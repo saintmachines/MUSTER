@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 358" width="720" height="358" role="img" aria-labelledby="t d">
+<title id="t">Building memory for one 10M-token conversation: LLM calls, build time and LLM cost</title>
+<desc id="d">EverMemOS 26,080 LLM calls, 39.8 h (all ten conversations in one run), LLM cost ≥ $3.19; HippoRAG-v2 20,870 LLM calls, 1.3 h, LLM cost $1.49; Hindsight 16,425 LLM calls, 3.0 h, LLM cost ≥ $1.97; Honcho 4,441–11,700 LLM calls, 7.8 h, LLM cost $1.41; Mem0 10,429 LLM calls, 13.0 h, LLM cost ≥ $15.15; True Memory 0 LLM calls, 39 min, LLM cost $0; MUSTER 0 LLM calls, 77 s, LLM cost $0.</desc>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif}</style>
+<g stroke="#21262d" stroke-width="1">
+<line x1="130.0" x2="130.0" y1="26" y2="302"/>
+<line x1="230.0" x2="230.0" y1="26" y2="302"/>
+<line x1="330.0" x2="330.0" y1="26" y2="302"/>
+<line x1="430.0" x2="430.0" y1="26" y2="302"/>
+</g>
+<text x="130.0" y="18.0" font-size="11" fill="#9198a1">LLM calls</text>
+<text x="548.0" y="18.0" font-size="11" fill="#9198a1" text-anchor="end">build time</text>
+<text x="704.0" y="18.0" font-size="11" fill="#9198a1" text-anchor="end">LLM cost</text>
+<text x="130.0" y="318.0" font-size="11" fill="#9198a1" text-anchor="middle">0</text>
+<text x="230.0" y="318.0" font-size="11" fill="#9198a1" text-anchor="middle">10K</text>
+<text x="330.0" y="318.0" font-size="11" fill="#9198a1" text-anchor="middle">20K</text>
+<text x="430.0" y="318.0" font-size="11" fill="#9198a1" text-anchor="middle">30K</text>
+<text x="10.0" y="46.0" font-size="11" fill="#9198a1" font-weight="700" letter-spacing=".02em">Extract with an LLM</text>
+<text x="120.0" y="69.0" font-size="12" fill="#d1d7e0" text-anchor="end">EverMemOS</text>
+<path d="M130.0 58.0 H386.8 a4 4 0 0 1 4 4 V68.0 a4 4 0 0 1 -4 4 H130.0 Z" fill="#6e7681"/>
+<text x="398.8" y="69.0" font-size="12" fill="#d1d7e0">26,080</text>
+<text x="548.0" y="69.0" font-size="12" fill="#d1d7e0" text-anchor="end">39.8 h</text>
+<text x="548.0" y="83.0" font-size="11" fill="#9198a1" text-anchor="end">all ten at once</text>
+<text x="704.0" y="69.0" font-size="12" fill="#d1d7e0" text-anchor="end">≥ $3.19</text>
+<text x="120.0" y="103.0" font-size="12" fill="#d1d7e0" text-anchor="end">HippoRAG-v2</text>
+<path d="M130.0 92.0 H334.7 a4 4 0 0 1 4 4 V102.0 a4 4 0 0 1 -4 4 H130.0 Z" fill="#6e7681"/>
+<text x="346.7" y="103.0" font-size="12" fill="#d1d7e0">20,870</text>
+<text x="548.0" y="103.0" font-size="12" fill="#d1d7e0" text-anchor="end">1.3 h</text>
+<text x="704.0" y="103.0" font-size="12" fill="#d1d7e0" text-anchor="end">$1.49</text>
+<text x="120.0" y="137.0" font-size="12" fill="#d1d7e0" text-anchor="end">Hindsight</text>
+<path d="M130.0 126.0 H290.2 a4 4 0 0 1 4 4 V136.0 a4 4 0 0 1 -4 4 H130.0 Z" fill="#6e7681"/>
+<text x="302.2" y="137.0" font-size="12" fill="#d1d7e0">16,425</text>
+<text x="548.0" y="137.0" font-size="12" fill="#d1d7e0" text-anchor="end">3.0 h</text>
+<text x="704.0" y="137.0" font-size="12" fill="#d1d7e0" text-anchor="end">≥ $1.97</text>
+<text x="120.0" y="171.0" font-size="12" fill="#d1d7e0" text-anchor="end">Honcho</text>
+<rect x="174.4" y="160" width="72.6" height="14" rx="4" fill="#6e7681" opacity=".55"/>
+<text x="255.0" y="171.0" font-size="12" fill="#d1d7e0">4.4–11.7K</text>
+<text x="548.0" y="171.0" font-size="12" fill="#d1d7e0" text-anchor="end">7.8 h</text>
+<text x="704.0" y="171.0" font-size="12" fill="#d1d7e0" text-anchor="end">$1.41</text>
+<text x="120.0" y="205.0" font-size="12" fill="#d1d7e0" text-anchor="end">Mem0</text>
+<path d="M130.0 194.0 H230.3 a4 4 0 0 1 4 4 V204.0 a4 4 0 0 1 -4 4 H130.0 Z" fill="#6e7681"/>
+<text x="242.3" y="205.0" font-size="12" fill="#d1d7e0">10,429</text>
+<text x="548.0" y="205.0" font-size="12" fill="#d1d7e0" text-anchor="end">13.0 h</text>
+<text x="704.0" y="205.0" font-size="12" fill="#d1d7e0" text-anchor="end">≥ $15.15</text>
+<text x="10.0" y="238.0" font-size="11" fill="#9198a1" font-weight="700" letter-spacing=".02em">Store as is</text>
+<text x="120.0" y="261.0" font-size="12" fill="#d1d7e0" text-anchor="end">True Memory</text>
+<line x1="130.0" x2="130.0" y1="249" y2="265" stroke="#6e7681" stroke-width="3" stroke-linecap="round"/>
+<text x="140.0" y="261.0" font-size="12" fill="#d1d7e0">0</text>
+<text x="548.0" y="261.0" font-size="12" fill="#d1d7e0" text-anchor="end">39 min</text>
+<text x="704.0" y="261.0" font-size="12" fill="#d1d7e0" text-anchor="end">$0</text>
+<text x="120.0" y="295.0" font-size="13" fill="#f0f6fc" text-anchor="end" font-weight="700">MUSTER</text>
+<line x1="130.0" x2="130.0" y1="283" y2="299" stroke="#4493f8" stroke-width="3" stroke-linecap="round"/>
+<text x="140.0" y="295.0" font-size="13" fill="#f0f6fc" font-weight="700">0</text>
+<text x="548.0" y="295.0" font-size="13" fill="#f0f6fc" text-anchor="end" font-weight="700">77 s</text>
+<text x="704.0" y="295.0" font-size="13" fill="#f0f6fc" text-anchor="end" font-weight="700">$0</text>
+<text x="10.0" y="346.0" font-size="11" fill="#9198a1">Full context reads everything: nothing to build, up to 849K tokens per question ($94.91 against $2.80 per 1,000 questions).</text>
+</svg>

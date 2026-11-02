@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121417" media="(prefers-color-scheme: dark)">
+<title>MUSTER: agent memory that sets its own strategy</title>
+<meta name="description" content="LLM-written memory takes hours. MUSTER detects each store, picks a strategy in seconds, and matches or beats it.">
+<style>
+:root{
+  --bg:#f7f8fa;--card:#ffffff;--code:#f2f3f5;--plate:#ffffff;
+  --ink:#1b1d22;--ink-2:#454a53;--ink-3:#5a6069;
+  --rule:rgba(27,29,34,.14);--rule-strong:rgba(27,29,34,.42);
+  --accent:#1f3fb4;--on-accent:#ffffff;--saint:#101012;
+  --bm-m0:#b45309;
+  --bm-ev:#0f766e;
+  --bm-tm:#7e22ce;
+  --bm-hs:#be123c;
+  --bm-ho:#4d7c0f;
+  --tint:rgba(31,63,180,.11);--tint-solid:#e0e4f2;--tint2:rgba(31,63,180,.05);--tint2-solid:#eceff7;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --fs-1:.8333rem;--fs0:1rem;--fs1:1.2rem;--fs2:1.728rem;--fs3:2.0736rem;--fs4:2.488rem;--fs5:2.986rem;
+  --s1:8px;--s2:16px;--s3:24px;--s4:32px;--s5:48px;--s6:64px;--s7:80px;
+  --max:1120px;--gutter:32px;--bar:55px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#121417;--card:#1a1d22;--code:#191c21;--plate:#ffffff;
+    --ink:#e9ebee;--ink-2:#b7bcc5;--ink-3:#a2a8b1;
+    --rule:rgba(233,235,238,.16);--rule-strong:rgba(233,235,238,.45);
+    --accent:#8db0ff;--on-accent:#0b1430;--saint:#f4f4f2;
+    --bm-m0:#fbbf24;
+    --bm-ev:#2dd4bf;
+    --bm-tm:#d8b4fe;
+    --bm-hs:#fda4af;
+    --bm-ho:#bef264;
+    --tint:rgba(141,176,255,.14);--tint-solid:#232a38;--tint2:rgba(141,176,255,.06);--tint2-solid:#191d25;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{font-size:106.25%;-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--bar) + 16px)}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs0);line-height:1.55;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+img,svg{max-width:100%;height:auto;display:block}
+p{margin:0 0 var(--s2);max-width:30rem}
+ul,ol{max-width:30rem}
+a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.16em;overflow-wrap:anywhere;transition:color .15s,text-decoration-thickness .15s}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+code{font-family:var(--mono);font-size:var(--fs-1);overflow-wrap:anywhere}
+h1,h2,h3{margin:0;line-height:1.1;font-weight:700}
+h1{font-size:clamp(2.0736rem,1.2rem + 2.6vw,2.986rem);letter-spacing:-.02em}
+h2{font-size:clamp(1.728rem,1rem + 1.4vw,2.0736rem);letter-spacing:-.02em;margin-bottom:var(--s3)}
+h3{font-size:var(--fs1);margin-bottom:var(--s2)}
+summary h3{margin:0;font-size:var(--fs1)}
+.faq h3{margin:var(--s3) 0 4px}
+.faq h3:first-child{margin-top:0}
+.bars-h{margin:var(--s5) 0 0}
+.lead{font-size:var(--fs1);line-height:1.4;color:var(--ink-2);max-width:36rem}
+.caption{font-size:var(--fs-1);line-height:1.45;color:var(--ink-3);max-width:25rem}
+.lab{font-size:var(--fs-1);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.limits{font-size:var(--fs-1);line-height:1.45;color:var(--ink-3);margin:var(--s2) 0;max-width:25rem}
+.notes{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--s5);row-gap:var(--s2);margin-top:var(--s2)}
+.notes .limits{margin:0}
+.legend{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--s3);row-gap:var(--s2);max-width:none}
+.lterm{display:block;color:var(--ink)}
+.legend li.wide{grid-column:1/-1}
+.nw{white-space:nowrap}
+.gate td:last-child a{white-space:nowrap}
+.gate table{min-width:640px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:16px;top:-100px;z-index:100;background:var(--accent);color:var(--on-accent);padding:8px 16px;text-decoration:none;font-weight:700}
+.skip:focus{top:8px}
+.wrap{max-width:var(--max);margin-inline:auto;padding-inline:var(--gutter)}
+
+/* bar */
+.bar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--rule)}
+.bar .wrap{height:var(--bar);display:flex;align-items:center;gap:var(--s3)}
+.wordmark{font-weight:700;letter-spacing:.06em;text-decoration:none;color:var(--ink);flex:none;min-height:44px;display:inline-flex;align-items:center;transition:color .15s}
+.wordmark:hover{color:var(--accent)}
+.bar nav{display:flex;gap:clamp(12px,1.6vw,24px);margin-left:auto;min-width:0}
+.bar nav a{text-decoration:none;color:var(--ink-2);font-size:var(--fs-1);min-height:44px;display:inline-flex;align-items:center;white-space:nowrap;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.bar nav a:hover,.bar nav a[aria-current="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.pill{flex:none;font-size:var(--fs-1);font-weight:700;text-decoration:none;color:var(--ink);border:1px solid var(--rule-strong);border-radius:999px;padding:0 16px;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap;transition:border-color .15s,color .15s}
+.pill:hover{border-color:var(--accent);color:var(--accent)}
+
+/* hero */
+.hero{padding:var(--s5) 0 var(--s3);border-bottom:1px solid var(--rule)}
+.hero .wrap{display:flex;flex-direction:column;min-height:756px}
+.hero-grid{display:grid;grid-template-columns:3fr 2fr;column-gap:var(--s5);row-gap:var(--s4);align-items:stretch;flex:1}
+.hero-main>*+*{margin-top:var(--s2)}
+.hero-main h1{margin-bottom:var(--s2)}
+.def{font-size:var(--fs1);line-height:1.4;max-width:34rem;text-wrap:balance}
+.measured{margin:0;max-width:31rem;color:var(--ink-2)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:var(--s2);row-gap:var(--s2);margin:var(--s3) 0 0;border-top:1px solid var(--rule);padding-top:var(--s2)}
+.tiles>div{display:grid;grid-template-rows:auto 1fr auto;min-width:0}
+.tiles dd{margin:0}
+.tiles dd.num{order:-1;font-size:clamp(2.0736rem,1rem + 1.6vw,2.488rem);line-height:1.1;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+.tiles dt{font-size:var(--fs-1);line-height:1.45;color:var(--ink-2);margin-top:var(--s1);text-wrap:pretty}
+.tiles dd.src a{overflow-wrap:normal}
+.tiles dd.src{font-size:var(--fs-1);line-height:1.45;margin-top:4px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:var(--s3)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 24px;border:1px solid var(--accent);border-radius:6px;text-decoration:none;font-weight:700;color:var(--accent);background:transparent;font-family:inherit;font-size:var(--fs0);cursor:pointer;transition:background-color .15s,color .15s,border-color .15s,filter .15s}
+.btn:hover{background:var(--tint)}
+.btn.primary{background:var(--accent);color:var(--on-accent)}
+.btn.primary:hover{background:var(--accent);filter:brightness(1.08)}
+.onpage{font-size:var(--fs-1);color:var(--ink-3);margin-top:var(--s2);display:flex;flex-wrap:wrap;align-items:center;column-gap:var(--s2);row-gap:0}
+.onpage a{color:var(--ink-2)}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:var(--s2);margin:0;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.card svg{width:100%;height:auto}
+.chart-h{font-weight:400;margin:0 0 var(--s2);max-width:none}
+.card .caption{margin:var(--s2) 0 0}
+/* results band under the hero: one panel per benchmark, the same six systems */
+.rfig{margin:var(--s4) 0 0;padding:var(--s2) var(--s3);justify-content:flex-start}
+.rfig .chart-h{margin:0 0 var(--s2)}
+.pns{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.075fr) minmax(0,1.075fr);column-gap:var(--s5);row-gap:var(--s3);align-items:start}
+.pn{min-width:0}
+.pn-t{font-size:var(--fs-1);line-height:1.45;color:var(--ink-3);margin:0 0 var(--s1);max-width:none}
+.pn-t b{display:block;font-size:var(--fs0);color:var(--ink)}
+.k{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:-1px;margin-right:4px}
+.k.o,.hr .d.o{border:2px solid var(--ink-3);background:var(--card)}
+.k.f,.hr .d.f{background:var(--ink-3)}
+.hr{list-style:none;margin:0;padding:0;max-width:none;font-size:var(--fs-1);line-height:1.25}
+.hr li{display:grid;grid-template-columns:5.5rem minmax(0,1fr) 2.75rem;column-gap:8px;align-items:center;min-height:22px}
+.hr.two li{grid-template-columns:5.5rem minmax(0,1fr) 2.75rem 2.75rem}
+.hr.three li{grid-template-columns:minmax(0,1fr) 3.25rem 3.25rem 3.25rem}
+.hr .nm{color:var(--ink-2);white-space:nowrap}
+.hr .v{text-align:right;white-space:nowrap}
+.hr li.us .nm,.hr li.us .v{font-weight:700;color:var(--ink)}
+.hr .tr{position:relative;align-self:stretch;min-height:22px}
+.hr.one .tr{border-left:1px solid var(--rule-strong)}
+.hr .br{position:absolute;left:0;top:7px;height:8px;width:var(--w);background:var(--ink-3);border-radius:0 2px 2px 0}
+.hr li.us .br{background:var(--accent)}
+.hr.two li:not(.hd):not(.ax) .tr{background:linear-gradient(90deg,var(--rule) 1px,transparent 1px) 0 0/25% 100% repeat-x;box-shadow:inset -1px 0 0 var(--rule)}
+.hr .ln{position:absolute;top:10px;height:2px;background:var(--ink-3)}
+.hr .d{position:absolute;top:6px;width:10px;height:10px;margin-left:-5px;border-radius:50%}
+.hr li.us .ln,.hr li.us .d.f{background:var(--accent)}
+.hr li.us .d.o{border-color:var(--accent)}
+.hr li.hd,.hr li.ax,.hr li.hd .tr,.hr li.ax .tr{min-height:0}
+.hr li.hd .v{line-height:1;padding-bottom:4px}
+.hr.three li.hd .v{color:var(--ink-3)}
+.hr li.ax .tr{height:20px}
+.hr li.ax b{position:absolute;top:3px;transform:translateX(-50%);font-weight:400;color:var(--ink-3)}
+/* panel 3: BEAM as a line graph; each system has its own colour and marker, values at both ends */
+.bm-c{display:grid;grid-template-columns:3.25rem minmax(0,1fr) 8.75rem;grid-template-rows:auto 240px;font-size:var(--fs-1);line-height:1;margin-top:4px}
+.bm-x{grid-column:2;grid-row:1;position:relative;height:22px;color:var(--ink-3)}
+.bm-x span{position:absolute;top:0;transform:translateX(-50%)}
+.bm-l,.bm-p,.bm-r{position:relative;grid-row:2;min-width:0}
+.bm-l{grid-column:1}.bm-p{grid-column:2}.bm-r{grid-column:3}
+.bm-c .bm-p svg{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;overflow:visible}
+.bm-c .bm-l svg,.bm-c .bm-r svg{position:absolute;top:0;width:14px;height:100%;max-width:none}
+.bm-c .bm-l svg{right:0}.bm-c .bm-r svg{left:0}
+.bm-g{stroke:var(--rule);stroke-width:1}
+.bm-k{stroke:var(--rule-strong);stroke-width:1}
+.bm-cs{fill:none;stroke:var(--card);stroke-width:5}
+.bm-cs.mu{stroke-width:6}
+.bm-ln{fill:none;stroke-width:2}
+.bm-ln.mu{stroke:var(--accent);stroke-width:3}
+.bm-ln.m0{stroke:var(--bm-m0)}.bm-ln.ev{stroke:var(--bm-ev)}.bm-ln.tm{stroke:var(--bm-tm)}.bm-ln.hs{stroke:var(--bm-hs)}.bm-ln.ho{stroke:var(--bm-ho)}
+.bm-lb.mu,.bm-mk.mu{color:var(--accent)}
+.bm-lb.m0,.bm-mk.m0{color:var(--bm-m0)}.bm-lb.ev,.bm-mk.ev{color:var(--bm-ev)}.bm-lb.tm,.bm-mk.tm{color:var(--bm-tm)}
+.bm-lb.hs,.bm-mk.hs{color:var(--bm-hs)}.bm-lb.ho,.bm-mk.ho{color:var(--bm-ho)}
+.bm-lb{position:absolute;transform:translateY(-50%);white-space:nowrap}
+.bm-lb b{font-weight:400}
+.bm-lb.mu,.bm-lb.mu b{font-weight:700;color:var(--ink)}
+.bm-l .bm-lb{right:16px}
+.bm-r .bm-lb{left:17px}
+.bm-p .bm-lb.bm-mid{transform:translate(calc(-100% - 6px),-50%)}
+.bm-mk{position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;background:currentColor;box-shadow:0 0 0 2px var(--card)}
+.bm-mk.ci{width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%}
+.bm-mk.di{transform:rotate(45deg)}
+.bm-mk.tr{width:11px;height:10px;margin:-6px 0 0 -5.5px;clip-path:polygon(50% 0,100% 100%,0 100%);box-shadow:none}
+.bm-mk.ri{background:var(--card);border:2px solid currentColor;border-radius:50%}
+.bm-mk.rs{background:var(--card);border:2px solid currentColor}
+/* hero chart: HTML labels over a stretched SVG grid, so its text keeps one size at every width */
+.bt{position:relative;margin:4px 0 0;padding-left:2.25rem;font-size:var(--fs-1);line-height:1.25;color:var(--ink)}
+.bt-yl{color:var(--ink-3);margin:0 0 12px -2.25rem}
+.bt-plot{position:relative;height:360px}
+.card .bt-plot svg{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;overflow:visible}
+.bt-g{stroke:var(--rule);stroke-width:1}
+.bt-ax{stroke:var(--rule-strong);stroke-width:1}
+.bt-yt{position:absolute;left:-2.25rem;width:1.6rem;text-align:right;transform:translateY(-50%);color:var(--ink-3)}
+.bt-pt{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--ink-3);box-shadow:0 0 0 2px var(--card)}
+.bt-pt.us{width:12px;height:12px;margin:-6px 0 0 -6px;background:var(--accent)}
+.bt-lb{position:absolute;white-space:nowrap;color:var(--ink);background:var(--card);box-shadow:0 0 0 2px var(--card)}
+.bt-lb>span{display:block}
+.bt-lb .bt-m{color:var(--ink-2)}
+.bt-lb.us .bt-n,.bt-lb.us .bt-m{font-weight:700;color:var(--ink)}
+.bt-lb.r{transform:translate(10px,-50%);text-align:left}
+.bt-lb.l{transform:translate(calc(-100% - 10px),-50%);text-align:right}
+.bt-lb.a{right:0;transform:translateY(calc(-100% - 9px));text-align:right}
+.bt-lb.b{right:0;transform:translateY(9px);text-align:right}
+.bt-lb.bl{transform:translate(calc(-100% + 6px),9px);text-align:right}
+.bt-xt{position:relative;height:20px;margin-top:6px;color:var(--ink-3)}
+.bt-xt span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.bt-xl{color:var(--ink-3);text-align:right;margin-top:4px}
+/* six panels: MemoryAgentBench under Infini Memory's scoring (hatched bars: the numbers its paper reports), LoCoMo-Refined
+   and its LLM calls join the three above; MemoryAgentBench's two panels share the first column, LoCoMo's two the second,
+   BEAM and the calls the third (calls first in the DOM, shown under BEAM on desktop) */
+.hr li.rp .br,.k.rp{background:repeating-linear-gradient(135deg,var(--ink-3) 0 1.5px,transparent 1.5px 4px);box-shadow:inset 0 0 0 1px var(--ink-3)}
+.k.rp{border-radius:1px}
+.pn-cap{font-size:var(--fs-1);line-height:1.45;color:var(--ink-3);margin:var(--s1) 0 0;max-width:none;text-wrap:pretty}
+.five .hr.one li{grid-template-columns:6.75rem minmax(0,1fr) 2.75rem}
+.pcol{display:flex;flex-direction:column;gap:var(--s3);min-width:0}
+.pcol>.pn+.pn{border-top:1px solid var(--rule);padding-top:var(--s3)}
+/* BEAM panel: attention on 10M, the scale BEAM-10M names */
+.bm-spot{position:absolute;top:-6px;bottom:-6px;left:100%;width:30px;margin-left:-15px;background:var(--tint);border-radius:6px}
+.bm-x .bm-x10{font-weight:700;color:var(--ink)}
+.bm-mk.ci.mu.bm-end{width:15px;height:15px;margin:-7.5px 0 0 -7.5px}
+.bm-quiet .bm-l .bm-lb:not(.mu){color:var(--ink-3)}
+.bm-rk{grid-column:2;grid-row:3;position:relative;height:18px;margin-top:10px;color:var(--ink-3)}
+.bm-rk span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.bm-rk b{font-weight:700;color:var(--ink)}
+.bm-rkl{grid-column:3;grid-row:3;margin-top:10px;padding-left:17px;color:var(--ink-3);white-space:nowrap}
+.hero-foot{margin:var(--s4) 0 0;padding-top:var(--s2);border-top:1px solid var(--rule);font-size:var(--fs-1);color:var(--ink-3);max-width:none;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px var(--s3)}
+.hero-foot a{color:var(--ink-2)}
+
+/* sections */
+section{padding:var(--s7) 0;border-bottom:1px solid var(--rule);scroll-margin-top:calc(var(--bar) + 16px)}
+details[id]{scroll-margin-top:calc(var(--bar) + 16px)}
+.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:var(--s4) 0 var(--s3)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:var(--fs-1);line-height:1.4}
+.tcap{font-weight:700;color:var(--ink);margin:var(--s3) 0 0;max-width:35rem;text-wrap:pretty}
+.tcap+.tbl{margin-top:8px}
+.tcap.plain{font-weight:400;font-size:var(--fs-1);color:var(--ink-2);text-wrap:balance}
+th,td{text-align:left;padding:8px 12px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-weight:700;color:var(--ink);border-bottom:2px solid var(--rule-strong);vertical-align:bottom}
+thead th .u{display:block;font-weight:400;color:var(--ink-3)}
+th[scope="row"]{font-weight:400;position:sticky;left:0;background:var(--bg);z-index:1;padding-right:12px;min-width:7rem;max-width:14rem}
+.n{text-align:right;white-space:nowrap}
+thead th.n{white-space:normal}
+tr.us>*{font-weight:700;background:var(--tint)}
+tr.us>th[scope="row"]{background:var(--tint-solid);box-shadow:inset 3px 0 0 var(--accent);padding-left:12px}
+tr.us2>*{font-weight:600;background:var(--tint2)}
+tr.us2>th[scope="row"]{background:var(--tint2-solid)}
+.cost td,.cost thead th{text-align:right}
+.cost th[scope="row"]{text-align:left}
+.cost .us-col{font-weight:700;background:var(--tint)}
+.cost thead th.us-col{box-shadow:inset 0 3px 0 var(--accent)}
+.cmp td{white-space:normal;min-width:12rem}
+.cmp th[scope="row"]{white-space:normal;max-width:11rem}
+.cmp .us-col{background:var(--tint);font-weight:700}
+@media (max-width:900px){th[scope="row"]{border-right:1px solid var(--rule)}}
+@media (max-width:720px){html:not(.jsr) .tbl.wide::before{content:"Wide table: scrolls sideways; the first column stays.";display:block;font-size:var(--fs-1);font-style:italic;color:var(--ink-3);margin-bottom:var(--s1)}}
+.tbl.scrolls::before{content:"Wide table: scrolls sideways; the first column stays.";display:block;font-size:var(--fs-1);font-style:italic;color:var(--ink-3);margin-bottom:var(--s1)}
+
+/* bars */
+.bars{list-style:none;margin:var(--s4) 0 0;padding:0;max-width:none}
+.bars li{display:grid;grid-template-columns:10rem minmax(0,1fr) 5rem;align-items:center;column-gap:12px;padding:4px 0}
+.bars .b{height:14px;border-radius:2px;background:var(--ink-3);width:var(--w)}
+.bars li.us{font-weight:700}
+.bars li.us .b{background:var(--accent)}
+.axis{margin:4px calc(5rem + 12px) var(--s3) calc(10rem + 12px);max-width:none}
+.axis .ticks{position:relative;height:28px;border-top:1px solid var(--rule-strong)}
+.axis .ticks span{position:absolute;top:4px;transform:translateX(-50%);font-size:var(--fs-1);color:var(--ink-3);white-space:nowrap}
+
+/* code */
+.code{background:var(--code);border:1px solid var(--rule);border-radius:6px;margin:var(--s3) 0;position:relative}
+.code pre{margin:0;padding:var(--s2) var(--s3);overflow-x:auto;font-family:var(--mono);font-size:var(--fs-1);line-height:1.5;color:var(--ink)}
+.code pre:focus-visible{outline-offset:-3px}
+.code .cm{color:var(--ink-3)}
+.code-head{display:flex;justify-content:space-between;align-items:center;gap:var(--s2);min-height:52px;padding:4px 4px 4px var(--s3);border-bottom:1px solid var(--rule);font-size:var(--fs-1);color:var(--ink-3)}
+.code-head code{color:var(--ink-2)}
+.code .copy{flex:none;min-height:44px;padding:0 16px;font-size:var(--fs-1);border-radius:4px}
+.code pre code{font-size:inherit}
+
+/* figures and details */
+figure{margin:var(--s3) 0}
+.plate{background:var(--plate);border:1px solid var(--rule);border-radius:8px;padding:12px}
+.plate img{width:100%;height:auto}
+figcaption{font-size:var(--fs-1);line-height:1.45;color:var(--ink-3);margin-top:8px;max-width:27rem}
+details{border-top:1px solid var(--rule)}
+details:last-of-type{border-bottom:1px solid var(--rule)}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:var(--s2);min-height:44px;padding:16px 0 8px;font-weight:700;transition:color .15s}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";content:"+" / "";flex:none;color:var(--ink-2);font-size:var(--fs1);line-height:1}
+details[open]>summary::after{content:"−";content:"−" / ""}
+details>summary:hover{color:var(--accent)}
+.dbody{padding:0 0 var(--s4)}
+.dbody>:first-child{margin-top:0}
+blockquote{margin:var(--s3) 0;padding:4px 0 4px var(--s3);border-left:3px solid var(--rule-strong);max-width:32rem}
+blockquote p{margin:0}
+blockquote p+p{margin-top:var(--s1)}
+.steps{margin:0 0 var(--s2);padding-left:1.2em}
+.steps li{margin-bottom:var(--s1)}
+.links{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:0 var(--s3);max-width:none}
+.links a{display:inline-block;padding:12px 0}
+.repro{padding-left:0;list-style:none;max-width:33rem}
+.repro li{padding-left:1.1em;text-indent:-1.1em}
+.repro li::before{content:"·";display:inline-block;width:1.1em;text-indent:0}
+.repro li{margin-bottom:var(--s2)}
+.faq p{max-width:32rem;margin-bottom:0}
+.status{margin:var(--s3) 0;padding:var(--s2) var(--s3);border-left:3px solid var(--rule-strong);max-width:34rem}
+.status p{margin:0;max-width:none}
+footer{padding:var(--s5) 0 var(--s4);font-size:var(--fs-1);color:var(--ink-3)}
+footer p{max-width:none}
+footer .maker{display:inline-block;padding:12px 0;color:var(--saint)}
+footer .maker svg{display:block;max-width:100%;height:auto}
+
+/* reveal, motion */
+.js [data-reveal]{opacity:0;transform:translateY(10px);transition:opacity .35s ease-out,transform .35s ease-out}
+.js [data-reveal].in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .js [data-reveal]{opacity:1;transform:none}
+}
+
+/* responsive */
+@media (max-width:1000px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){
+  .notes{grid-template-columns:minmax(0,1fr)}
+  .hero .wrap{min-height:0}
+  .hero-main{display:flex;flex-direction:column}
+  .hero-main .measured{order:9}
+  .hero-grid{grid-template-columns:minmax(0,1fr)}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:720px){
+  .axis .ticks{height:44px}
+  .axis .ticks span:nth-child(even){top:22px}
+  .axis .ticks span:last-child{transform:translateX(-100%)}
+  .bar nav{display:none}
+  .pill{margin-left:auto}
+  .bars li{grid-template-columns:minmax(0,1fr) 4.5rem;row-gap:4px}
+  .bars li>span:first-child{grid-column:1/-1}
+  .axis{margin-left:0;margin-right:calc(4.5rem + 12px)}
+}
+@media (max-width:1199px){.pns{column-gap:var(--s3)}}
+@media (max-width:959px){
+  .pns{grid-template-columns:minmax(0,36rem)}
+  .pn+.pn{border-top:1px solid var(--rule);padding-top:var(--s3)}
+}
+@media (max-width:900px){.rfig{padding:var(--s2)}}
+@media (min-width:1200px){
+  .pns.five{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(0,1.25fr);column-gap:var(--s3)}
+  .pcol.rev{flex-direction:column-reverse}
+  .pcol.rev>.pn+.pn{border-top:0;padding-top:0}
+  .pcol.rev>.pn:first-child{border-top:1px solid var(--rule);padding-top:var(--s3)}
+}
+@media (min-width:960px) and (max-width:1199px){
+  .pns.five{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .five .pcol{display:contents}
+  .five [aria-labelledby="pn3-t"]{order:1}
+  .five [aria-labelledby="pn6-t"]{order:2}
+  .five [aria-labelledby="pn2-t"],.five [aria-labelledby="pn5-t"],.five [aria-labelledby="pn3-t"],.five [aria-labelledby="pn6-t"]{border-top:1px solid var(--rule);padding-top:var(--s3)}
+  .five .pcol:first-child>.pn+.pn{border-top:0;padding-top:0}
+}
+@media (max-width:959px){
+  .five .pcol{display:contents}
+  .five .pn{border-top:1px solid var(--rule);padding-top:var(--s3)}
+  .five>.pcol:first-child>.pn:first-child{border-top:0;padding-top:0}
+}
+@media (max-width:359px){.hr.two li.ax b:first-child{transform:none}}
+@media (max-width:359px){
+  .hr.two li{grid-template-columns:minmax(0,1fr) 2.75rem 2.75rem;row-gap:2px}
+  .hr.two li>.nm{grid-column:1/-1}
+  .hr.two li.hd>span:first-child,.hr.two li.ax>span:first-child{display:none}
+  .hr.three li{grid-template-columns:minmax(0,1fr) 2.75rem 2.75rem 2.75rem}
+}
+@media (max-width:600px){
+  .bt-plot{height:420px}
+  .bt-v{display:none}
+  .bt-lb.k-mu .bt-sep,.bt-lb.k-m0 .bt-sep,.bt-lb.k-ev .bt-sep,.bt-lb.k-tm .bt-sep{display:none}
+  .bt-lb.k-mu .bt-m>span:not(.bt-sep),.bt-lb.k-m0 .bt-m>span:not(.bt-sep),.bt-lb.k-ev .bt-m>span:not(.bt-sep),.bt-lb.k-tm .bt-m>span:not(.bt-sep){display:block}
+}
+@media (max-width:359px){
+  .bt-lb.k-tm .bt-sc,.bt-lb.k-ev .bt-sc{display:block}
+}
+@media (max-width:600px){
+  #run-it .code pre{white-space:pre-wrap;overflow-wrap:anywhere}
+  :root{--gutter:16px;--s7:48px}
+  .def{font-size:var(--fs0)}
+  .actions{flex-direction:column}
+  .actions .btn{width:100%}
+  .card{padding:12px}
+  .tiles dd.src a,.onpage a{display:inline-flex;min-height:44px;min-width:44px;align-items:center}
+  .onpage a{justify-content:center}
+  .tiles,.actions{margin-top:var(--s2)}
+  .hero{padding-top:var(--s2)}
+  th,td{padding-right:8px}
+  th[scope="row"]{min-width:6rem}
+  .notes,.legend{grid-template-columns:minmax(0,1fr)}
+  .code pre{padding:var(--s2)}
+  .cmp td{min-width:10rem}
+}
+
+/* print */
+@media print{
+  :root{--bg:#ffffff;--card:#ffffff;--code:#ffffff;--ink:#000000;--ink-2:#222222;--ink-3:#333333;--accent:#1f3fb4;--on-accent:#ffffff;--rule:rgba(0,0,0,.2);--rule-strong:rgba(0,0,0,.5);--tint:rgba(0,0,0,.06);--tint-solid:#eeeeee;--tint2:rgba(0,0,0,.03);--tint2-solid:#f5f5f5;--saint:#000000}
+  .bar,.actions,.skip,.onpage,.copy{display:none!important}
+  .tbl,.code pre{overflow:visible}
+  .tbl{zoom:.8333}
+  td a[href^="../"]::after{content:none}
+  .tbl::before{content:none!important}
+  .cmp td{min-width:0}
+  h2,h3,.tcap,summary{break-after:avoid}
+  th,td{padding:2pt 4pt 2pt 0}
+  .n,thead th.n,.gate td:last-child a{white-space:normal}
+  th[scope="row"]{position:static;min-width:0}
+  .gate table{min-width:0}
+  .code pre{white-space:pre-wrap;overflow-wrap:anywhere}
+  .hero .wrap{min-height:0}
+  table,figure,pre,.card{break-inside:avoid}
+  a[href^="../"]::after{content:" (" attr(href) ")";font-size:var(--fs-1)}
+  .js [data-reveal]{opacity:1;transform:none}
+  details::details-content{content-visibility:visible;display:block}
+  summary::after{content:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="bar">
+  <div class="wrap">
+    <a class="wordmark" href="#top">MUSTER</a>
+    <nav aria-label="Sections">
+      <a href="#results">Results</a>
+      <a href="#run-it">Run it</a>
+      <a href="#cost">Cost</a>
+      <a href="#how">How it works</a>
+      <a href="#reproduce">Reproduce</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="pill" href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER.pdf">Paper (PDF)</a>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="hero" id="top" aria-labelledby="title">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-main">
+        <h1 id="title">MUSTER</h1>
+        <p class="def"><span class="nw">LLM-written</span> memory takes hours. MUSTER detects each store, picks a strategy in seconds, and matches or beats it.</p>
+        <p class="measured">57.5 on MemoryAgentBench at its own <span class="nw">GPT-4o-mini</span> reader, first among the retrieval and memory systems the benchmark reports · 93.46 on LoCoMo · 64.3 on <span class="nw">BEAM-10M</span> · a <span class="nw">10M-token</span> memory built in 36&nbsp;seconds with 0&nbsp;LLM&nbsp;calls, where Mem0 makes 10,429&nbsp;calls over 13&nbsp;hours.</p>
+        <dl class="tiles">
+          <div><dt>MemoryAgentBench overall, <span class="nw">GPT-4o-mini</span> reader</dt><dd class="num">57.5</dd><dd class="src"><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_mab.py" aria-label="gate/rescore_mab.py">rescore_mab.py</a></dd></div>
+          <div><dt>LoCoMo, <span class="nw">GPT-4.1-mini</span> reader, <span class="nw">GPT-4o-mini</span> judge</dt><dd class="num">93.46</dd><dd class="src"><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage0d_render.md" aria-label="gate/stage0d_render.md">stage0d_render.md</a></dd></div>
+          <div><dt><span class="nw">BEAM-10M</span>, <span class="nw">GLM-5.3-Flash</span> reader, BEAM's judge</dt><dd class="num">64.3</dd><dd class="src"><a href="https://github.com/saintmachines/MUSTER/blob/main/harness/beam_score.py" aria-label="harness/beam_score.py">beam_score.py</a></dd></div>
+          <div><dt><span class="nw">10M-token</span> memory built with 0&nbsp;LLM&nbsp;calls</dt><dd class="num">77&nbsp;s</dd><dd class="src"><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/build_time_rtx.md" aria-label="gate/build_time_rtx.md">build_time_rtx.md</a></dd></div>
+        </dl>
+        <div class="actions">
+          <a class="btn primary" id="cta-run" href="#run-it">Run it, no API key</a>
+          <a class="btn" href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER.pdf">Paper (PDF)</a>
+        </div>
+        <p class="onpage"><span>On this page:</span> <a href="#results">Results</a> <a href="#run-it">Run it</a> <a href="#cost">Cost</a> <a href="#how">How it works</a> <a href="#detailed">Detailed results</a> <a href="#reproduce">Reproduce</a> <a href="#faq">FAQ</a></p>
+      </div>
+      <figure class="card" aria-labelledby="ch-t">
+        <p class="chart-h" id="chart-h"><span class="nw">BEAM-10M</span> score against the build time for one <span class="nw">10M-token</span> conversation</p>
+        <div class="bt" role="img" aria-labelledby="ch-t ch-d">
+          <span class="sr-only" id="ch-t">BEAM-10M score against the build time for one 10M-token conversation, log time axis</span>
+          <span class="sr-only" id="ch-d">MUSTER 64.3, built in 77 s with 0 LLM calls; Mem0 2.1.0 63.9, built in 13 h with 10,429 calls; EverMemOS 62.7, built in 39.8 h for all ten conversations in one run, with 26.1K calls; True Memory 62.4, built in 39 min with 0 LLM calls; Hindsight 0.10.3 52.2, built in 3.0 h with 16,425 calls; Honcho 48.9, built in 7.8 h with 4.4–11.7K calls.</span>
+          <div class="bt-yl" aria-hidden="true"><span class="nw">BEAM-10M</span> score</div>
+          <div class="bt-plot" aria-hidden="true"><svg viewBox="0 0 100 100" preserveAspectRatio="none" focusable="false"><line class="bt-g" x1="0" y1="81.82" x2="100" y2="81.82" vector-effect="non-scaling-stroke"/><line class="bt-g" x1="0" y1="59.09" x2="100" y2="59.09" vector-effect="non-scaling-stroke"/><line class="bt-g" x1="0" y1="36.36" x2="100" y2="36.36" vector-effect="non-scaling-stroke"/><line class="bt-g" x1="0" y1="13.64" x2="100" y2="13.64" vector-effect="non-scaling-stroke"/><line class="bt-g" x1="11.81" y1="0" x2="11.81" y2="100" vector-effect="non-scaling-stroke"/><line class="bt-g" x1="36.50" y1="0" x2="36.50" y2="100" vector-effect="non-scaling-stroke"/><line class="bt-g" x1="55.71" y1="0" x2="55.71" y2="100" vector-effect="non-scaling-stroke"/><line class="bt-g" x1="80.40" y1="0" x2="80.40" y2="100" vector-effect="non-scaling-stroke"/><line class="bt-ax" x1="0" y1="0" x2="0" y2="100" vector-effect="non-scaling-stroke"/><line class="bt-ax" x1="0" y1="100" x2="100" y2="100" vector-effect="non-scaling-stroke"/></svg><span class="bt-yt" style="top:81.82%">50</span><span class="bt-yt" style="top:59.09%">55</span><span class="bt-yt" style="top:36.36%">60</span><span class="bt-yt" style="top:13.64%">65</span><i class="bt-pt" style="left:83.22%;top:18.64%"></i><i class="bt-pt" style="left:95.21%;top:24.09%"></i><i class="bt-pt" style="left:51.09%;top:25.45%"></i><i class="bt-pt" style="left:67.49%;top:71.82%"></i><i class="bt-pt" style="left:77.74%;top:86.82%"></i><i class="bt-pt us" style="left:14.48%;top:16.82%"></i><span class="bt-lb r k-mu us" style="left:14.48%;top:16.82%"><span class="bt-n">MUSTER<span class="bt-sc"> 64.3</span></span><span class="bt-m"><span>77 s</span><span class="bt-sep"> · </span><span>0 LLM calls</span></span></span><span class="bt-lb a k-m0" style="top:18.64%"><span class="bt-n">Mem0<span class="bt-v"> 2.1.0</span><span class="bt-sc"> 63.9</span></span><span class="bt-m"><span>13 h</span><span class="bt-sep"> · </span><span>10,429 calls</span></span></span><span class="bt-lb b k-ev" style="top:24.09%"><span class="bt-n">EverMemOS<span class="bt-sc"> 62.7</span></span><span class="bt-m"><span>39.8 h</span><span class="bt-sep"> · </span><span>26.1K calls</span></span><span class="bt-m">all ten at once</span></span><span class="bt-lb bl k-tm" style="left:51.09%;top:25.45%"><span class="bt-n">True Memory<span class="bt-sc"> 62.4</span></span><span class="bt-m"><span>39 min</span><span class="bt-sep"> · </span><span>0 LLM calls</span></span></span><span class="bt-lb l k-hs" style="left:67.49%;top:71.82%"><span class="bt-n">Hindsight<span class="bt-v"> 0.10.3</span><span class="bt-sc"> 52.2</span></span><span class="bt-m"><span>3.0 h</span><span class="bt-sep"> · </span><span>16,425 calls</span></span></span><span class="bt-lb l k-ho" style="left:77.74%;top:86.82%"><span class="bt-n">Honcho<span class="bt-sc"> 48.9</span></span><span class="bt-m"><span>7.8 h</span><span class="bt-sep"> · </span><span>4.4–11.7K calls</span></span></span></div>
+          <div class="bt-xt" aria-hidden="true"><span style="left:11.81%">1 min</span><span style="left:36.50%">10 min</span><span style="left:55.71%">1 h</span><span style="left:80.40%">10 h</span></div>
+          <div class="bt-xl" aria-hidden="true">build time, log axis</div>
+        </div>
+        <figcaption class="caption"><span class="nw">BEAM-10M</span> (<span class="nw">GLM-5.3-Flash</span> reader, BEAM's judge) against the build time for one <span class="nw">10M-token</span> conversation, log axis; up and to the left is better.</figcaption>
+      </figure>
+    </div>
+    <figure class="card rfig" aria-labelledby="rf-h">
+      <p class="chart-h" id="rf-h">Scores on one instrument, higher is better; LLM calls, fewer is better (Infini Memory: its paper's numbers)</p>
+      <div class="pns five">
+      <div class="pcol">
+      <div class="pn" role="group" aria-labelledby="pn1-t">
+      <p class="pn-t" id="pn1-t"><b>MemoryAgentBench, overall</b><span class="nw">GPT-4o-mini</span> reader, the benchmark's own protocol</p>
+      <ol class="hr one">
+      <li class="us"><span class="nm">MUSTER</span><span class="tr" aria-hidden="true"><i class="br" style="--w:95.83%"></i></span><span class="v">57.5</span></li>
+      <li><span class="nm">True Memory</span><span class="tr" aria-hidden="true"><i class="br" style="--w:72.67%"></i></span><span class="v">43.6</span></li>
+      <li><span class="nm">Honcho</span><span class="tr" aria-hidden="true"><i class="br" style="--w:58.33%"></i></span><span class="v">35.0</span></li>
+      <li><span class="nm">Hindsight</span><span class="tr" aria-hidden="true"><i class="br" style="--w:52.33%"></i></span><span class="v">31.4</span></li>
+      <li><span class="nm">Mem0</span><span class="tr" aria-hidden="true"><i class="br" style="--w:44.50%"></i></span><span class="v">26.7</span></li>
+      <li><span class="nm">EverMemOS</span><span class="tr" aria-hidden="true"><i class="br" style="--w:38.50%"></i></span><span class="v">23.1</span></li>
+      </ol>
+      </div>
+      <div class="pn" role="group" aria-labelledby="pn4-t">
+      <p class="pn-t" id="pn4-t"><b>MemoryAgentBench, <span class="nw">Infini Memory's scoring</span></b><span class="nw">GPT-5-mini</span> reader, <span class="nw">GPT-5</span> judge; <span class="nw"><i class="k rp" aria-hidden="true"></i>Infini Memory as its paper reports</span></p>
+      <ol class="hr one">
+      <li class="us"><span class="nm">MUSTER</span><span class="tr" aria-hidden="true"><i class="br" style="--w:96.29%"></i></span><span class="v">67.4</span></li>
+      <li class="rp"><span class="nm">Infini Memory-A</span><span class="tr" aria-hidden="true"><i class="br" style="--w:92.43%"></i></span><span class="v"><span class="sr-only">as its paper reports, </span>64.7</span></li>
+      </ol>
+      <p class="pn-cap">MUSTER's own <span class="nw">GPT-5-mini</span> answers, rescored with <span class="nw">Infini Memory's</span> <span class="nw">GPT-5</span> prompt.</p>
+      </div>
+      </div>
+      <div class="pcol">
+      <div class="pn" role="group" aria-labelledby="pn2-t">
+      <p class="pn-t" id="pn2-t"><b>LoCoMo, 1,540 questions</b><span class="nw">GPT-4.1-mini</span> reader, <span class="nw">GPT-4o-mini</span> judge; <span class="nw"><i class="k o" aria-hidden="true"></i>Mem0's prompt</span> <span class="nw"><i class="k f" aria-hidden="true"></i>EverMemOS's prompt</span></p>
+      <ol class="hr two">
+      <li class="hd" aria-hidden="true"><span></span><span></span><span class="v"><i class="k o"></i></span><span class="v"><i class="k f"></i></span></li>
+      <li class="us"><span class="nm">MUSTER</span><span class="tr" aria-hidden="true"><i class="ln" style="left:65.10%;width:18.55%"></i><i class="d o" style="left:65.10%"></i><i class="d f" style="left:83.65%"></i></span><span class="v"><span class="sr-only">Mem0's prompt </span>86.04</span><span class="v"><span class="sr-only">EverMemOS's prompt </span>93.46</span></li>
+      <li><span class="nm">EverMemOS</span><span class="tr" aria-hidden="true"><i class="ln" style="left:59.68%;width:22.95%"></i><i class="d o" style="left:59.68%"></i><i class="d f" style="left:82.62%"></i></span><span class="v"><span class="sr-only">Mem0's prompt </span>83.87</span><span class="v"><span class="sr-only">EverMemOS's prompt </span>93.05</span></li>
+      <li><span class="nm">True Memory</span><span class="tr" aria-hidden="true"><i class="ln" style="left:54.83%;width:21.62%"></i><i class="d o" style="left:54.83%"></i><i class="d f" style="left:76.45%"></i></span><span class="v"><span class="sr-only">Mem0's prompt </span>81.93</span><span class="v"><span class="sr-only">EverMemOS's prompt </span>90.58</span></li>
+      <li><span class="nm">Mem0</span><span class="tr" aria-hidden="true"><i class="ln" style="left:51.25%;width:22.35%"></i><i class="d o" style="left:51.25%"></i><i class="d f" style="left:73.60%"></i></span><span class="v"><span class="sr-only">Mem0's prompt </span>80.50</span><span class="v"><span class="sr-only">EverMemOS's prompt </span>89.44</span></li>
+      <li><span class="nm">Hindsight</span><span class="tr" aria-hidden="true"><i class="ln" style="left:33.70%;width:29.67%"></i><i class="d o" style="left:33.70%"></i><i class="d f" style="left:63.37%"></i></span><span class="v"><span class="sr-only">Mem0's prompt </span>73.48</span><span class="v"><span class="sr-only">EverMemOS's prompt </span>85.35</span></li>
+      <li><span class="nm">Honcho</span><span class="tr" aria-hidden="true"><i class="ln" style="left:18.35%;width:25.70%"></i><i class="d o" style="left:18.35%"></i><i class="d f" style="left:44.05%"></i></span><span class="v"><span class="sr-only">Mem0's prompt </span>67.34</span><span class="v"><span class="sr-only">EverMemOS's prompt </span>77.62</span></li>
+      <li class="ax" aria-hidden="true"><span></span><span class="tr"><b style="left:0%">60</b><b style="left:50%">80</b><b style="left:100%">100</b></span><span></span><span></span></li>
+      </ol>
+      </div>
+      <div class="pn" role="group" aria-labelledby="pn5-t">
+      <p class="pn-t" id="pn5-t"><b>LoCoMo-Refined, 1,382 questions</b>official judge, AML answer template, memory systems write with <span class="nw">GPT-OSS-120B</span>; <span class="nw"><i class="k o" aria-hidden="true"></i>GPT-4o-mini</span> <span class="nw"><i class="k f" aria-hidden="true"></i>GLM-5.3-Flash</span> reader</p>
+      <ol class="hr two">
+      <li class="hd" aria-hidden="true"><span></span><span></span><span class="v"><i class="k o"></i></span><span class="v"><i class="k f"></i></span></li>
+      <li class="us"><span class="nm">MUSTER</span><span class="tr" aria-hidden="true"><i class="ln" style="left:43.92%;width:28.03%"></i><i class="d o" style="left:43.92%"></i><i class="d f" style="left:71.95%"></i></span><span class="v"><span class="sr-only">GPT-4o-mini reader </span>77.57</span><span class="v"><span class="sr-only">GLM-5.3-Flash reader </span>88.78</span></li>
+      <li><span class="nm">EverMemOS</span><span class="tr" aria-hidden="true"><i class="ln" style="left:38.32%;width:12.47%"></i><i class="d o" style="left:38.32%"></i><i class="d f" style="left:50.80%"></i></span><span class="v"><span class="sr-only">GPT-4o-mini reader </span>75.33</span><span class="v"><span class="sr-only">GLM-5.3-Flash reader </span>80.32</span></li>
+      <li><span class="nm">Mem0</span><span class="tr" aria-hidden="true"><i class="ln" style="left:34.33%;width:17.03%"></i><i class="d o" style="left:34.33%"></i><i class="d f" style="left:51.35%"></i></span><span class="v"><span class="sr-only">GPT-4o-mini reader </span>73.73</span><span class="v"><span class="sr-only">GLM-5.3-Flash reader </span>80.54</span></li>
+      <li><span class="nm">True Memory</span><span class="tr" aria-hidden="true"><i class="ln" style="left:28.90%;width:21.35%"></i><i class="d o" style="left:28.90%"></i><i class="d f" style="left:50.25%"></i></span><span class="v"><span class="sr-only">GPT-4o-mini reader </span>71.56</span><span class="v"><span class="sr-only">GLM-5.3-Flash reader </span>80.10</span></li>
+      <li><span class="nm">Hindsight</span><span class="tr" aria-hidden="true"><i class="ln" style="left:9.20%;width:18.07%"></i><i class="d o" style="left:9.20%"></i><i class="d f" style="left:27.27%"></i></span><span class="v"><span class="sr-only">GPT-4o-mini reader </span>63.68</span><span class="v"><span class="sr-only">GLM-5.3-Flash reader </span>70.91</span></li>
+      <li class="ax" aria-hidden="true"><span></span><span class="tr"><b style="left:0%">60</b><b style="left:50%">80</b><b style="left:100%">100</b></span><span></span><span></span></li>
+      </ol>
+      </div>
+      </div>
+      <div class="pcol rev">
+      <div class="pn" role="group" aria-labelledby="pn6-t">
+      <p class="pn-t" id="pn6-t"><b>LoCoMo-Refined, LLM calls</b>to build and search memory over its ten conversations; †&nbsp;one HyDE query per question</p>
+      <ol class="hr one">
+      <li class="us"><span class="nm">MUSTER</span><span class="tr" aria-hidden="true"><i class="br" style="--w:0.00%"></i></span><span class="v">0</span></li>
+      <li><span class="nm">Hindsight</span><span class="tr" aria-hidden="true"><i class="br" style="--w:5.43%"></i></span><span class="v">543</span></li>
+      <li><span class="nm">True Memory</span><span class="tr" aria-hidden="true"><i class="br" style="--w:13.82%"></i></span><span class="v">1,382†</span></li>
+      <li><span class="nm">Mem0</span><span class="tr" aria-hidden="true"><i class="br" style="--w:58.82%"></i></span><span class="v">5,882</span></li>
+      <li><span class="nm">EverMemOS</span><span class="tr" aria-hidden="true"><i class="br" style="--w:90.34%"></i></span><span class="v">9,034</span></li>
+      </ol>
+      </div>
+      <div class="pn" role="group" aria-labelledby="pn3-t">
+      <p class="pn-t" id="pn3-t"><b>BEAM, 100K to 10M tokens</b><span class="nw">GLM-5.3-Flash</span> reader, BEAM's judge; 19.5K context (Hindsight 8.4K, Honcho 20.7K)</p>
+      <div class="bm-c bm-quiet" style="grid-template-rows:auto 190px auto" role="img" aria-label="BEAM score by conversation length: MUSTER 76.1 at 100K, 73.4 at 1M, 64.3 at 10M; Mem0 75.5 at 100K, 73.1 at 1M, 63.9 at 10M; EverMemOS 76.3 at 100K, 73.1 at 1M, 62.7 at 10M; True Memory 78.1 at 100K, 74.6 at 1M, 62.4 at 10M; Hindsight 66.4 at 100K, 67.2 at 1M, 52.2 at 10M; Honcho 67.1 at 100K, 60.7 at 1M, 48.9 at 10M; MUSTER ranks 3rd of six at 100K, 2nd at 1M and 1st at 10M">
+      <div class="bm-x" aria-hidden="true"><span style="left:0">100K</span><span style="left:50%">1M</span><span style="left:100%" class="bm-x10">10M</span></div>
+      <div class="bm-l" aria-hidden="true"><svg viewBox="0 0 14 190" focusable="false"><line class="bm-k" x1="1" y1="42.0" x2="13" y2="30.1"/><line class="bm-k" x1="1" y1="59.0" x2="13" y2="33.2"/><line class="bm-k" x1="1" y1="25.0" x2="13" y2="29.1"/><line class="bm-k" x1="1" y1="8.0" x2="13" y2="19.8"/><line class="bm-k" x1="1" y1="93.0" x2="13" y2="80.1"/></svg><span class="bm-lb mu" style="top:42.0px">76.1</span><span class="bm-lb m0" style="top:59.0px">75.5</span><span class="bm-lb ev" style="top:25.0px">76.3</span><span class="bm-lb tm" style="top:8.0px">78.1</span><span class="bm-lb hs" style="top:93.0px">66.4</span><span class="bm-lb ho" style="top:76.0px">67.1</span></div>
+      <div class="bm-p" aria-hidden="true"><svg viewBox="0 0 100 190" preserveAspectRatio="none" focusable="false"><line class="bm-g" x1="0" y1="0" x2="0" y2="190" vector-effect="non-scaling-stroke"/><line class="bm-g" x1="50" y1="0" x2="50" y2="190" vector-effect="non-scaling-stroke"/><line class="bm-g" x1="100" y1="0" x2="100" y2="190" vector-effect="non-scaling-stroke"/><polyline class="bm-cs" points="0,33.2 50,45.5 100,92.9" vector-effect="non-scaling-stroke"/><polyline class="bm-ln m0" points="0,33.2 50,45.5 100,92.9" vector-effect="non-scaling-stroke"/><polyline class="bm-cs" points="0,29.1 50,45.5 100,99.1" vector-effect="non-scaling-stroke"/><polyline class="bm-ln ev" points="0,29.1 50,45.5 100,99.1" vector-effect="non-scaling-stroke"/><polyline class="bm-cs" points="0,19.8 50,37.8 100,100.7" vector-effect="non-scaling-stroke"/><polyline class="bm-ln tm" points="0,19.8 50,37.8 100,100.7" vector-effect="non-scaling-stroke"/><polyline class="bm-cs" points="0,80.1 50,75.9 100,153.2" vector-effect="non-scaling-stroke"/><polyline class="bm-ln hs" points="0,80.1 50,75.9 100,153.2" vector-effect="non-scaling-stroke"/><polyline class="bm-cs" points="0,76.5 50,109.4 100,170.2" vector-effect="non-scaling-stroke"/><polyline class="bm-ln ho" points="0,76.5 50,109.4 100,170.2" vector-effect="non-scaling-stroke"/><polyline class="bm-cs mu" points="0,30.1 50,44.0 100,90.9" vector-effect="non-scaling-stroke"/><polyline class="bm-ln mu" points="0,30.1 50,44.0 100,90.9" vector-effect="non-scaling-stroke"/></svg><i class="bm-spot"></i><i class="bm-mk sq m0" style="left:0%;top:33.2px"></i><i class="bm-mk sq m0" style="left:50%;top:45.5px"></i><i class="bm-mk sq m0" style="left:100%;top:92.9px"></i><i class="bm-mk di ev" style="left:0%;top:29.1px"></i><i class="bm-mk di ev" style="left:50%;top:45.5px"></i><i class="bm-mk di ev" style="left:100%;top:99.1px"></i><i class="bm-mk tr tm" style="left:0%;top:19.8px"></i><i class="bm-mk tr tm" style="left:50%;top:37.8px"></i><i class="bm-mk tr tm" style="left:100%;top:100.7px"></i><i class="bm-mk ri hs" style="left:0%;top:80.1px"></i><i class="bm-mk ri hs" style="left:50%;top:75.9px"></i><i class="bm-mk ri hs" style="left:100%;top:153.2px"></i><i class="bm-mk rs ho" style="left:0%;top:76.5px"></i><i class="bm-mk rs ho" style="left:50%;top:109.4px"></i><i class="bm-mk rs ho" style="left:100%;top:170.2px"></i><i class="bm-mk ci mu" style="left:0%;top:30.1px"></i><i class="bm-mk ci mu" style="left:50%;top:44.0px"></i><i class="bm-mk ci mu bm-end" style="left:100%;top:90.9px"></i><span class="bm-lb mu bm-mid" style="left:50%;top:59.0px">73.4</span></div>
+      <div class="bm-r" aria-hidden="true"><svg viewBox="0 0 14 190" focusable="false"><line class="bm-k" x1="1" y1="90.9" x2="13" y2="70.4"/><line class="bm-k" x1="1" y1="92.9" x2="13" y2="87.4"/><line class="bm-k" x1="1" y1="99.1" x2="13" y2="104.4"/><line class="bm-k" x1="1" y1="100.7" x2="13" y2="121.4"/></svg><span class="bm-lb mu" style="top:70.4px"><b>64.3</b> MUSTER</span><span class="bm-lb m0" style="top:87.4px"><b>63.9</b> Mem0</span><span class="bm-lb ev" style="top:104.4px"><b>62.7</b> EverMemOS</span><span class="bm-lb tm" style="top:121.4px"><b>62.4</b> True Memory</span><span class="bm-lb hs" style="top:153.2px"><b>52.2</b> Hindsight</span><span class="bm-lb ho" style="top:170.2px"><b>48.9</b> Honcho</span></div>
+      <div class="bm-rk" aria-hidden="true"><span style="left:0">3rd</span><span style="left:50%">2nd</span><span style="left:100%"><b>1st</b></span></div>
+      <div class="bm-rkl" aria-hidden="true">MUSTER's rank</div>
+      </div>
+      </div>
+      </div>
+      </div>
+    </figure>
+    <p class="hero-foot"><span>Research release · Apache-2.0</span><span>Library and experiment harness included (<a href="https://github.com/saintmachines/MUSTER/blob/main/STATUS.md">STATUS.md</a>)</span></p>
+  </div>
+</section>
+
+<section id="results" aria-labelledby="results-h">
+  <div class="wrap">
+    <h2 id="results-h">Results on one instrument</h2>
+    <p class="tcap" id="tcap-1">MUSTER is first among retrieval and memory systems on MemoryAgentBench (57.5 against True Memory's 43.6), equal to the strongest model-built memory on LoCoMo (93.46 against EverMemOS's 93.05) and on its corrected release, LoCoMo-Refined (77.57 against 75.33), and at parity on BEAM from 100K to 10M tokens (64.3 against Mem0's 63.9 at 10M), with no generative model before the first query.</p>
+    <div class="tbl wide" data-reveal>
+      <table aria-labelledby="tcap-1">
+        <thead><tr>
+          <th scope="col">System</th>
+          <th scope="col" class="n">MemoryAgentBench overall<span class="u">score</span></th>
+          <th scope="col" class="n">LoCoMo, Mem0's prompt<span class="u">score</span></th>
+          <th scope="col" class="n">LoCoMo, EverMemOS's prompt<span class="u">score</span></th>
+          <th scope="col" class="n"><span class="nw">LoCoMo-Refined</span>, official judge<span class="u">score</span></th>
+          <th scope="col" class="n"><span class="nw">BEAM-10M</span><span class="u">score</span></th>
+          <th scope="col" class="n">LM calls to build 10M<span class="u">calls</span></th>
+          <th scope="col" class="n">LM input to build 10M<span class="u">tokens</span></th>
+          <th scope="col" class="n">Build time, 10M<span class="u">h / m / s</span></th>
+        </tr></thead>
+        <tbody>
+          <tr><th scope="row">Mem0 2.1.0</th><td class="n">26.7</td><td class="n">80.50</td><td class="n">89.44</td><td class="n">73.73</td><td class="n">63.9</td><td class="n">10,429</td><td class="n">≈101M</td><td class="n">13 h</td></tr>
+          <tr><th scope="row">Honcho</th><td class="n">35.0</td><td class="n">67.34</td><td class="n">77.62</td><td class="n">–</td><td class="n">48.9</td><td class="n">4.4–11.7K</td><td class="n">≥10.8M</td><td class="n">7.8 h</td></tr>
+          <tr><th scope="row">Hindsight 0.10.3</th><td class="n">31.4</td><td class="n">73.48</td><td class="n">85.35</td><td class="n">63.68</td><td class="n">52.2</td><td class="n">16,425</td><td class="n">65.5M</td><td class="n">3.0 h</td></tr>
+          <tr><th scope="row">EverMemOS</th><td class="n">23.1</td><td class="n">83.87</td><td class="n">93.05</td><td class="n">75.33</td><td class="n">62.7</td><td class="n">26.1K</td><td class="n">106M</td><td class="n">39.8 h</td></tr>
+          <tr><th scope="row">True Memory</th><td class="n">43.6</td><td class="n">81.93</td><td class="n">90.58</td><td class="n">71.56</td><td class="n">62.4</td><td class="n">0</td><td class="n">0</td><td class="n">39 m</td></tr>
+          <tr class="us"><th scope="row">MUSTER</th><td class="n">57.5</td><td class="n">86.04</td><td class="n">93.46</td><td class="n">77.57</td><td class="n">64.3</td><td class="n">0</td><td class="n">0</td><td class="n">36 s</td></tr>
+          <tr class="us2"><th scope="row">MUSTER beside Mem0's memories</th><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">66.2</td><td class="n">10,429</td><td class="n">–</td><td class="n">–</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notes">
+      <p class="limits"><span class="lab">What moves these numbers</span> · LoCoMo prescribes no answer prompt and the two in use move scores by 6.5 to 11.9&nbsp;points on the same contexts, so both are shown; the BEAM cell is the 10M scale at 19.5K context (Hindsight 8.4K, Honcho 20.7K) under our answer prompt; the MemoryAgentBench column is the four-competency mean at the benchmark's own reader; LoCoMo-Refined is read under the Agent Memory Leaderboard's answer template, every store rebuilt from its files (Honcho not run).</p>
+      <ul class="legend caption"><li class="wide"><span class="lterm">One instrument</span> the same stored text, the same reader and answer prompt, the same judge and the same per-question context budget</li><li><span class="lterm">MemoryAgentBench</span> <span class="nw">GPT-4o-mini</span> reader, the benchmark's own protocol</li><li><span class="lterm">LoCoMo</span> 1,540 questions; <span class="nw">GPT-4.1-mini</span> reader, <span class="nw">GPT-4o-mini</span> judge</li><li><span class="lterm">LoCoMo-Refined</span> 1,382 questions; <span class="nw">GPT-4o-mini</span> reader, its official judge (<span class="nw">Qwen3-14B</span>)</li><li><span class="lterm">BEAM, 100K to 10M tokens</span> <span class="nw">GLM-5.3-Flash</span> reader, BEAM's official judge</li><li><span class="lterm">Build time, 10M</span> one conversation as run; EverMemOS, all ten conversations in one run</li><li><span class="lterm">Competitors</span> released code at pinned commits, each writing memory with a model of its own paper, except <span class="nw">GPT-OSS-120B</span> for EverMemOS on MemoryAgentBench and BEAM and for all on <span class="nw">LoCoMo-Refined</span></li></ul>
+    </div>
+  </div>
+</section>
+
+<section id="run-it" aria-labelledby="run-h">
+  <div class="wrap">
+    <h2 id="run-h">Run it</h2>
+    <div class="code" data-reveal>
+      <div class="code-head"><span>In the repository folder, replace <code>path/to/store.txt</code> with your store file</span></div>
+      <pre tabindex="0"><code>pip install tiktoken &amp;&amp; python scripts/derive.py path/to/store.txt</code></pre>
+    </div>
+    <p>It detects the store and sets its own strategy by the paper's rule, with no model or key, and the store never leaves the machine. It decides how to cut the text, how to group the pieces, whether only the newest version counts, and how to weight the three search channels.</p>
+    <div class="code" data-reveal>
+      <div class="code-head"><span>What it prints for BEAM, conversation 0, saved as text</span></div>
+      <pre tabindex="0"><code>MUSTER  beam_conv0.txt  115,630 tokens
+  store      record store
+  units      512 tokens, records whole
+  parents    4,096 tokens, 28 of them
+  order      none: all versions kept
+  retrieval  balanced, 3 channels</code></pre>
+    </div>
+    <p>To answer questions it also needs the retrieval and reading models in <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/README.md">harness/</a>, set up as in <a href="#reproduce">Reproduce</a>. The <code>muster</code> library packages the same rule, build and search (<a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">docs/library</a>).</p>
+  </div>
+</section>
+
+<section id="cost" aria-labelledby="cost-h">
+  <div class="wrap">
+    <h2 id="cost-h">What it costs to build the memory</h2>
+    <p class="tcap plain" id="tcap-2">The cost of making memory for one <span class="nw">10M-token</span> conversation</p>
+    <div class="tbl wide cost" data-reveal>
+      <table aria-labelledby="tcap-2">
+        <thead><tr>
+          <th scope="col"><span class="sr-only">Cost</span></th>
+          <th scope="col" class="us-col">MUSTER</th>
+          <th scope="col">True Memory</th>
+          <th scope="col">Mem0 2.1.0</th>
+          <th scope="col">Honcho</th>
+        </tr></thead>
+        <tbody>
+          <tr><th scope="row">generative calls</th><td class="us-col">0</td><td>0</td><td>10,429</td><td><span class="nw">4,441–11,700</span> (estimated)</td></tr>
+          <tr><th scope="row">model input</th><td class="us-col">0</td><td>0</td><td>≈101M&nbsp;tokens (9.2×&nbsp;source)</td><td>≥10.8M&nbsp;tokens sent</td></tr>
+          <tr><th scope="row">wall-clock</th><td class="us-col">76.8&nbsp;s (one&nbsp;GPU)</td><td>2,325&nbsp;s</td><td>13.0&nbsp;h</td><td>7.8&nbsp;h</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 class="bars-h" id="bars-h">Build time for one <span class="nw">10M-token</span> conversation (log axis; EverMemOS: all ten at once)</h3>
+    <ol class="bars" aria-labelledby="bars-h" data-reveal>
+      <li><span>Mem0 2.1.0</span><span class="b" style="--w:80.6%"></span><span>13&nbsp;h</span></li>
+      <li><span>Honcho</span><span class="b" style="--w:75.7%"></span><span>7.8&nbsp;h</span></li>
+      <li><span>Hindsight 0.10.3</span><span class="b" style="--w:66.6%"></span><span>3.0&nbsp;h</span></li>
+      <li><span>EverMemOS</span><span class="b" style="--w:91.2%"></span><span>39.8&nbsp;h</span></li>
+      <li><span>True Memory</span><span class="b" style="--w:52.0%"></span><span>39&nbsp;m</span></li>
+      <li class="us"><span>MUSTER</span><span class="b" style="--w:19.4%"></span><span>77&nbsp;s</span></li>
+    </ol>
+    <div class="axis" aria-hidden="true"><div class="ticks"><span style="left:19.4%">77&nbsp;s</span><span style="left:52%">39&nbsp;m</span><span style="left:75.7%">7.8&nbsp;h</span><span style="left:91.2%">39.8&nbsp;h</span></div></div>
+    <p>Per scale, MUSTER builds the 100K, 1M and 10M conversations in 1&nbsp;s, 7&nbsp;s and 77&nbsp;s; True Memory, which also writes no model-made memory, in 8&nbsp;s, 3.3&nbsp;m and 39&nbsp;m. A query costs one ranking pass and one reader call.</p>
+  </div>
+</section>
+
+<section id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <h2 id="how-h">How it works</h2>
+    <figure data-reveal>
+      <div class="plate">
+        <picture>
+            <source type="image/svg+xml" srcset="assets/fig_rule3_v209.svg">
+            <img src="assets/fig_rule3_v209.png" width="1302" height="536" loading="lazy" decoding="async" alt="Two statistics separate the fourteen MemoryAgentBench stores, and on eight cells the unit that record share picks is compared with the other">
+          </picture>
+      </div>
+      <figcaption>MUSTER reads two numbers off the stored bytes: the share of lines that open with a serial, and the share of text inside records that fit the reference chunk. Full size: <a href="assets/fig_rule3_v209.svg">fig_rule3_v209.svg</a></figcaption>
+    </figure>
+    <p>Those two numbers decide the retrieval unit, the parent hierarchy, whether an order may be used to resolve conflicts, and how retrieval slots are shared across channels. No query, label or model is involved, so a store is configured in seconds and the same rule runs unchanged on every benchmark.</p>
+    <p>Per query, three channels retrieve, the newest version of each slot wins where the store counts, and the reader sees one block per parent in stored order. Everything else is in the <a href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER.pdf">paper (PDF)</a>.</p>
+
+    <details id="rule">
+      <summary><h3>The two statistics, the rule verbatim, and the per-query steps</h3></summary>
+      <div class="dbody">
+        <p class="tcap plain" id="tcap-3">Two statistics, computed once per store, with no query, label or model</p>
+        <div class="tbl">
+          <table aria-labelledby="tcap-3">
+            <thead><tr><th scope="col">Statistic</th><th scope="col">Definition</th><th scope="col">Question it answers</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">serial fraction</th><td>share of non-empty lines that open with <code>&lt;integer&gt;. &lt;body&gt;</code></td><td>does the store count, so that an order exists to resolve by?</td></tr>
+              <tr><th scope="row">record share</th><td>token-weighted share of blank-line records no longer than the reference scale <i>c</i></td><td>is the store made of records, so that a finer cut never splits one?</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The rule, quoted from the paper:</p>
+        <blockquote><p>If serial ≥ 0.80, the unit is the record with its serial stripped, the parent is the record's normalised slot, and the order is the serial.</p><p>Otherwise the unit is the chunk size the benchmark prescribes, cut so a record is never split when record share ≥ 0.90 and refined one documented step under the same condition, the parent is eight times the unit, halved until at least ten parents remain, and no order is claimed.</p></blockquote>
+        <p>Three constants appear: the refinement step moves between the only two chunk sizes MemoryAgentBench itself uses (512 and 4096), the parent multiplier of eight is their ratio, and the floor of ten parents is the retrieval budget. The same statistic that chose the representation also gates the retrieval arm: a store where serial fires takes the parent-priority arm, every other store the balanced one.</p>
+    <p>Prose that keeps the 4,096-token unit is searched at a quarter of that size, 1,024 tokens, with four times as many units, so the token budget does not change.</p>
+        <p>Then, per query:</p>
+        <ol class="steps">
+          <li><b>Reach.</b> Dense, lexical and parent-graph channels each keep a floor of slots; the rest are filled by one shared reranker score.</li>
+          <li><b>Resolve.</b> Where an order is recorded, the newest version of each slot wins; where none is, supersession stays off rather than deleting by an arbitrary key.</li>
+          <li><b>Render.</b> One container per parent, in stored order, so the reader sees the memory as it was written.</li>
+        </ol>
+        <p>Nothing is written back. Units are embedded once per store; a query is one embedding, one rerank and one reader call.</p>
+        <figure>
+          <div class="plate">
+            <picture>
+                <source type="image/svg+xml" srcset="assets/fig_read3_v122.svg">
+                <img src="assets/fig_read3_v122.png" width="1282" height="584" loading="lazy" decoding="async" alt="Per query, three channels retrieve, the newest version of each slot wins where the store counts, and the reader sees one block per parent in stored order.">
+              </picture>
+          </div>
+          <figcaption>MUSTER: detection, structure-matched hybrid retrieval, context assembly. Full size: <a href="assets/fig_read3_v122.svg">fig_read3_v122.svg</a></figcaption>
+        </figure>
+      </div>
+    </details>
+    <details id="compare">
+      <summary><h3 id="cmpt-h">Write-time memory or read-time memory?</h3></summary>
+      <div class="dbody">
+        <div class="tbl wide cmp">
+          <table aria-labelledby="cmpt-h">
+            <thead><tr>
+              <th scope="col"><span class="sr-only">Criterion</span></th>
+              <th scope="col">Model-written memories (Mem0, Hindsight, EverMemOS, Honcho)</th>
+              <th scope="col">One fixed representation for every store (True Memory)</th>
+              <th scope="col" class="us-col">MUSTER</th>
+            </tr></thead>
+            <tbody>
+              <tr><th scope="row">work before the first query</th><td>thousands of LLM calls, hours per 10M tokens</td><td>an embedding pass</td><td class="us-col">two byte statistics and an embedding pass, seconds</td></tr>
+              <tr><th scope="row">what the reader sees</th><td>memories a model rewrote</td><td>stored text, ranked</td><td class="us-col">stored text in stored order, one block per parent, newest version per slot where the store counts</td></tr>
+              <tr><th scope="row">conflict resolution</th><td>the writer's judgement</td><td>none</td><td class="us-col">deterministic, from the store's own serials, switched off where no order exists</td></tr>
+              <tr><th scope="row">adapts to the store</th><td>one configuration for every store</td><td>one configuration for every store</td><td class="us-col">unit, parent, order and channel floors derived per store</td></tr>
+              <tr><th scope="row">works beside your existing memory</th><td>–</td><td>–</td><td class="us-col">yes, under the same rule (<span class="nw">BEAM-10M</span> 66.2 with Mem0's store)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="detailed" aria-labelledby="det-h">
+  <div class="wrap">
+    <h2 id="det-h">Detailed results</h2>
+    <details id="mab" open>
+      <summary><h3 id="mab-h">MemoryAgentBench (<span class="nw">GPT-4o-mini</span> reader, the benchmark's own protocol)</h3></summary>
+      <div class="dbody">
+        <p>Fourteen stores across four competencies: accurate retrieval (AR), test-time learning (TTL), long-range understanding (LRU) and selective forgetting (SF, the two FactConsolidation cells). "All" averages the four competencies.</p>
+        <p class="tcap" id="tcap-5">MUSTER leads every retrieval and memory system in the table on the total (57.5 against True Memory's 43.6) and on three of the four competencies.</p>
+        <div class="tbl">
+          <table aria-labelledby="mab-h tcap-5">
+            <thead><tr><th scope="col">System</th><th scope="col" class="n">AR<span class="u">score</span></th><th scope="col" class="n">TTL<span class="u">score</span></th><th scope="col" class="n">LRU<span class="u">score</span></th><th scope="col" class="n">SF<span class="u">score</span></th><th scope="col" class="n">All<span class="u">score</span></th></tr></thead>
+            <tbody>
+              <tr><th scope="row"><span class="nw">GPT-5-mini</span>, whole context (400K window)</th><td class="n">74.4</td><td class="n">48.6</td><td class="n">66.2</td><td class="n">53.0</td><td class="n">60.6</td></tr>
+              <tr><th scope="row">GPT-4o, whole context (128K window)</th><td class="n">58.1</td><td class="n">50.0</td><td class="n">54.9</td><td class="n">32.5</td><td class="n">48.8</td></tr>
+              <tr><th scope="row">BM25 (reported by the benchmark)</th><td class="n">60.5</td><td class="n">44.5</td><td class="n">35.6</td><td class="n">25.5</td><td class="n">41.5</td></tr>
+              <tr><th scope="row"><span class="nw">HippoRAG-v2</span> (reported by the benchmark)</th><td class="n">65.1</td><td class="n">35.8</td><td class="n">36.2</td><td class="n">29.5</td><td class="n">41.6</td></tr>
+              <tr><th scope="row">Mem0 2.1.0, model-written memories</th><td class="n">49.9</td><td class="n">9.0</td><td class="n">39.1</td><td class="n">9.0</td><td class="n">26.7</td></tr>
+              <tr><th scope="row">Mem0 2.1.0, raw chunks, Mem0's search</th><td class="n">46.3</td><td class="n">39.0</td><td class="n">41.8</td><td class="n">28.5</td><td class="n">38.9</td></tr>
+              <tr><th scope="row">Honcho</th><td class="n">46.7</td><td class="n">23.8</td><td class="n">45.7</td><td class="n">24.0</td><td class="n">35.0</td></tr>
+              <tr><th scope="row">Hindsight 0.10.3</th><td class="n">61.8</td><td class="n">9.4</td><td class="n">28.4</td><td class="n">26.0</td><td class="n">31.4</td></tr>
+              <tr><th scope="row">EverMemOS (<span class="nw">GPT-OSS-120B</span> writer)</th><td class="n">36.5</td><td class="n">19.7</td><td class="n">24.7</td><td class="n">11.5</td><td class="n">23.1</td></tr>
+              <tr><th scope="row">True Memory</th><td class="n">63.8</td><td class="n">43.5</td><td class="n">41.2</td><td class="n">26.0</td><td class="n">43.6</td></tr>
+              <tr class="us"><th scope="row">MUSTER</th><td class="n">73.8</td><td class="n">47.5</td><td class="n">44.2</td><td class="n">64.5</td><td class="n">57.5</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="limits"><span class="lab">Limits</span> · the whole-context rows read the store through 400K and 128K windows, oldest chunks evicted; rows marked as reported by the benchmark were not re-run here.</p>
+        <p>Against True Memory, which also writes no model-made memory, the gap is widest where detection acts: selective forgetting, 64.5 against 26.0.</p>
+        <p>On FactConsolidation multi-hop MUSTER scores 37.0, the highest value in the full table, in a column where twenty-two of the twenty-three other rows are in single digits. At the same reader it beats the whole store read in context by 14.0&nbsp;points at <span class="nw">GPT-4.1-mini</span> and 4.1 at <span class="nw">GPT-5-mini</span> (64.7 against 60.6).</p>
+      </div>
+    </details>
+    <details id="locomo" open>
+      <summary><h3 id="lcm-h">LoCoMo (1,540 questions; <span class="nw">GPT-4.1-mini</span> reader, <span class="nw">GPT-4o-mini</span> judge)</h3></summary>
+      <div class="dbody">
+        <p>LoCoMo prescribes no answer prompt and the two in use move scores by 6.5 to 11.9&nbsp;points on the same contexts, so every store is read under both. "Before answering" counts the language-model calls and input each system spends over the ten conversations before the first question.</p>
+        <p class="tcap" id="tcap-6">Under its own answer prompt MUSTER scores 93.46 at ten units; under Mem0's prompt it leads every store by 2.2 to 18.7&nbsp;points (86.04 against EverMemOS's 83.87 and Honcho's 67.34).</p>
+        <div class="tbl wide">
+          <table aria-labelledby="lcm-h tcap-6">
+            <thead><tr><th scope="col">System</th><th scope="col" class="n">Mem0's prompt<span class="u">score</span></th><th scope="col" class="n">EverMemOS's prompt<span class="u">score</span></th><th scope="col" class="n">Reader context<span class="u">K tokens</span></th><th scope="col" class="n">LM calls<span class="u">before answering</span></th><th scope="col" class="n">LM input<span class="u">tokens, before answering</span></th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Mem0 2.1.0</th><td class="n">80.50</td><td class="n">89.44</td><td class="n">4.7K</td><td class="n">5,882</td><td class="n">50.3M</td></tr>
+              <tr><th scope="row">Honcho</th><td class="n">67.34</td><td class="n">77.62</td><td class="n">5.2K</td><td class="n">n/o</td><td class="n">≥0.18M</td></tr>
+              <tr><th scope="row">Hindsight 0.10.3</th><td class="n">73.48</td><td class="n">85.35</td><td class="n">5.0K</td><td class="n">602</td><td class="n">2.2M</td></tr>
+              <tr><th scope="row">EverMemOS</th><td class="n">83.87</td><td class="n">93.05</td><td class="n">2.4K</td><td class="n">9,398</td><td class="n">12.9M</td></tr>
+              <tr><th scope="row">Full conversation</th><td class="n">82.06</td><td class="n">93.44</td><td class="n">31.1K</td><td class="n">0</td><td class="n">0</td></tr>
+              <tr><th scope="row">True Memory</th><td class="n">81.93</td><td class="n">90.58</td><td class="n">4.9K</td><td class="n">0 (one HyDE expansion per question)</td><td class="n">0</td></tr>
+              <tr class="us2"><th scope="row">MUSTER, 5 units</th><td class="n">85.74</td><td class="n">92.25</td><td class="n">2.5K</td><td class="n">0</td><td class="n">0</td></tr>
+              <tr class="us"><th scope="row">MUSTER, 10 units</th><td class="n">86.04</td><td class="n">93.46</td><td class="n">5.0K</td><td class="n">0</td><td class="n">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="limits"><span class="lab">Limits</span> · Honcho's language-model calls are not observable (n/o); Mem0's and True Memory's lists are cut to MUSTER's context at ten units.</p>
+        <p>Our EverMemOS run reproduces its reported 93.05.</p>
+      </div>
+    </details>
+    <details id="beam">
+      <summary><h3 id="beam-h">BEAM, 100K to 10M tokens (<span class="nw">GLM-5.3-Flash</span> reader, BEAM's official judge)</h3></summary>
+      <div class="dbody">
+        <p>The rule set on MemoryAgentBench runs on BEAM unchanged. Score is the ten-category macro of the official rubric judge; "build" is the cost of making memory for one <span class="nw">10M-token</span> conversation, and build time is for one conversation at each scale (EverMemOS: all conversations of a scale in one run).</p>
+        <p class="tcap" id="tcap-7">True Memory, which also stores the conversation without a model, is within 0.5&nbsp;point of MUSTER on the three-scale mean at both contexts and below it at 10M.</p>
+        <div class="tbl wide">
+          <table aria-labelledby="beam-h tcap-7">
+            <thead><tr><th scope="col">System</th><th scope="col" class="n">100K<span class="u">score</span></th><th scope="col" class="n">1M<span class="u">score</span></th><th scope="col" class="n">10M<span class="u">score</span></th><th scope="col" class="n">Mean<span class="u">score</span></th><th scope="col" class="n">Context<span class="u">K tokens</span></th><th scope="col" class="n">LM calls<span class="u">build</span></th><th scope="col" class="n">LM input<span class="u">tokens, build</span></th><th scope="col" class="n">Build time 100K / 1M / 10M<span class="u">h / m / s</span></th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Mem0 2.1.0</th><td class="n">75.5</td><td class="n">72.3</td><td class="n">62.3</td><td class="n">70.0</td><td class="n">8.2K</td><td class="n">10,429</td><td class="n">≈101M</td><td class="n">11 m / 77 m / 13 h</td></tr>
+              <tr><th scope="row">Mem0 2.1.0, 19.5K</th><td class="n">75.5</td><td class="n">73.1</td><td class="n">63.9</td><td class="n">70.8</td><td class="n">19.5K</td><td class="n">10,429</td><td class="n">≈101M</td><td class="n">11 m / 77 m / 13 h</td></tr>
+              <tr><th scope="row">Honcho</th><td class="n">67.1</td><td class="n">60.7</td><td class="n">48.9</td><td class="n">58.9</td><td class="n">20.7K</td><td class="n">4.4–11.7K</td><td class="n">≥10.8M</td><td class="n">7 m / 28 m / 7.8 h</td></tr>
+              <tr><th scope="row">Hindsight 0.10.3</th><td class="n">66.4</td><td class="n">67.2</td><td class="n">52.2</td><td class="n">61.9</td><td class="n">8.4K</td><td class="n">16,425</td><td class="n">65.5M</td><td class="n">49 m / 30 m / 3.0 h</td></tr>
+              <tr><th scope="row">EverMemOS</th><td class="n">72.0</td><td class="n">69.4</td><td class="n">60.6</td><td class="n">67.3</td><td class="n">4.5K</td><td class="n">26.1K</td><td class="n">106M</td><td class="n">60 m / 12.0 h / 39.8 h</td></tr>
+              <tr><th scope="row">EverMemOS, 19.5K</th><td class="n">76.3</td><td class="n">73.1</td><td class="n">62.7</td><td class="n">70.7</td><td class="n">19.5K</td><td class="n">26.1K</td><td class="n">106M</td><td class="n">60 m / 12.0 h / 39.8 h</td></tr>
+              <tr><th scope="row">True Memory, 9.7K</th><td class="n">75.4</td><td class="n">72.1</td><td class="n">61.4</td><td class="n">69.6</td><td class="n">9.7K</td><td class="n">0</td><td class="n">0</td><td class="n">8 s / 3.3 m / 39 m</td></tr>
+              <tr><th scope="row">True Memory, 19.5K</th><td class="n">78.1</td><td class="n">74.6</td><td class="n">62.4</td><td class="n">71.7</td><td class="n">19.5K</td><td class="n">0</td><td class="n">0</td><td class="n">8 s / 3.3 m / 39 m</td></tr>
+              <tr class="us2"><th scope="row">MUSTER, 20 units</th><td class="n">75.0</td><td class="n">72.4</td><td class="n">62.7</td><td class="n">70.0</td><td class="n">9.7K</td><td class="n">0</td><td class="n">0</td><td class="n">1 s / 7 s / 77 s</td></tr>
+              <tr class="us"><th scope="row">MUSTER, 40 units</th><td class="n">76.1</td><td class="n">73.4</td><td class="n">64.3</td><td class="n">71.3</td><td class="n">19.5K</td><td class="n">0</td><td class="n">0</td><td class="n">1 s / 7 s / 77 s</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="limits"><span class="lab">Limits</span> · 400, 700 and 200 questions over 20, 35 and 10 conversations at 100K, 1M and 10M; the <span class="nw">Qwen3.5-9B</span> reader and BEAM's own answer prompt are in the paper's appendix.</p>
+        <p>True Memory's released worker takes 39&nbsp;minutes to build the 10M conversation where MUSTER takes 77&nbsp;seconds.</p>
+        <p>With the open-weight <span class="nw">Qwen3.5-9B</span> as reader, MUSTER's three-scale mean is 60.3 under our answer prompt and 44.2 under BEAM's own, first on both, against 59.9 and 41.8 for EverMemOS and 59.8 and 42.6 for True Memory.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="reproduce" aria-labelledby="repro-h">
+  <div class="wrap">
+    <h2 id="repro-h">Reproduce</h2>
+    <p class="lead">Each headline number is one click from the file that recomputes it: MemoryAgentBench rows via <a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_mab.py">gate/rescore_mab.py</a>, the metric of <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/cellscore.py">harness/cellscore.py</a> over the board's per-cell result tags (<a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_mab.md">gate/rescore_mab.md</a>); BEAM rows via <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/beam_score.py">harness/beam_score.py</a> over the judge files (<a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_beam.md">gate/rescore_beam.md</a>); the contexts behind them via the gate (<a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage0_tier0.md">gate/stage0_tier0.md</a>, <a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage0d_render.md">gate/stage0d_render.md</a>, <a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage1_beam100k.md">gate/stage1_beam100k.md</a>).</p>
+    <p class="tcap plain" id="tcap-8">The reproduction gate this code is held to, with its evidence in gate/</p>
+    <div class="tbl wide gate" data-reveal>
+      <table aria-labelledby="tcap-8">
+        <thead><tr><th scope="col">Gate</th><th scope="col">Result</th><th scope="col">Evidence</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Detection rule on the fourteen MemoryAgentBench stores</th><td>reproduces the paper's unit and parent counts exactly on twelve stores, and takes the paper's numbered-log branch on the two FactConsolidation stores</td><td><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage0_derive.md">gate/stage0_derive.md</a></td></tr>
+          <tr><th scope="row">Every score of the main BEAM table</th><td>recomputed from the per-question judge files with <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/beam_score.py">harness/beam_score.py</a></td><td><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_beam.md">gate/rescore_beam.md</a></td></tr>
+          <tr><th scope="row">The MemoryAgentBench board</th><td>re-scored from its per-cell result tags to the paper's 57.52 / 60.92 / 64.71, every cell equal</td><td><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_mab.md">gate/rescore_mab.md</a></td></tr>
+          <tr><th scope="row">Cleaned render chain at 100K, 1M and 10M tokens and on LoCoMo</th><td>regenerates the paper's rendered contexts byte for byte, fourteen files of fourteen <span class="nw">sha256-identical</span></td><td><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage0_tier0.md">gate/stage0_tier0.md</a></td></tr>
+          <tr><th scope="row">The same render chain on the MemoryAgentBench board and on LoCoMo at ten units</th><td>rebuilds every context the board's reads saw, on all fourteen cells, and the LoCoMo and <span class="nw">LoCoMo-Refined</span> contexts, byte for byte</td><td><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage0d_render.md">gate/stage0d_render.md</a></td></tr>
+          <tr><th scope="row">CPU-only retrieval replay, <span class="nw">BEAM-100K</span> contexts</th><td>400 of 400 questions at 20 units and 399 of 400 at 40 units, where the one difference is an exact dense-score tie between two near-duplicate units</td><td><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage1_beam100k.md">gate/stage1_beam100k.md</a></td></tr>
+          <tr><th scope="row">CPU-only retrieval replay, an earlier MemoryAgentBench LongMemEval leg with read-time extraction</th><td>300 of 300</td><td><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage1_beam100k.md">gate/stage1_beam100k.md</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">The CPU-only replay runs the same code with the encoder and BM25 live and the reranker scores from the published cache.</p>
+    <ul class="repro">
+      <li><a href="https://github.com/saintmachines/MUSTER/tree/main/harness/">harness/</a> is the harness that produced every table, copied file for file from the experiment machine in its current revision (a few environment switches were added after the paper's runs, all off by default; the gate above is the evidence that the default behaviour is unchanged); <a href="https://github.com/saintmachines/MUSTER/blob/main/MANIFEST.sha256">MANIFEST.sha256</a> pins each file. <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/README.md">harness/README.md</a> maps files to roles.</li>
+      <li><a href="https://github.com/saintmachines/MUSTER/blob/main/harness/beam_score.py">harness/beam_score.py</a> recomputes every score of the paper's main BEAM table offline from its per-question judgment files (<code>beam_score.score(FILE, nq=N, nconv=C)</code>, with 400/20, 700/35 and 200/10 questions and conversations at 100K, 1M and 10M, in <a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_beam.md">gate/rescore_beam.md</a>). BEAM's judge is imported unmodified from <code>mohammadtavakoli78/BEAM</code> at commit <code>b2da22e</code>.</li>
+      <li>Readers run through <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/or_client.py">harness/or_client.py</a>: one pinned provider per model on OpenRouter, <code>allow_fallbacks=false</code>, and the answering provider checked on every response, so a reader-swap bundle (<a href="https://github.com/saintmachines/MUSTER/blob/main/harness/make_bundle.py">harness/make_bundle.py</a>, <span class="nw">sha256-pinned</span> contexts) reads byte-identical contexts under any model.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <h2 id="faq-h">FAQ</h2>
+    <div class="faq">
+      <h3>Does it need a language model at all?</h3>
+      <p>Not before the first query. Detection, unit cutting, embedding and BM25 are the write path; a query uses one reader call.</p>
+      <h3>Which stores does the rule recognise?</h3>
+      <p>Anything a writing process produces: numbered logs, record-delimited banks and prose; the rule names the branch it took.</p>
+      <h3>What if my store already has Mem0 memories?</h3>
+      <p>Keep them. Mem0's memories, one per line in write order, read as a numbered store beside the conversation.</p>
+      <h3>Which embedder and reranker?</h3>
+      <p><code>BAAI/bge-m3</code> and <code>BAAI/bge-reranker-v2-m3</code> by default, both local; the encoder is selectable through <code>MIRROR_BGE</code>.</p>
+      <h3>Can I run it without a GPU?</h3>
+      <p>Detection, yes, anywhere, in well under a second per store; a CPU-only configuration is part of the reproduction gate (<a href="#reproduce">Reproduce</a>).</p>
+    </div>
+  </div>
+</section>
+
+<section id="paper" aria-labelledby="paper-h">
+  <div class="wrap">
+    <h2 id="paper-h">Paper, status, license</h2>
+    <p>The paper, <i>MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure</i>, is in <a href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER.pdf">paper/MUSTER.pdf</a>.</p>
+    <p>Its reproducibility statement is the contract this repository is held to: the two statistics are in closed form, the rule is stated in full, Appendix A lists every retrieval parameter and model identifier, and the released harness makes no generative call beyond the reader per query. To cite it, use <a href="https://github.com/saintmachines/MUSTER/blob/main/CITATION.cff">CITATION.cff</a>.</p>
+    <aside class="status" aria-label="Status">
+      <p><b>Status.</b> Research release. The detection rule, the packaged library and the experiment harness behind every number in the paper are here (<a href="https://github.com/saintmachines/MUSTER/blob/main/STATUS.md">STATUS.md</a>).</p>
+    </aside>
+    <p>Apache-2.0. See <a href="https://github.com/saintmachines/MUSTER/blob/main/LICENSE">LICENSE</a> and <a href="https://github.com/saintmachines/MUSTER/blob/main/NOTICE">NOTICE</a>. Benchmarks (MemoryAgentBench, BEAM, LoCoMo) and the systems we compare against keep their own licenses and are fetched, never redistributed, from their sources.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <a class="maker" href="https://saintmachines.ai" aria-label="SAINT Machines"><svg viewBox="0 0 1211.159878540331 150" width="193.8" height="24" aria-hidden="true" focusable="false"><g transform="translate(0 0) scale(0.33482142857142855) translate(-62.01 -32.0)"><path d="M235.21539 44.0Q256 32 276.78461 44.0L429.20539 132.0Q449.99 144 449.99 168L449.99 208.66L256 96.66L184.01 138.23L449.99 291.79L449.99 356.45L72.01 138.23ZM276.78461 468.0Q256 480 235.21539 468.0L82.79461 380.0Q62.01 368 62.01 344L62.01 303.34L256 415.34L327.99 373.77L62.01 220.21L62.01 155.55L439.99 373.77Z" fill="currentColor" /></g><g transform="translate(184.90401785714286 25) scale(0.9568462348100659) translate(-7.61 102.25)"><path d="M48.17 2.25L48.17 2.25Q36.20 2.25 27.39-2.11Q18.59-6.48 13.52-14.23Q8.45-21.97 7.61-32.25L7.61-32.25L23.24-33.24Q24.23-26.20 27.32-21.34Q30.42-16.48 35.70-14.01Q40.99-11.55 48.45-11.55L48.45-11.55Q54.93-11.55 59.51-13.17Q64.08-14.79 66.48-18.03Q68.87-21.27 68.87-25.92L68.87-25.92Q68.87-30.14 66.83-33.45Q64.79-36.76 59.08-39.51Q53.38-42.25 42.39-44.93L42.39-44.93Q30.42-47.89 23.24-51.41Q16.06-54.93 12.89-60.21Q9.72-65.49 9.72-73.24L9.72-73.24Q9.72-81.83 13.87-88.38Q18.03-94.93 25.77-98.59Q33.52-102.25 44.37-102.25L44.37-102.25Q55.77-102.25 63.87-98.03Q71.97-93.80 76.69-86.48Q81.41-79.15 82.54-69.72L82.54-69.72L66.90-68.87Q66.20-74.65 63.38-79.08Q60.56-83.52 55.77-85.99Q50.99-88.45 44.08-88.45L44.08-88.45Q35.35-88.45 30.35-84.44Q25.35-80.42 25.35-73.80L25.35-73.80Q25.35-69.58 27.39-66.69Q29.44-63.80 34.72-61.69Q40-59.58 49.72-57.18L49.72-57.18Q62.68-54.23 70.35-49.93Q78.03-45.63 81.27-39.86Q84.51-34.08 84.51-26.76L84.51-26.76Q84.51-17.89 79.93-11.34Q75.35-4.79 67.18-1.27Q59.01 2.25 48.17 2.25ZM110.99 0L94.79 0L130.85-100L150.14-100L186.20 0L170 0L160.85-26.06L120-26.06L110.99 0ZM140.42-85.49L124.79-39.86L156.20-39.86L140.42-85.49ZM218.17 0L202.96 0L202.96-100L218.17-100L218.17 0ZM260 0L244.79 0L244.79-100L264.08-100L310.28-18.45L310.28-100L325.49-100L325.49 0L305.49 0L260-79.72L260 0ZM385.07 0L369.86 0L369.86-86.06L339.15-86.06L339.15-100L415.77-100L415.77-86.06L385.07-86.06L385.07 0ZM480.42 0L465.21 0L465.21-100L486.06-100L515.77-17.89L545.49-100L566.34-100L566.34 0L551.13 0L551.13-73.24L524.23-0.14L507.32-0.14L480.42-73.24L480.42 0ZM610 1.69L610 1.69Q598.31 1.69 591.34-3.66Q584.37-9.01 584.37-18.73Q584.37-28.45 590.21-33.87Q596.06-39.30 608.31-41.69L608.31-41.69L634.08-46.62Q634.08-55.35 630-59.65Q625.92-63.94 617.89-63.94L617.89-63.94Q610.70-63.94 606.62-60.77Q602.54-57.61 600.99-51.41L600.99-51.41L585.63-52.39Q587.75-63.66 596.13-70.14Q604.51-76.62 617.89-76.62L617.89-76.62Q633.10-76.62 641.06-68.52Q649.01-60.42 649.01-45.77L649.01-45.77L649.01-16.62Q649.01-13.94 649.93-12.89Q650.85-11.83 652.96-11.83L652.96-11.83L655.63-11.83L655.63 0Q654.93 0.14 653.38 0.28Q651.83 0.42 650.14 0.42L650.14 0.42Q645.35 0.42 641.90-1.13Q638.45-2.68 636.76-6.34L636.76-6.34Q635.77-8.45 635.35-11.55L635.35-11.55Q634.08-8.73 631.83-6.48L631.83-6.48Q628.03-2.68 622.32-0.49Q616.62 1.69 610 1.69ZM612.39-10.14L612.39-10.14Q619.15-10.14 623.94-12.75Q628.73-15.35 631.41-20Q634.08-24.65 634.08-30.56L634.08-30.56L634.08-35.35L612.11-31.13Q605.35-29.86 602.61-27.11Q599.86-24.37 599.86-20.14L599.86-20.14Q599.86-15.35 603.17-12.75Q606.48-10.14 612.39-10.14ZM697.61 1.69L697.61 1.69Q686.90 1.69 678.87-3.10Q670.85-7.89 666.48-16.76Q662.11-25.63 662.11-37.46L662.11-37.46Q662.11-49.30 666.48-58.10Q670.85-66.90 678.87-71.76Q686.90-76.62 697.61-76.62L697.61-76.62Q706.76-76.62 713.87-73.45Q720.99-70.28 725.42-64.23Q729.86-58.17 731.13-49.44L731.13-49.44L715.49-48.59Q714.37-55.92 709.58-59.79Q704.79-63.66 697.61-63.66L697.61-63.66Q688.17-63.66 682.89-56.69Q677.61-49.72 677.61-37.46L677.61-37.46Q677.61-25.21 682.89-18.24Q688.17-11.27 697.61-11.27L697.61-11.27Q704.79-11.27 709.58-15.28Q714.37-19.30 715.49-27.46L715.49-27.46L731.13-26.62Q729.86-18.03 725.42-11.69Q720.99-5.35 713.87-1.83Q706.76 1.69 697.61 1.69ZM758.73 0L743.80 0L743.80-100L758.73-100L758.73-64.08Q759.86-66.62 761.55-68.73L761.55-68.73Q764.93-72.68 769.86-74.65Q774.79-76.62 780.70-76.62L780.70-76.62Q788.87-76.62 794.51-73.03Q800.14-69.44 803.03-62.96Q805.92-56.48 805.92-48.17L805.92-48.17L805.92 0L790.99 0L790.99-44.23Q790.99-54.37 787.54-59.23Q784.08-64.08 776.76-64.08L776.76-64.08Q768.59-64.08 763.66-58.94Q758.73-53.80 758.73-43.94L758.73-43.94L758.73 0ZM840.28 0L825.35 0L825.35-74.93L840.28-74.93L840.28 0ZM840.56-85.77L825.07-85.77L825.07-100.70L840.56-100.70L840.56-85.77ZM876.34 0L861.41 0L861.41-74.93L875.07-74.93L875.49-61.97Q876.62-65.35 878.59-67.75L878.59-67.75Q882.11-72.25 887.18-74.44Q892.25-76.62 898.17-76.62L898.17-76.62Q906.62-76.62 912.18-72.89Q917.75-69.15 920.63-62.75Q923.52-56.34 923.52-48.17L923.52-48.17L923.52 0L908.59 0L908.59-43.66Q908.59-50.28 907.18-54.79Q905.77-59.30 902.54-61.69Q899.30-64.08 894.08-64.08L894.08-64.08Q886.20-64.08 881.27-58.87Q876.34-53.66 876.34-43.66L876.34-43.66L876.34 0ZM972.96 1.69L972.96 1.69Q961.97 1.69 954.01-3.10Q946.06-7.89 941.76-16.76Q937.46-25.63 937.46-37.46L937.46-37.46Q937.46-49.30 941.76-58.10Q946.06-66.90 953.94-71.76Q961.83-76.62 972.54-76.62L972.54-76.62Q982.68-76.62 990.42-71.90Q998.17-67.18 1002.46-58.31Q1006.76-49.44 1006.76-36.90L1006.76-36.90L1006.76-33.10L952.96-33.10Q953.52-22.11 958.80-16.62Q964.08-11.13 973.10-11.13L973.10-11.13Q979.72-11.13 984.08-14.23Q988.45-17.32 990.14-22.54L990.14-22.54L1005.63-21.55Q1002.68-11.13 994.01-4.72Q985.35 1.69 972.96 1.69ZM952.96-44.37L952.96-44.37L990.99-44.37Q990.28-54.37 985.28-59.15Q980.28-63.94 972.54-63.94L972.54-63.94Q964.51-63.94 959.37-58.94Q954.23-53.94 952.96-44.37ZM1049.86 1.69L1049.86 1.69Q1039.01 1.69 1031.76-1.55Q1024.51-4.79 1020.70-10.49Q1016.90-16.20 1016.34-23.66L1016.34-23.66L1031.69-24.37Q1032.82-18.17 1036.90-14.51Q1040.99-10.85 1049.86-10.85L1049.86-10.85Q1056.90-10.85 1060.63-13.10Q1064.37-15.35 1064.37-20.28L1064.37-20.28Q1064.37-23.10 1063.10-24.93Q1061.83-26.76 1058.17-28.10Q1054.51-29.44 1047.32-30.70L1047.32-30.70Q1036.34-32.82 1030.21-35.70Q1024.08-38.59 1021.55-42.89Q1019.01-47.18 1019.01-53.38L1019.01-53.38Q1019.01-63.66 1026.76-70.14Q1034.51-76.62 1049.15-76.62L1049.15-76.62Q1059.44-76.62 1066.06-73.17Q1072.68-69.72 1076.06-64.08Q1079.44-58.45 1080.14-51.97L1080.14-51.97L1064.79-51.13Q1064.65-54.65 1062.89-57.61Q1061.13-60.56 1057.75-62.32Q1054.37-64.08 1048.87-64.08L1048.87-64.08Q1041.55-64.08 1038.03-61.27Q1034.51-58.45 1034.51-53.94L1034.51-53.94Q1034.51-50.56 1035.92-48.45Q1037.32-46.34 1040.85-45Q1044.37-43.66 1050.28-42.68L1050.28-42.68Q1061.69-40.85 1068.17-37.96Q1074.65-35.07 1077.25-30.77Q1079.86-26.48 1079.86-20.42L1079.86-20.42Q1079.86-9.86 1071.62-4.08Q1063.38 1.69 1049.86 1.69Z" fill="currentColor" /></g></svg></a>
+    <ul class="links">
+      <li><a href="https://github.com/saintmachines/MUSTER#readme">README</a></li>
+      <li><a href="https://github.com/saintmachines/MUSTER/blob/main/STATUS.md">STATUS.md</a></li>
+      <li><a href="https://github.com/saintmachines/MUSTER/blob/main/LICENSE">LICENSE</a></li>
+      <li><a href="https://github.com/saintmachines/MUSTER/blob/main/CITATION.cff">CITATION.cff</a></li>
+      <li><a href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER.pdf">Paper (PDF)</a></li>
+    </ul>
+    <p>MUSTER · Research release · Apache-2.0</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  try{
+    var d=document,h=d.documentElement,vh=window.innerHeight||h.clientHeight;
+    h.classList.add('jsr');
+    function hint(t){t.classList.toggle('scrolls',t.scrollWidth>t.clientWidth+1);}
+    function hints(){var ts=d.querySelectorAll('.tbl');for(var q=0;q<ts.length;q++)hint(ts[q]);}
+    hints();window.addEventListener('resize',hints);window.addEventListener('load',hints);
+    if('ResizeObserver' in window){var ro=new ResizeObserver(function(es){for(var q=0;q<es.length;q++)hint(es[q].target);});[].forEach.call(d.querySelectorAll('.tbl'),function(t){ro.observe(t);});}
+    [].forEach.call(d.querySelectorAll('details'),function(x){x.addEventListener('toggle',hints);});
+    var els=d.querySelectorAll('[data-reveal]'),i;
+    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if('IntersectionObserver' in window&&!reduce){
+      for(i=0;i<els.length;i++){if(els[i].getBoundingClientRect().top<vh)els[i].classList.add('in');}
+      h.classList.add('js');
+      var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px 120px 0px',threshold:.15});
+      for(i=0;i<els.length;i++)if(!els[i].classList.contains('in'))io.observe(els[i]);
+    }
+    var lines='pip install tiktoken && python scripts/derive.py path/to/store.txt';
+    var pre=d.querySelector('#run-it pre');
+    function selectPre(){if(!pre)return;var r=d.createRange();r.selectNodeContents(pre);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);}
+    function copied(b){if(!b)return;var t=b.getAttribute('data-label')||b.textContent;b.setAttribute('data-label',t);b.setAttribute('aria-live','polite');b.textContent='Copied';setTimeout(function(){b.textContent=t;},1500);}
+    function copy(btns){
+      if(!(navigator.clipboard&&navigator.clipboard.writeText)){selectPre();return;}
+      navigator.clipboard.writeText(lines).then(function(){for(var k=0;k<btns.length;k++)copied(btns[k]);},selectPre);
+    }
+    var box=d.querySelector('#run-it .code-head'),cb=null;
+    if(box&&navigator.clipboard&&navigator.clipboard.writeText){cb=d.createElement('button');cb.type='button';cb.className='btn copy';cb.id='copy-install';cb.setAttribute('aria-label','Copy the command');cb.textContent='Copy';box.appendChild(cb);}
+    if(cb)cb.addEventListener('click',function(){copy([cb]);});
+    var cta=d.getElementById('cta-run');
+    if(cta)cta.addEventListener('click',function(){copy([cta,cb]);});
+    var links=d.querySelectorAll('.bar nav a'),secs=d.querySelectorAll('main section[id]');
+    if('IntersectionObserver' in window&&secs.length){
+      var so=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;for(var j=0;j<links.length;j++){if(links[j].getAttribute('href')==='#'+e.target.id)links[j].setAttribute('aria-current','true');else links[j].removeAttribute('aria-current');}});},{rootMargin:'-30% 0px -60% 0px'});
+      for(i=0;i<secs.length;i++)so.observe(secs[i]);
+    }
+    window.addEventListener('beforeprint',function(){var ds=d.querySelectorAll('details');for(var k=0;k<ds.length;k++)ds[k].setAttribute('open','');});
+  }catch(err){}
+})();
+</script>
+</body>
+</html>

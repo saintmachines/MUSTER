@@ -1,0 +1,21 @@
+# The benchmark files the paper's final legs read, by the path each leg names (relative to the experiment tree).
+# MemoryAgentBench: all four equal the Hugging Face dataset ai-hyz/MemoryAgentBench at revision
+# 7ea066982b140a19337e17e60d45d4076e042faf (data/<file>); the experiment tree holds two Test_Time_Learning copies, equal.
+# BEAM: built from the benchmark's own data by harness/beam/build_parquet.py, build_parquet_1m.py, build_parquet_10m.py.
+# LoCoMo: the store texts are rebuilt from snap-research/locomo data/locomo10.json by muster.adapters.locomo (10 of 10 equal).
+# The two LoCoMo parquets: built by harness/make_locomo_pq.py and make_locomo_refined_conv_pq.py (through make_locomo_refined_pq.py); rebuilt from the public files, all three outputs are sha256-identical.
+# Their inputs: locomo/locomo10.json 79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4
+#   (snap-research/locomo at 3eb6f2c585f5e1699204e3c3bdf7adc5c28cb376, data/locomo10.json);
+#   locomo_refined/questions.jsonl 4dd84cf65a28ece0ed6b2a1b7b2700ea639f4e7b2c5e1afcc511e47e81732790 and
+#   locomo_refined/conversations.jsonl abbe220013815b1761c07d9ab7d6147ee08fb089f1a8a083fd31188cdcd91444
+#   (mem-eval-suite/LoCoMo_refined at 887091190789e8d6760e70b9edd696539923dc4f, data/public/).
+56c3cd80fb6731a3e53cd1a6be3148f54df60ff2d290ee50e28f8acebf9655c1  data/Accurate_Retrieval-00000-of-00001.parquet
+5338753be48f925d03318eed66117286e3489025fabe050a547bd086cd7d79c0  data/Test_Time_Learning-00000-of-00001.parquet
+5338753be48f925d03318eed66117286e3489025fabe050a547bd086cd7d79c0  data_all/data/Test_Time_Learning-00000-of-00001.parquet
+5ab175461954db67770d4a4cb69e569b513ebb96aceb9ee79b57f67488bcd539  data_all/data/Long_Range_Understanding-00000-of-00001.parquet
+24d5c3f09ce0ce15625cb9f8a98f44f0d864ca6c94d7b4ad04eb697ca3a5ff45  data_all/data/Conflict_Resolution-00000-of-00001.parquet
+2f7ad9626362c32e5b043a33a72f38461c8014df713249e53d38611be35d5bba  beam/beam100k.parquet
+d8175fabb8bf3e60782617c318eb50eb86ee48e5a86a7662b956ced3b28a2d9f  beam/beam1m.parquet
+8f3a15b2b7e70c355ec7685aaf350599b906276581da07141b7112da93ac2492  beam/beam10m.parquet
+dcb280ffab06e653746921e3a33a945a826b962442fddcc0f84e60156737024f  beam/locomo.parquet
+5d0279f29da4911b27c3c6194502dcc6a4245e8eb7dad18363ca9eea0c2697eb  beam/locomo_refined_conv.parquet

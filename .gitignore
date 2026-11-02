@@ -1,0 +1,54 @@
+# credentials: never committed
+.keys.sh
+*.key
+*.pem
+.env
+.env.*
+*token*
+*secret*
+
+# benchmark data is fetched, never committed (root-level only: harness/beam/ holds the BEAM parquet builders)
+/data/
+/beam/
+*.parquet
+
+# run outputs, caches, ledgers
+results/
+bundle_out/
+cost_ledger/
+ce_cache*/
+extract_cache*/
+wts_cache/
+logs*/
+*.log
+*.jsonl.bak*
+
+# environments and build artifacts
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# local notes
+private/
+
+# local tool settings
+CLAUDE.md
+.claude/
+
+# local page reviews
+docs/review/
+
+# local page drafts
+docs/index_*.html
+
+# benchmark repositories fetched by scripts/fetch_mab_repo.sh and scripts/fetch_beam_repo.sh: never committed
+harness/mab_repo/
+harness/beam/BEAM/
+
+# library build artifacts and stores the examples create
+dist/
+build/
+*.egg-info/
+*.muster
+*.muster.scores

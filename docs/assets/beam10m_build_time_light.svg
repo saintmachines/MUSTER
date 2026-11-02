@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 404" width="880" height="404" role="img" aria-labelledby="t d">
+<title id="t">BEAM-10M score against the build time for one 10M-token conversation, log time axis</title>
+<desc id="d">MUSTER 64.3 in 36 s with 0 LLM calls; Mem0 2.1.0 63.9 in 13 h with 10,429 calls; EverMemOS 62.7 in 39.8 h, all ten at once with 26.1K calls; True Memory 62.4 in 39 min with 0 LLM calls; Hindsight 0.10.3 52.2 in 3.0 h with 16,425 calls; Honcho 48.9 in 7.8 h with 4.4–11.7K calls.</desc>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}</style>
+<g stroke="#e1e4e8" stroke-width="1" fill="none">
+<line x1="64.0" y1="268.2" x2="516.6" y2="268.2"/>
+<line x1="676.0" y1="268.2" x2="852.0" y2="268.2"/>
+<line x1="64.0" y1="203.4" x2="852.0" y2="203.4"/>
+<line x1="64.0" y1="138.7" x2="319.4" y2="138.7"/>
+<line x1="463.4" y1="138.7" x2="595.6" y2="138.7"/>
+<line x1="837.5" y1="138.7" x2="852.0" y2="138.7"/>
+<line x1="64.0" y1="73.9" x2="124.3" y2="73.9"/>
+<line x1="257.3" y1="73.9" x2="587.6" y2="73.9"/>
+<line x1="719.7" y1="73.9" x2="852.0" y2="73.9"/>
+<line x1="158.0" y1="48.0" x2="158.0" y2="62.0"/>
+<line x1="158.0" y1="106.0" x2="158.0" y2="320.0"/>
+<line x1="355.0" y1="48.0" x2="355.0" y2="100.6"/>
+<line x1="355.0" y1="144.6" x2="355.0" y2="320.0"/>
+<line x1="508.3" y1="48.0" x2="508.3" y2="222.7"/>
+<line x1="508.3" y1="266.7" x2="508.3" y2="320.0"/>
+<line x1="705.3" y1="48.0" x2="705.3" y2="57.2"/>
+<line x1="705.3" y1="101.2" x2="705.3" y2="116.7"/>
+<line x1="705.3" y1="160.7" x2="705.3" y2="320.0"/>
+</g>
+<g stroke="#9a9da3" stroke-width="1" fill="none">
+<line x1="64" y1="320" x2="852" y2="320"/><line x1="64" y1="48" x2="64" y2="320"/>
+</g>
+<g fill="#5a6069" font-size="15">
+<text x="158.0" y="344" text-anchor="middle">1 min</text>
+<text x="355.0" y="344" text-anchor="middle">10 min</text>
+<text x="508.3" y="344" text-anchor="middle">1 h</text>
+<text x="705.3" y="344" text-anchor="middle">10 h</text>
+<text x="54" y="273.2" text-anchor="end">50</text>
+<text x="54" y="208.4" text-anchor="end">55</text>
+<text x="54" y="143.7" text-anchor="end">60</text>
+<text x="54" y="78.9" text-anchor="end">65</text>
+<text x="64" y="30">BEAM-10M score</text>
+<text x="852" y="376" text-anchor="end">build time, log axis</text>
+</g>
+<circle cx="114.3" cy="83.0" r="7" fill="#1f3fb4"/>
+<text x="128.3" y="79.0" text-anchor="start" font-size="16" fill="#1b1d22" font-weight="700">MUSTER 64.3</text>
+<text x="128.3" y="98.0" text-anchor="start" font-size="15" fill="#1b1d22" font-weight="700">36 s · 0 LLM calls</text>
+<circle cx="727.7" cy="88.2" r="5.5" fill="#5a6069"/>
+<text x="715.7" y="74.2" text-anchor="end" font-size="16" fill="#1b1d22">Mem0 2.1.0 63.9</text>
+<text x="715.7" y="93.2" text-anchor="end" font-size="15" fill="#5a6069">13 h · 10,429 calls</text>
+<circle cx="823.5" cy="103.7" r="5.5" fill="#5a6069"/>
+<text x="833.5" y="133.7" text-anchor="end" font-size="16" fill="#1b1d22">EverMemOS 62.7</text>
+<text x="833.5" y="152.7" text-anchor="end" font-size="15" fill="#5a6069">39.8 h, all ten at once · 26.1K calls</text>
+<circle cx="471.4" cy="107.6" r="5.5" fill="#5a6069"/>
+<text x="459.4" y="117.6" text-anchor="end" font-size="16" fill="#1b1d22">True Memory 62.4</text>
+<text x="459.4" y="136.6" text-anchor="end" font-size="15" fill="#5a6069">39 min · 0 LLM calls</text>
+<circle cx="602.3" cy="239.7" r="5.5" fill="#5a6069"/>
+<text x="590.3" y="239.7" text-anchor="end" font-size="16" fill="#1b1d22">Hindsight 0.10.3 52.2</text>
+<text x="590.3" y="258.7" text-anchor="end" font-size="15" fill="#5a6069">3.0 h · 16,425 calls</text>
+<circle cx="684.0" cy="282.4" r="5.5" fill="#5a6069"/>
+<text x="672.0" y="282.4" text-anchor="end" font-size="16" fill="#1b1d22">Honcho 48.9</text>
+<text x="672.0" y="301.4" text-anchor="end" font-size="15" fill="#5a6069">7.8 h · 4.4–11.7K calls</text>
+</svg>

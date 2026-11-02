@@ -1,0 +1,68 @@
+"""The README's headline numbers come from one file, docs/data/headline.json: tools/make_readme.py generates the README's
+tables and figures from it, and neither the README nor that data carries a private pattern."""
+import json
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+from test_packaging import _private_patterns, _violations
+
+ROOT = Path(__file__).resolve().parents[2]
+PUBLIC = (ROOT / "README.md", ROOT / "docs" / "data", ROOT / "docs" / "assets" / "readme")
+
+
+def _run(*args):
+    return subprocess.run([sys.executable, *map(str, args)], capture_output=True, text=True, timeout=120)
+
+
+def test_generated_blocks_and_figures_are_current():
+    result = _run(ROOT / "tools" / "make_readme.py", "--check")
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_readme_and_its_data_carry_no_private_pattern():
+    private = _private_patterns()
+    files = [p for root in PUBLIC for p in ([root] if root.is_file() else sorted(root.rglob("*"))) if p.is_file()]
+    assert len(files) >= 8
+    bad = ["%s:%d" % (p.relative_to(ROOT).as_posix(), i)
+           for p in files for i, line in enumerate(p.read_text(encoding="utf-8").splitlines(), 1) if _violations(line, private)]
+    assert not bad, "privacy scan failed; values suppressed:\n" + "\n".join(bad)
+
+
+def test_pages_and_citation_follow_the_headline_data():
+    data = json.loads((ROOT / "docs" / "data" / "headline.json").read_text(encoding="utf-8"))
+    build = next(r for r in data["build_10m"]["rows"] if r["system"] == "MUSTER")["build"]
+    page = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    citation = (ROOT / "CITATION.cff").read_text(encoding="utf-8")
+    assert build.replace(" ", "&nbsp;") in page and build in readme
+    title = data["paper"]["title"]
+    assert title in page and title in readme and title in citation
+    assert "withheld" not in page and "withheld" not in readme
+    assert "when the paper is public" not in page and "when the paper is public" not in readme
+
+
+def test_landing_page_links_stay_inside_what_pages_serves():
+    page = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+    assert 'href="../' not in page and 'src="../' not in page
+    for local in re.findall(r'(?:href|src)="(assets/[^"#]+)"', page):
+        assert (ROOT / "docs" / local).is_file(), local
+    for target in re.findall(r'https://github\.com/saintmachines/MUSTER/(?:blob|tree)/main/([^"#]+)', page):
+        assert (ROOT / target).exists(), target
+
+
+@pytest.mark.skipif(not os.environ.get("MUSTER_PAPER_TEX"), reason="MUSTER_PAPER_TEX names the paper's tex source")
+def test_headline_cells_equal_the_paper():
+    result = _run(ROOT / "tools" / "check_headline_tex.py", os.environ["MUSTER_PAPER_TEX"])
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.skipif(not os.environ.get("MUSTER_PAPER_TEX"), reason="MUSTER_PAPER_TEX names the paper's tex source")
+def test_every_readme_number_is_in_the_paper_or_a_named_source():
+    result = _run(ROOT / "scripts" / "check_readme_numbers.py", ROOT / "README.md", os.environ["MUSTER_PAPER_TEX"],
+                  ROOT / "docs" / "data" / "headline.json", ROOT / "gate" / "stage0d_render.md")
+    assert result.returncode == 0, result.stdout + result.stderr

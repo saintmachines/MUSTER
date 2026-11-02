@@ -1,0 +1,50 @@
+name: Model-free package checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ['3.10', '3.11', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    env:
+      PYTHONHASHSEED: '0'
+      OPENAI_AGENTS_DISABLE_TRACING: '1'
+      LANGSMITH_TRACING: 'false'
+      HF_HUB_OFFLINE: '1'
+      TOKENIZERS_PARALLELISM: 'false'
+      CUDA_VISIBLE_DEVICES: ''
+      MUSTER_REQUIRE_INTEGRATIONS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: Install CPU model-free dependencies
+        run: >-
+          python -m pip install --disable-pip-version-check
+          tiktoken numpy nltk rank-bm25==0.2.2 pandas pyarrow pytest hypothesis mcp
+          build hatchling pyyaml openai-agents==0.24.0 langchain-core==1.6.12 langgraph==1.2.16
+      - name: Prepare tokenizer assets
+        run: >-
+          python -c "import nltk, tiktoken;
+          nltk.download('punkt_tab', raise_on_error=True);
+          nltk.download('punkt', raise_on_error=True);
+          tiktoken.get_encoding('cl100k_base');
+          tiktoken.get_encoding('o200k_base')"
+      - name: Assert no torch dependency
+        run: python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Test source oracle, SDK tools, and installed wheel
+        run: python -m pytest -q tests/ci

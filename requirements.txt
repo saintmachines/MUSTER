@@ -1,0 +1,13 @@
+# Versions measured on the machine that produced the paper's numbers (CPython 3.12.13, macOS, 2026-10-15).
+# The derive step needs only tiktoken (and pandas/pyarrow to read parquet). Retrieval needs the rest.
+tiktoken==0.13.0
+pandas==3.0.2
+pyarrow==23.0.1
+numpy==2.4.4
+torch==2.11.0
+sentence-transformers==5.3.0
+transformers==5.5.0
+rank-bm25==0.2.2
+nltk==3.10.0            # sentence atoms (ATOM=sentence); needs the punkt and punkt_tab data
+google-genai==1.74.0    # imported at load by harness/src/real_e1_reader.py
+openai==2.38.0

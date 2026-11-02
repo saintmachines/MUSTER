@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" width="720" height="270" role="img" aria-labelledby="t d">
+<title id="t">MemoryAgentBench Overall at the benchmark's reader, GPT-4o-mini: where MUSTER's lead comes from</title>
+<desc id="d">BM25 41.5; Full context (128K window) 42.2; True Memory 43.6; Retrieval + assembly, no detection 50.3; + detection: units, parents, order 56.0; + retrieval mix matched (MUSTER) 57.5.</desc>
+<style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif}</style>
+<g stroke="#e6e9ed" stroke-width="1">
+<line x1="250.0" x2="250.0" y1="8" y2="226"/>
+<line x1="298.0" x2="298.0" y1="8" y2="226"/>
+<line x1="346.0" x2="346.0" y1="8" y2="226"/>
+<line x1="394.0" x2="394.0" y1="8" y2="226"/>
+<line x1="442.0" x2="442.0" y1="8" y2="226"/>
+<line x1="490.0" x2="490.0" y1="8" y2="226"/>
+</g>
+<text x="250.0" y="242.0" font-size="11" fill="#59636e" text-anchor="middle">0</text>
+<text x="298.0" y="242.0" font-size="11" fill="#59636e" text-anchor="middle">10</text>
+<text x="346.0" y="242.0" font-size="11" fill="#59636e" text-anchor="middle">20</text>
+<text x="394.0" y="242.0" font-size="11" fill="#59636e" text-anchor="middle">30</text>
+<text x="442.0" y="242.0" font-size="11" fill="#59636e" text-anchor="middle">40</text>
+<text x="490.0" y="242.0" font-size="11" fill="#59636e" text-anchor="middle">50</text>
+<text x="370.0" y="264.0" font-size="11" fill="#59636e" text-anchor="middle">MemoryAgentBench Overall, GPT-4o-mini reader</text>
+<text x="240.0" y="28.0" font-size="12" fill="#424a53" text-anchor="end">BM25</text>
+<path d="M250.0 12.0 H445.2 a4 4 0 0 1 4 4 V32.0 a4 4 0 0 1 -4 4 H250.0 Z" fill="#8c959f"/>
+<text x="457.2" y="28.0" font-size="12" fill="#424a53">41.5</text>
+<text x="240.0" y="66.0" font-size="12" fill="#424a53" text-anchor="end">Full context (128K window)</text>
+<path d="M250.0 50.0 H448.6 a4 4 0 0 1 4 4 V70.0 a4 4 0 0 1 -4 4 H250.0 Z" fill="#8c959f"/>
+<text x="460.6" y="66.0" font-size="12" fill="#424a53">42.2</text>
+<text x="240.0" y="104.0" font-size="12" fill="#424a53" text-anchor="end">True Memory</text>
+<path d="M250.0 88.0 H455.3 a4 4 0 0 1 4 4 V108.0 a4 4 0 0 1 -4 4 H250.0 Z" fill="#8c959f"/>
+<text x="467.3" y="104.0" font-size="12" fill="#424a53">43.6</text>
+<text x="240.0" y="142.0" font-size="12" fill="#424a53" text-anchor="end">Retrieval + assembly, no detection</text>
+<path d="M250.0 126.0 H487.4 a4 4 0 0 1 4 4 V146.0 a4 4 0 0 1 -4 4 H250.0 Z" fill="#ddf4ff" stroke="#0969da" stroke-width="1.5"/>
+<text x="499.4" y="142.0" font-size="13" fill="#1f2328" font-weight="700">50.3</text>
+<text x="535.7" y="142.0" font-size="11" fill="#59636e" font-weight="700">+6.7 over the best other</text>
+<text x="240.0" y="180.0" font-size="12" fill="#424a53" text-anchor="end">+ detection: units, parents, order</text>
+<path d="M250.0 164.0 H514.8 a4 4 0 0 1 4 4 V184.0 a4 4 0 0 1 -4 4 H250.0 Z" fill="#ddf4ff" stroke="#0969da" stroke-width="1.5"/>
+<text x="526.8" y="180.0" font-size="13" fill="#1f2328" font-weight="700">56.0</text>
+<text x="563.1" y="180.0" font-size="11" fill="#59636e" font-weight="700">+5.7</text>
+<text x="240.0" y="218.0" font-size="13" fill="#1f2328" text-anchor="end" font-weight="700">+ retrieval mix matched (MUSTER)</text>
+<path d="M250.0 202.0 H522.0 a4 4 0 0 1 4 4 V222.0 a4 4 0 0 1 -4 4 H250.0 Z" fill="#0969da"/>
+<text x="534.0" y="218.0" font-size="13" fill="#1f2328" font-weight="700">57.5</text>
+<text x="570.3" y="218.0" font-size="11" fill="#59636e" font-weight="700">+1.5</text>
+</svg>

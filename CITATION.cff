@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use MUSTER's configuration rule, implementation, or released evaluation artifacts, please cite the MUSTER paper."
+type: software
+title: "MUSTER"
+repository-code: "https://github.com/saintmachines/MUSTER"
+license: Apache-2.0
+authors:
+  - family-names: "Lim"
+    given-names: "Woosang"
+    affiliation: "SAINT Machines and KAIST"
+preferred-citation:
+  type: article
+  title: "MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure"
+  authors:
+    - family-names: "Lim"
+      given-names: "Woosang"
+      affiliation: "SAINT Machines and KAIST"
+  year: 2026

@@ -1,0 +1,1182 @@
+{
+ "legs": {
+  "lcm_u10": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 1540,
+   "parq": "beam/locomo.parquet",
+   "preset": "locomo.u10",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  "lcm_u20": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 1540,
+   "parq": "beam/locomo.parquet",
+   "preset": "locomo.u20",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  "lcm_u5": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 1540,
+   "parq": "beam/locomo.parquet",
+   "preset": "locomo.u5",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  "lcmrefc_u10": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 1382,
+   "parq": "beam/locomo_refined_conv.parquet",
+   "preset": "locomo.u10",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  "lz_b77": {
+   "arm": "flrs_4_3_3",
+   "ds": "in_context_learning",
+   "nq": 100,
+   "parq": "data_all/data/Test_Time_Learning-00000-of-00001.parquet",
+   "preset": "mab.A",
+   "rows": [
+    1
+   ]
+  },
+  "lz_clin": {
+   "arm": "flrs_4_3_3",
+   "ds": "in_context_learning",
+   "nq": 100,
+   "parq": "data_all/data/Test_Time_Learning-00000-of-00001.parquet",
+   "preset": "mab.A",
+   "rows": [
+    2
+   ]
+  },
+  "lz_det": {
+   "arm": "flr_4_3_3",
+   "ds": "detective_qa",
+   "nq": 71,
+   "parq": "data_all/data/Long_Range_Understanding-00000-of-00001.parquet",
+   "preset": "mab.B",
+   "rows": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109
+   ]
+  },
+  "lz_evq": {
+   "arm": "flr_4_3_3",
+   "ds": "eventqa",
+   "nq": 100,
+   "parq": "data/Accurate_Retrieval-00000-of-00001.parquet",
+   "preset": "mab.B",
+   "rows": [
+    2
+   ]
+  },
+  "lz_lme": {
+   "arm": "flrs_4_3_3",
+   "ds": "longmemeval",
+   "nq": 300,
+   "parq": "data/Accurate_Retrieval-00000-of-00001.parquet",
+   "preset": "mab.A1",
+   "rows": [
+    17,
+    18,
+    19,
+    20,
+    21
+   ]
+  },
+  "lz_mhqa": {
+   "arm": "flrs_4_3_3",
+   "ds": "ruler_qa",
+   "nq": 100,
+   "parq": "data/Accurate_Retrieval-00000-of-00001.parquet",
+   "preset": "mab.A",
+   "rows": [
+    1
+   ]
+  },
+  "lz_nlu": {
+   "arm": "flrs_4_3_3",
+   "ds": "in_context_learning",
+   "nq": 100,
+   "parq": "data_all/data/Test_Time_Learning-00000-of-00001.parquet",
+   "preset": "mab.A",
+   "rows": [
+    3
+   ]
+  },
+  "lz_rec": {
+   "arm": "flrs_4_3_3",
+   "ds": "recsys_redial",
+   "nq": 200,
+   "parq": "data_all/data/Test_Time_Learning-00000-of-00001.parquet",
+   "preset": "mab.A",
+   "rows": [
+    0
+   ]
+  },
+  "lz_shqa": {
+   "arm": "flrs_4_3_3",
+   "ds": "ruler_qa",
+   "nq": 100,
+   "parq": "data/Accurate_Retrieval-00000-of-00001.parquet",
+   "preset": "mab.A",
+   "rows": [
+    0
+   ]
+  },
+  "lz_summ": {
+   "arm": "flr_4_3_3",
+   "ds": "infbench_sum",
+   "nq": 100,
+   "parq": "data_all/data/Long_Range_Understanding-00000-of-00001.parquet",
+   "preset": "mab.B",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99
+   ]
+  },
+  "lz_trcC": {
+   "arm": "flrs_4_3_3",
+   "ds": "in_context_learning",
+   "nq": 100,
+   "parq": "data_all/data/Test_Time_Learning-00000-of-00001.parquet",
+   "preset": "mab.A",
+   "rows": [
+    4
+   ]
+  },
+  "lz_trcF": {
+   "arm": "flrs_4_3_3",
+   "ds": "in_context_learning",
+   "nq": 100,
+   "parq": "data_all/data/Test_Time_Learning-00000-of-00001.parquet",
+   "preset": "mab.A",
+   "rows": [
+    5
+   ]
+  },
+  "lz_u20_beam100k": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 400,
+   "parq": "beam/beam100k.parquet",
+   "preset": "beam.u20",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+   ]
+  },
+  "lz_u20_beam10m": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 200,
+   "parq": "beam/beam10m.parquet",
+   "preset": "beam.u20",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  "lz_u20_beam1m": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 700,
+   "parq": "beam/beam1m.parquet",
+   "preset": "beam.u20",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ]
+  },
+  "lz_u40_beam100k": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 400,
+   "parq": "beam/beam100k.parquet",
+   "preset": "beam.u40",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+   ]
+  },
+  "lz_u40_beam10m": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 200,
+   "parq": "beam/beam10m.parquet",
+   "preset": "beam.u40",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+   ]
+  },
+  "lz_u40_beam1m": {
+   "arm": "flr_4_3_3",
+   "ds": "beam",
+   "nq": 700,
+   "parq": "beam/beam1m.parquet",
+   "preset": "beam.u40",
+   "rows": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ]
+  },
+  "mg_fcmh_struct": {
+   "arm": "attprio_sess",
+   "ds": "factconsolidation",
+   "nq": 100,
+   "parq": "data_all/data/Conflict_Resolution-00000-of-00001.parquet",
+   "preset": "mab.C",
+   "rows": [
+    3
+   ]
+  },
+  "mg_fcsh_struct": {
+   "arm": "attprio_sess",
+   "ds": "factconsolidation",
+   "nq": 100,
+   "parq": "data_all/data/Conflict_Resolution-00000-of-00001.parquet",
+   "preset": "mab.C",
+   "rows": [
+    7
+   ]
+  }
+ },
+ "presets": {
+  "beam.u20": {
+   "U": 20,
+   "atom": "blank",
+   "branch": "record",
+   "chunk": 512,
+   "compat": {
+    "arm": "flr_4_3_3",
+    "cache": true,
+    "chain": "seg3 cap -10, HBOND doc, HMARK off -> recover -> R4",
+    "env": {
+     "ATOM": "blank",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "2048",
+     "CE_CACHE": "1",
+     "CE_SUBMAX": "0",
+     "CHUNK": "512",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "EMB_MAXLEN": "2048",
+     "HBOND": "doc",
+     "HDETECT": "0",
+     "HMARK": "off",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flr_4_3_3",
+     "MR_ALPHA": "0",
+     "MSCALE": "4096",
+     "NOREFILL": "0",
+     "NO_EXTRACT": "1",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "RENDER": "seg3",
+     "RGROUP_MAX": "-10",
+     "U": "20",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "",
+    "knobs": "CEML=2048|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "lz_u20_beam100k",
+     "lz_u20_beam1m",
+     "lz_u20_beam10m"
+    ],
+    "sources": [
+     "harness/len_legs.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 4096,
+   "policy": "flr",
+   "reference_chunk": 4096,
+   "render": "r4",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:beam.u20",
+   "stats": null,
+   "supersede": "off",
+   "trace": [
+    "generated by tools/gen_presets.py from harness/len_legs.json"
+   ]
+  },
+  "beam.u40": {
+   "U": 40,
+   "atom": "blank",
+   "branch": "record",
+   "chunk": 512,
+   "compat": {
+    "arm": "flr_4_3_3",
+    "cache": true,
+    "chain": "seg3 cap -10, HBOND doc, HMARK off -> recover -> R4",
+    "env": {
+     "ATOM": "blank",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "2048",
+     "CE_CACHE": "1",
+     "CE_SUBMAX": "0",
+     "CHUNK": "512",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "EMB_MAXLEN": "2048",
+     "HBOND": "doc",
+     "HDETECT": "0",
+     "HMARK": "off",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flr_4_3_3",
+     "MR_ALPHA": "0",
+     "MSCALE": "4096",
+     "NOREFILL": "0",
+     "NO_EXTRACT": "1",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "RENDER": "seg3",
+     "RGROUP_MAX": "-10",
+     "U": "40",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "",
+    "knobs": "CEML=2048|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "lz_u40_beam100k",
+     "lz_u40_beam1m",
+     "lz_u40_beam10m"
+    ],
+    "sources": [
+     "harness/len_legs.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 4096,
+   "policy": "flr",
+   "reference_chunk": 4096,
+   "render": "r4",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:beam.u40",
+   "stats": null,
+   "supersede": "off",
+   "trace": [
+    "generated by tools/gen_presets.py from harness/len_legs.json"
+   ]
+  },
+  "locomo.u10": {
+   "U": 10,
+   "atom": "blank",
+   "branch": "record",
+   "chunk": 512,
+   "compat": {
+    "arm": "flr_4_3_3",
+    "cache": true,
+    "chain": "seg3 cap -10, HBOND doc, HMARK off -> recover -> R4",
+    "env": {
+     "ATOM": "blank",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "2048",
+     "CE_CACHE": "1",
+     "CE_SUBMAX": "0",
+     "CHUNK": "512",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "EMB_MAXLEN": "2048",
+     "HBOND": "doc",
+     "HDETECT": "0",
+     "HMARK": "off",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flr_4_3_3",
+     "MR_ALPHA": "0",
+     "MSCALE": "2048",
+     "NOREFILL": "0",
+     "NO_EXTRACT": "1",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "RENDER": "seg3",
+     "RGROUP_MAX": "-10",
+     "U": "10",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "",
+    "knobs": "CEML=2048|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "lcm_u10",
+     "lcmrefc_u10"
+    ],
+    "sources": [
+     "gate/legs_extra.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 2048,
+   "policy": "flr",
+   "reference_chunk": 4096,
+   "render": "r4",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:locomo.u10",
+   "stats": null,
+   "supersede": "off",
+   "trace": [
+    "generated by tools/gen_presets.py from gate/legs_extra.json"
+   ]
+  },
+  "locomo.u20": {
+   "U": 20,
+   "atom": "blank",
+   "branch": "record",
+   "chunk": 512,
+   "compat": {
+    "arm": "flr_4_3_3",
+    "cache": true,
+    "chain": "seg3 cap -10, HBOND doc, HMARK off -> recover -> R4",
+    "env": {
+     "ATOM": "blank",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "2048",
+     "CE_CACHE": "1",
+     "CE_SUBMAX": "0",
+     "CHUNK": "512",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "EMB_MAXLEN": "2048",
+     "HBOND": "doc",
+     "HDETECT": "0",
+     "HMARK": "off",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flr_4_3_3",
+     "MR_ALPHA": "0",
+     "MSCALE": "2048",
+     "NOREFILL": "0",
+     "NO_EXTRACT": "1",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "RENDER": "seg3",
+     "RGROUP_MAX": "-10",
+     "U": "20",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "",
+    "knobs": "CEML=2048|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "lcm_u20"
+    ],
+    "sources": [
+     "gate/legs_extra.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 2048,
+   "policy": "flr",
+   "reference_chunk": 4096,
+   "render": "r4",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:locomo.u20",
+   "stats": null,
+   "supersede": "off",
+   "trace": [
+    "generated by tools/gen_presets.py from gate/legs_extra.json"
+   ]
+  },
+  "locomo.u5": {
+   "U": 5,
+   "atom": "blank",
+   "branch": "record",
+   "chunk": 512,
+   "compat": {
+    "arm": "flr_4_3_3",
+    "cache": true,
+    "chain": "seg3 cap -10, HBOND doc, HMARK off -> recover -> R4",
+    "env": {
+     "ATOM": "blank",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "2048",
+     "CE_CACHE": "1",
+     "CE_SUBMAX": "0",
+     "CHUNK": "512",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "EMB_MAXLEN": "2048",
+     "FLOORS_LT10": "rule",
+     "HBOND": "doc",
+     "HDETECT": "0",
+     "HMARK": "off",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flr_4_3_3",
+     "MR_ALPHA": "0",
+     "MSCALE": "2048",
+     "NOREFILL": "0",
+     "NO_EXTRACT": "1",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "RENDER": "seg3",
+     "RGROUP_MAX": "-10",
+     "U": "5",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "rule",
+    "knobs": "CEML=2048|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "lcm_u5"
+    ],
+    "sources": [
+     "gate/legs_extra.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 2048,
+   "policy": "flr",
+   "reference_chunk": 4096,
+   "render": "r4",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:locomo.u5",
+   "stats": null,
+   "supersede": "off",
+   "trace": [
+    "generated by tools/gen_presets.py from gate/legs_extra.json"
+   ]
+  },
+  "mab.A": {
+   "U": 10,
+   "atom": "blank",
+   "branch": "record",
+   "chunk": 512,
+   "compat": {
+    "arm": "flrs_4_3_3",
+    "cache": true,
+    "chain": "flat, read as built",
+    "env": {
+     "ATOM": "blank",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "2048",
+     "CE_CACHE": "1",
+     "CE_SUBMAX": "0",
+     "CHUNK": "512",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "EMB_MAXLEN": "2048",
+     "HDETECT": "0",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flrs_4_3_3",
+     "MR_ALPHA": "0",
+     "MSCALE": "4096",
+     "NOREFILL": "0",
+     "NO_EXTRACT": "1",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "U": "10",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "",
+    "knobs": "CEML=2048|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "lz_shqa",
+     "lz_mhqa",
+     "lz_rec",
+     "lz_b77",
+     "lz_clin",
+     "lz_nlu",
+     "lz_trcC",
+     "lz_trcF"
+    ],
+    "sources": [
+     "harness/len_legs.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 4096,
+   "policy": "flrs",
+   "reference_chunk": 4096,
+   "render": "flat",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:mab.A",
+   "stats": null,
+   "supersede": "off",
+   "trace": [
+    "generated by tools/gen_presets.py from harness/len_legs.json"
+   ]
+  },
+  "mab.A1": {
+   "U": 10,
+   "atom": null,
+   "branch": "rounds",
+   "chunk": null,
+   "compat": {
+    "arm": "flrs_4_3_3",
+    "cache": true,
+    "chain": "flat, read as built",
+    "env": {
+     "ATOM": "sentence",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "2048",
+     "CE_CACHE": "1",
+     "CE_SUBMAX": "0",
+     "CHUNK": "512",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "EMB_MAXLEN": "2048",
+     "HDETECT": "0",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flrs_4_3_3",
+     "MR_ALPHA": "0",
+     "MSCALE": "4096",
+     "NOREFILL": "0",
+     "NO_EXTRACT": "1",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "U": "10",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "",
+    "knobs": "CEML=2048|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "lz_lme"
+    ],
+    "sources": [
+     "harness/len_legs.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 0,
+   "policy": "flrs",
+   "reference_chunk": 4096,
+   "render": "flat",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:mab.A1",
+   "stats": null,
+   "supersede": "off",
+   "trace": [
+    "generated by tools/gen_presets.py from harness/len_legs.json"
+   ]
+  },
+  "mab.B": {
+   "U": 40,
+   "atom": "sentence",
+   "branch": "prose",
+   "chunk": 1024,
+   "compat": {
+    "arm": "flr_4_3_3",
+    "cache": true,
+    "chain": "bgroup cap 10 -> recover -> R4",
+    "env": {
+     "ATOM": "sentence",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "2048",
+     "CE_CACHE": "1",
+     "CE_SUBMAX": "0",
+     "CHUNK": "1024",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "EMB_MAXLEN": "2048",
+     "HDETECT": "0",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flr_4_3_3",
+     "MR_ALPHA": "0",
+     "MSCALE": "8192",
+     "NOREFILL": "0",
+     "NO_EXTRACT": "1",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "RENDER": "bgroup",
+     "RGROUP_MAX": "10",
+     "U": "40",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "",
+    "knobs": "CEML=2048|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "lz_evq",
+     "lz_det",
+     "lz_summ"
+    ],
+    "sources": [
+     "harness/len_legs.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 8192,
+   "policy": "flr",
+   "reference_chunk": 4096,
+   "render": "r4",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 2048,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:mab.B",
+   "stats": null,
+   "supersede": "off",
+   "trace": [
+    "generated by tools/gen_presets.py from harness/len_legs.json"
+   ]
+  },
+  "mab.C": {
+   "U": 10,
+   "atom": null,
+   "branch": "numbered",
+   "chunk": null,
+   "compat": {
+    "arm": "attprio_sess",
+    "cache": false,
+    "chain": "tagged -> strip \"[CURRENT] \"",
+    "env": {
+     "AS_SLOT": "5",
+     "AUTOSTRUCT": "1",
+     "BM25LC": "1",
+     "CEBS": "16",
+     "CEML": "1024",
+     "CE_SUBMAX": "0",
+     "DOCFLOOR": "0",
+     "DOCU": "0",
+     "HDETECT": "0",
+     "K1": "200",
+     "LPROFILE": "0",
+     "METHODS": "flrs_4_3_3,attprio_sess",
+     "MR_ALPHA": "0",
+     "NOREFILL": "0",
+     "PER_ARM": "1",
+     "PROFILE": "0",
+     "PYTHONHASHSEED": "0",
+     "U": "10",
+     "XQUOTAS": "4,3,3"
+    },
+    "floors_lt10": "",
+    "knobs": "CEML=1024|CEBS=16|CE_SUBMAX=0|CE_SUB_TOK=|CE_SLIDE=|name=BAAI/bge-reranker-v2-m3",
+    "legs": [
+     "mg_fcsh_struct",
+     "mg_fcmh_struct"
+    ],
+    "sources": [
+     "gate/legs_extra.json"
+    ]
+   },
+   "encoder": {
+    "batch_size": 32,
+    "dtype": "float32",
+    "max_length": 448,
+    "name": "BAAI/bge-m3",
+    "revision": "5617a9f61b028005a4858fdac845db406aefb181"
+   },
+   "frozen": true,
+   "mode": "exact",
+   "mscale": 0,
+   "policy": "attprio_sess",
+   "reference_chunk": 4096,
+   "render": "numbered",
+   "reranker": {
+    "batch_size": 16,
+    "dtype": "float32",
+    "max_length": 1024,
+    "name": "BAAI/bge-reranker-v2-m3",
+    "revision": "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+   },
+   "source": "preset:mab.C",
+   "stats": null,
+   "supersede": "numbered",
+   "trace": [
+    "generated by tools/gen_presets.py from gate/legs_extra.json"
+   ]
+  }
+ }
+}

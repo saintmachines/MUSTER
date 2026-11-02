@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "muster": {
+      "command": "muster",
+      "args": ["mcp", "--store", "/absolute/path/to/agent.muster"]
+    }
+  }
+}

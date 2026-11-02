@@ -1,0 +1,354 @@
+{
+  "identity": {
+    "created_utc": "2026-10-20T15:41:36.340942+00:00",
+    "device": "cpu",
+    "hardware": {
+      "hw.memsize": "274877906944",
+      "hw.model": "Mac15,14",
+      "hw.physicalcpu": "28"
+    },
+    "hash_seed": "0",
+    "machine": "arm64",
+    "models": "Models.fake(dim=16)",
+    "python": "3.12.13",
+    "source_sha256": {
+      "muster/__init__.py": "ed5523391972781e48f89956ce572d619a55784883b453804a53ff881999c491",
+      "muster/_version.py": "a9b84c8789a0d893280857e52b0211bc0a54eb7451f00c6f62ad4e4ffffcb202",
+      "muster/adapters.py": "6a2e7b9fed37e15ae9629601ccf07159c454992eb79357408a72647a870bdace",
+      "muster/bpe.py": "6ae2072e3be2dcd4195d1d57a3758c6b8d5bb67452fe9546874823e8c0736ab5",
+      "muster/cache.py": "a3e4451b3da47368e00180837a560a27763d6f8b968e84f90c7dc6f043a50092",
+      "muster/cli.py": "da59c31b61cbf45656ccc8c0e1015707519a1ae9b0dcbe7ff349d2928e5806f7",
+      "muster/compat/__init__.py": "127d0f5108c3e1ce5ff0cc80618e83073e7fbf8edc62a4859938979b9117cfe6",
+      "muster/compat/bundles.py": "98778297206613965055fe953548cc4b10b431428ee12b465c6bd72ae3cbf8da",
+      "muster/compat/ce_cache.py": "1cbc938ac0bd9f89e9451023565fc146ff51fc72719d4d97723c632b24a0f6c4",
+      "muster/compat/env.py": "aec7e45f2055f54204bcbe42d16e0ef6311d6c0168f9e59ea9b8fc4e13f7a1e3",
+      "muster/compat/intermediates.py": "43b0ed1918da8b58bb4e1476a59a9a2286e6f1a94cbe6a7d64468250f86d6bfd",
+      "muster/compat/recover.py": "bae3c4c2ef359c9186c0af394b0db3cabbb8b12dac5280ddd41ffc86b8d34f9c",
+      "muster/compat/verify.py": "a84592f4a662f7b5918a129314a4fcc2d352c7c2242a7ef0fe0095cd00712570",
+      "muster/cut.py": "4b2a60ca0c914ccfb31012eb58291d07a18da0feec98cca3a8c679427576bc67",
+      "muster/derive.py": "88be1a565d6519a931da317a51fbec1d0ad12ecd10b16397c01695f0db7f550b",
+      "muster/errors.py": "b16e6c6e22fff1128a6ebb03f0f74380a597169c11c7842549e69c4ac5e6662f",
+      "muster/index.py": "eca0e1deb6bf47bb55e738f7b3429b1e9dccbdb296296a88eabb3035328786ee",
+      "muster/integrations/__init__.py": "2769012753ceefe13a964ce54387cdd47e0515c4cb0b33ab42de37721ae53dca",
+      "muster/integrations/_common.py": "65bc78e903f0a72070c002b988ab984dd6e0eeb4fccae610dbdfbabfb84d8163",
+      "muster/integrations/langchain.py": "0c21f50dfa038579b21889a541e08ad3cf0b7ea8b42f04af1a52622ebaefe1df",
+      "muster/integrations/langgraph.py": "81ef5b265e18a0956ef970854bbd9eb23dfb61489c3787183497ed974e437243",
+      "muster/integrations/openai_agents.py": "f36815a9d006cb653b20f74b8ba47385069f80d9bbd97f12be34290353d84a68",
+      "muster/io.py": "f96577ee5b0fb031b7f32bc43c9f61c6a315f24a0e3f5155987f9c9fc3cca907",
+      "muster/memory.py": "6681ee30d2432950c58ff95974b65aeafb6417c5266c9966a999f8ff49c86449",
+      "muster/models.py": "0b5d17f5d81de309bb1b7168234f9168b80f840cd286892069044fb7c5847006",
+      "muster/plan.py": "4bb27eff1f35ec9dc4dbde5cd446cd6e6ff32ce91594c71eec553ddefbd6265e",
+      "muster/presets/__init__.py": "e2f63d104ca271f46e0d0c9223d84c499db9420ca78b1e8eff8e90d05cc71939",
+      "muster/presets/paper.json": "9a0b2fa33631c2926e2a9181acdcaded9bcd3d26051d5e5ce54e49245ecc29ef",
+      "muster/records.py": "ac5ad205626cb4e1fb836565cb97b61ff653cefa25d4c1ea545953d329ab86c9",
+      "muster/render.py": "b4643fc60f396e6c36bd5335c2dcb80795f7dba5d3c698f0b8c99aca48d05aec",
+      "muster/search.py": "c8364ac3a6f912c26681777db25437ea677130cb97d8d1de9f1e5e327ac67f32",
+      "muster/serve.py": "e719dae3e148a35b6f277c441c3a876a656699310b8f21f4b1d11f41cf5c2629",
+      "muster/stats.py": "2d5e0f75fa80e95fc693444ea54f99fc42d4fe32654b1f230a702e4e20e95ae9",
+      "muster/store.py": "4257262c3e37c32e3c673ea1750ef089f9522e073404b370f2a430b8ba7303d2"
+    },
+    "system": "Darwin",
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "versions": {
+      "nltk": "3.10.0",
+      "numpy": "2.4.4",
+      "rank-bm25": "0.2.2",
+      "tiktoken": "0.13.0"
+    }
+  },
+  "measurements": [
+    {
+      "batch_per_record_ms": 0.005418383295182139,
+      "batch_total_s": 0.05418383295182139,
+      "case": "add",
+      "model_calls": 0,
+      "peak_rss_mib": 38.265625,
+      "single_record": {
+        "n": 10000,
+        "p50_ms": 0.037207966670393944,
+        "p99_ms": 0.06274995394051075
+      },
+      "sqlite_journal": "WAL",
+      "sqlite_synchronous": "FULL"
+    },
+    {
+      "U": 10,
+      "bm25_s": 0.047772624995559454,
+      "branch": "record",
+      "case": "rebuild",
+      "context_sha256": "7968e92f617211e643d2e56cfcd1b4c1d692a41a1bd2e77984c2fbccbc484bf7",
+      "cut_index_s": 0.09641487500630319,
+      "cut_s": 0.03887733304873109,
+      "first_repeat_query_ms": 5.531083908863366,
+      "index_s": 0.009764916962012649,
+      "o200k_tokens": 100000,
+      "parents": 25,
+      "peak_rss_mib": 152.03125,
+      "profile_search_top": [
+        {
+          "calls": 1,
+          "cumulative_s": 0.003151,
+          "function": "store.py:156:context",
+          "self_s": 1.3249000000000001e-05
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.002719792,
+          "function": "memory.py:101:search",
+          "self_s": 4.5166e-05
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.002275084,
+          "function": "search.py:218:select",
+          "self_s": 0.00018512500000000001
+        },
+        {
+          "calls": 5,
+          "cumulative_s": 0.001449917,
+          "function": "search.py:48:score",
+          "self_s": 5.075e-05
+        },
+        {
+          "calls": 2,
+          "cumulative_s": 0.0014411670000000001,
+          "function": "search.py:69:rank",
+          "self_s": 5.459000000000001e-06
+        },
+        {
+          "calls": 2,
+          "cumulative_s": 0.001398292,
+          "function": "cache.py:30:get_many",
+          "self_s": 0.00013958900000000002
+        },
+        {
+          "calls": 205,
+          "cumulative_s": 0.000837919,
+          "function": "~:0:<method 'execute' of 'sqlite3.Connection' objects>",
+          "self_s": 0.000837919
+        },
+        {
+          "calls": 2,
+          "cumulative_s": 0.0006475840000000001,
+          "function": "memory.py:56:fingerprint",
+          "self_s": 8.340000000000001e-07
+        },
+        {
+          "calls": 2,
+          "cumulative_s": 0.0006467500000000001,
+          "function": "memory.py:24:_fingerprint",
+          "self_s": 8.165e-06
+        },
+        {
+          "calls": 2,
+          "cumulative_s": 0.0006366680000000001,
+          "function": "ce_cache.py:15:ce_sig",
+          "self_s": 0.00014357400000000002
+        },
+        {
+          "calls": 618,
+          "cumulative_s": 0.0005019600000000001,
+          "function": "~:0:<built-in method _hashlib.openssl_sha1>",
+          "self_s": 0.0005019600000000001
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.00036425000000000004,
+          "function": "memory.py:130:render",
+          "self_s": 5.375e-06
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.00034675,
+          "function": "rank_bm25.py:107:get_scores",
+          "self_s": 0.00016817400000000002
+        },
+        {
+          "calls": 206,
+          "cumulative_s": 0.000328583,
+          "function": "cache.py:11:_sha",
+          "self_s": 6.6253e-05
+        },
+        {
+          "calls": 1920,
+          "cumulative_s": 0.000146286,
+          "function": "~:0:<method 'get' of 'dict' objects>",
+          "self_s": 0.000146286
+        }
+      ],
+      "profile_top": [
+        {
+          "calls": 1,
+          "cumulative_s": 0.090491917,
+          "function": "index.py:97:bm25",
+          "self_s": 0.00030658000000000004
+        },
+        {
+          "calls": 205,
+          "cumulative_s": 0.083680295,
+          "function": "index.py:37:btok",
+          "self_s": 8.7472e-05
+        },
+        {
+          "calls": 615,
+          "cumulative_s": 0.082874081,
+          "function": "~:0:<method 'join' of 'str' objects>",
+          "self_s": 0.017762857
+        },
+        {
+          "calls": 434085,
+          "cumulative_s": 0.06511122400000001,
+          "function": "index.py:40:<genexpr>",
+          "self_s": 0.041653528
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.043483958,
+          "function": "cut.py:227:cut",
+          "self_s": 0.000199299
+        },
+        {
+          "calls": 3268,
+          "cumulative_s": 0.037395492,
+          "function": "core.py:82:encode",
+          "self_s": 0.000509925
+        },
+        {
+          "calls": 3268,
+          "cumulative_s": 0.036885567,
+          "function": "~:0:<method 'encode' of 'builtins.CoreBPE' objects>",
+          "self_s": 0.036885567
+        },
+        {
+          "calls": 410,
+          "cumulative_s": 0.024317075,
+          "function": "bpe.py:93:count",
+          "self_s": 0.0006768060000000001
+        },
+        {
+          "calls": 433880,
+          "cumulative_s": 0.01961804,
+          "function": "~:0:<method 'isalnum' of 'str' objects>",
+          "self_s": 0.01961804
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.016322583,
+          "function": "cut.py:104:pack",
+          "self_s": 0.001792563
+        },
+        {
+          "calls": 206,
+          "cumulative_s": 0.012202025,
+          "function": "cut.py:278:<genexpr>",
+          "self_s": 2.4816e-05
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.011584666,
+          "function": "index.py:56:__init__",
+          "self_s": 0.000306138
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.006505042000000001,
+          "function": "rank_bm25.py:79:__init__",
+          "self_s": 5.834e-06
+        },
+        {
+          "calls": 1,
+          "cumulative_s": 0.006499208,
+          "function": "rank_bm25.py:16:__init__",
+          "self_s": 6.750000000000001e-06
+        },
+        {
+          "calls": 205,
+          "cumulative_s": 0.006333036,
+          "function": "index.py:17:entities",
+          "self_s": 0.001060769
+        }
+      ],
+      "records": 2858,
+      "repeat_search": {
+        "n": 30,
+        "p50_ms": 1.947375014424324,
+        "p99_ms": 1.981999957934022
+      },
+      "rss_after_search_mib": 150.328125,
+      "rss_before_rebuild_mib": 134.1875,
+      "store_head_with_fake_embed_s": 0.14939666690770537,
+      "unique_query_search": {
+        "n": 30,
+        "p50_ms": 5.5025205365382135,
+        "p99_ms": 7.255250005982816
+      },
+      "units": 205
+    },
+    {
+      "U": 10,
+      "bm25_s": 0.2546779999975115,
+      "branch": "record",
+      "case": "rebuild",
+      "context_sha256": "7b2be9a4d662d454e9d7cf085d37bb89d1c4c8deec196935d87c29233b715810",
+      "cut_index_s": 0.7526075009955093,
+      "cut_s": 0.4016864589648321,
+      "first_repeat_query_ms": 18.319708993658423,
+      "index_s": 0.0962430420331657,
+      "o200k_tokens": 1000000,
+      "parents": 245,
+      "peak_rss_mib": 263.078125,
+      "profile_search_top": [],
+      "profile_top": [],
+      "records": 28572,
+      "repeat_search": {
+        "n": 30,
+        "p50_ms": 10.564312513452023,
+        "p99_ms": 10.722792008891702
+      },
+      "rss_after_search_mib": 263.078125,
+      "rss_before_rebuild_mib": 166.921875,
+      "store_head_with_fake_embed_s": 1.5388715419685468,
+      "unique_query_search": {
+        "n": 30,
+        "p50_ms": 17.009625036735088,
+        "p99_ms": 19.46616591885686
+      },
+      "units": 2041
+    },
+    {
+      "U": 10,
+      "bm25_s": 2.4068636250449345,
+      "branch": "record",
+      "case": "rebuild",
+      "context_sha256": "28a220fc6300a4d22effe13ca948a3637ad66a6c3bf103d8eaae4dc1c8f60035",
+      "cut_index_s": 7.3904404590139166,
+      "cut_s": 4.015621791942976,
+      "first_repeat_query_ms": 102.95262502040714,
+      "index_s": 0.9679550420260057,
+      "o200k_tokens": 10000000,
+      "parents": 2442,
+      "peak_rss_mib": 1258.71875,
+      "profile_search_top": [],
+      "profile_top": [],
+      "records": 285715,
+      "repeat_search": {
+        "n": 30,
+        "p50_ms": 87.67558296676725,
+        "p99_ms": 116.39854195527732
+      },
+      "rss_after_search_mib": 1242.21875,
+      "rss_before_rebuild_mib": 665.640625,
+      "store_head_with_fake_embed_s": 15.185651374980807,
+      "unique_query_search": {
+        "n": 30,
+        "p50_ms": 98.23922900250182,
+        "p99_ms": 100.73170799296349
+      },
+      "units": 20409
+    }
+  ]
+}

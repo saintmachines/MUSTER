@@ -1,0 +1,134 @@
+{
+  "about": "The one source of the README's headline numbers, its figures and the landing page's data. Edit values here only, then run: python tools/make_readme.py (writes the README blocks between the headline markers and docs/assets/readme/*.svg); python tools/make_readme.py --check fails if any generated file differs. Every value is a cell of the paper table named in its block's source, except the LLM build costs, which are build tokens times the list prices given here.",
+  "name": "MUSTER",
+  "paper": {
+    "title": "MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure",
+    "version": "v211"
+  },
+  "settings": [
+    {"bench": "MAB", "reader": "GLM"},
+    {"bench": "MAB", "reader": "Luna"},
+    {"bench": "LoCoMo-Refined", "reader": "GLM"},
+    {"bench": "LoCoMo-Refined", "reader": "Luna"},
+    {"bench": "BEAM-10M", "reader": "GLM"},
+    {"bench": "BEAM-10M", "reader": "Luna"}
+  ],
+  "readers": {"GLM": "GLM-5.3-Flash", "Luna": "GPT-6 Luna"},
+  "overview": {
+    "source": "paper tab:overview, with Context and Read $ counted per question: each question once, a question read in several runs as the mean of its runs",
+    "rows": [
+      {"system": "MUSTER", "us": true, "scores": [67.70, 64.50, 88.78, 87.84, 64.30, 55.55], "mean_rank": 1.33, "mean_score": 71.45, "worst_rank": 2, "top3": 6, "context": "10K/5.2K/20K", "read_usd_per_1k": 2.8, "build_calls": 0},
+      {"system": "Full context", "memory_system": false, "scores": [64.46, 61.30, 88.93, 87.41, 34.27, 27.14], "mean_rank": 3.83, "mean_score": 60.59, "worst_rank": 8, "top3": 4, "context": "310K/31K/849K", "read_usd_per_1k": 94.91, "build_calls": 0},
+      {"system": "True Memory", "scores": [58.27, 56.06, 80.10, 78.44, 62.45, 52.91], "mean_rank": 4.33, "mean_score": 64.70, "worst_rank": 5, "top3": 0, "context": "14K/5.1K/20K", "read_usd_per_1k": 3.04, "build_calls": 0},
+      {"system": "Mem0", "scores": [33.79, 30.95, 80.54, 78.58, 63.95, 56.89], "mean_rank": 4.33, "mean_score": 57.45, "worst_rank": 8, "top3": 3, "context": "3.0K/5.2K/20K", "read_usd_per_1k": 2.32, "build_calls": 10429},
+      {"system": "EverMemOS", "scores": [35.61, 33.36, 80.32, 79.59, 62.70, 54.42], "mean_rank": 4.50, "mean_score": 57.67, "worst_rank": 7, "top3": 3, "context": "3.3K/4.3K/19K", "read_usd_per_1k": 2.29, "build_calls": 26080},
+      {"system": "HippoRAG-v2", "scores": [58.65, 57.51, 76.05, 72.79, 59.95, 50.41], "mean_rank": 4.67, "mean_score": 62.56, "worst_rank": 6, "top3": 2, "context": "10K/5.1K/20K", "read_usd_per_1k": 2.7, "build_calls": 20870},
+      {"system": "Hindsight", "scores": [38.62, 37.67, 70.91, 69.10, 52.19, 46.28], "mean_rank": 6.33, "mean_score": 52.46, "worst_rank": 7, "top3": 0, "context": "6.8K/4.9K/10K", "read_usd_per_1k": 1.88, "build_calls": 16425},
+      {"system": "Honcho", "scores": [41.73, 38.81, 65.56, 62.16, 48.89, 44.64], "mean_rank": 6.67, "mean_score": 50.30, "worst_rank": 8, "top3": 0, "context": "7.3K/5.5K/15K", "read_usd_per_1k": 2.21, "build_calls": [4441, 11700]}
+    ]
+  },
+  "build_10m": {
+    "source": "paper appendix table tab:beamcost (one 10M-token BEAM conversation, as run); LLM cost = the build model's tokens x its list price",
+    "prices_usd_per_1m": {
+      "GPT-4o-mini": {"in": 0.15, "out": 0.60, "where": "OpenAI list price"},
+      "GPT-OSS-120B": {"in": 0.03, "out": 0.15, "where": "cheapest OpenRouter route, Near AI"},
+      "Honcho": {"in": 2.00, "where": "honcho.dev list price for ingestion"}
+    },
+    "rows": [
+      {"system": "MUSTER", "llm_cost": "$0", "calls": 0, "build_s": 76.8, "build": "77 s", "build_note": "on one GPU with bge-m3 in fp16", "model": null},
+      {"system": "True Memory", "llm_cost": "$0", "calls": 0, "build_s": 2325, "build": "39 min", "build_note": "on one RTX PRO 6000", "model": null},
+      {"system": "Mem0", "llm_cost": "≥ $15.15", "calls": 10429, "build_s": 46800, "build": "13.0 h", "build_note": "", "model": "GPT-4o-mini", "tokens_in": "101.0", "tokens_out": null},
+      {"system": "EverMemOS", "llm_cost": "≥ $3.19", "calls": 26080, "build_s": 143280, "build": "39.8 h", "build_note": "all ten conversations in one run", "build_mark": "all ten at once", "model": "GPT-OSS-120B", "tokens_in": "106.3", "tokens_out": null},
+      {"system": "HippoRAG-v2", "llm_cost": "$1.49", "calls": 20870, "build_s": 4680, "build": "1.3 h", "build_note": "mean per conversation", "model": "GPT-OSS-120B", "tokens_in": "30.12", "tokens_out": "3.937"},
+      {"system": "Hindsight", "llm_cost": "≥ $1.97", "calls": 16425, "build_s": 10800, "build": "3.0 h", "build_note": "mean per conversation", "model": "GPT-OSS-120B", "tokens_in": "65.5", "tokens_out": null},
+      {"system": "Honcho", "llm_cost": "$1.41", "calls": [4441, 11700], "build_s": 28080, "build": "7.8 h", "build_note": "with queue drain", "model": "Honcho", "tokens_in": "0.7051753", "tokens_note": "in its own BEAM setup Honcho reasons over the user's turns, 7,051,753 tokens over the ten conversations, 6.5% of the 108.1M sent"}
+    ]
+  },
+  "lead": {
+    "source": "paper tab:board and tab:gate; MemoryAgentBench Overall, GPT-4o-mini reader",
+    "rows": [
+      {"label": "BM25", "kind": "other", "overall": 41.5, "note": "sparse retrieval, reported by MemoryAgentBench"},
+      {"label": "Full context (128K window)", "kind": "other", "overall": 42.2, "note": "GPT-4o-mini reads the whole store; the oldest chunks drop out past its window"},
+      {"label": "True Memory", "kind": "other", "overall": 43.6, "note": "the strongest other retrieval or memory system; it also builds with no LLM call"},
+      {"label": "Retrieval + assembly, no detection", "kind": "step", "overall": 50.3, "note": "detection off: the benchmark's own chunks, balanced floors and one rerank, assembled in stored order"},
+      {"label": "+ detection: units, parents, order", "kind": "step", "overall": 56.0, "note": "detection on: unit, parent and order from each store's structure; floors still balanced"},
+      {"label": "+ retrieval mix matched (MUSTER)", "kind": "us", "overall": 57.5, "note": "the shipped system: the floors also follow the structure, parent graph first on numbered logs, balanced elsewhere"}
+    ]
+  },
+  "mechanism": {
+    "source": "paper tab:gate, Section 3 (sec:read, Algorithm 1), Section 1 (fourteen stores in three seconds) and the slot-source table (tab:slotsrc); MemoryAgentBench, GPT-4o-mini reader",
+    "competencies": {"AR": "accurate retrieval", "TTL": "test-time learning", "LRU": "long-range understanding", "SF": "selective forgetting"},
+    "gate_columns": ["AR", "TTL", "LRU", "SF", "Overall"],
+    "gate": [
+      {"key": "none", "label": "Retrieval + assembly, no detection", "values": [71.8, 43.6, 42.9, 43.0, 50.3]},
+      {"key": "balanced", "label": "+ detection, balanced floors everywhere", "values": [73.8, 47.5, 44.2, 58.5, 56.0]},
+      {"key": "parent_priority", "label": "+ detection, parent-priority floors everywhere", "values": [70.3, 47.7, 39.5, 64.5, 55.5]},
+      {"key": "muster", "label": "+ detection with its gate (MUSTER)", "values": [73.8, 47.5, 44.2, 64.5, 57.5]}
+    ],
+    "detect": {"stores": 14, "seconds": 3},
+    "floor_channels": ["dense", "BM25", "parent graph"],
+    "floors": {"balanced": [4, 3, 3], "parent_priority": [2, 0, 8]},
+    "order_fc_sh": [
+      {"order": "recorded", "label": "in the recorded order", "fc_sh": 92},
+      {"order": "none", "label": "with no order", "fc_sh": 64},
+      {"order": "shuffled", "label": "with the order shuffled", "fc_sh": 59}
+    ]
+  },
+  "detect_stats": {
+    "source": "gate/stage0_derive.md (the two statistics the rule prints for each MemoryAgentBench store), the rule in paper Section 3.2 (sec:rule) and Figure 1 (fig:rule)",
+    "tau": {"serial": 0.80, "recshare": 0.90},
+    "gap": {"serial": 0.998, "recshare": 0.425},
+    "stores": [
+      {"key": "shqa", "name": "SH-QA", "recshare": 0.9751, "serial": 0.0016},
+      {"key": "mhqa", "name": "MH-QA", "recshare": 0.9891, "serial": 0.0},
+      {"key": "lme", "name": "LongMemEval", "recshare": 0.0, "serial": 0.0},
+      {"key": "evq", "name": "EventQA", "recshare": 0.0, "serial": 0.0},
+      {"key": "b77", "name": "banking77", "recshare": 1.0, "serial": 0.0},
+      {"key": "clin", "name": "CLINC150", "recshare": 1.0, "serial": 0.0},
+      {"key": "nlu", "name": "NLU", "recshare": 1.0, "serial": 0.0},
+      {"key": "trcC", "name": "TREC-coarse", "recshare": 1.0, "serial": 0.0},
+      {"key": "trcF", "name": "TREC-fine", "recshare": 1.0, "serial": 0.0},
+      {"key": "rec", "name": "Recsys", "recshare": 1.0, "serial": 0.0},
+      {"key": "summ", "name": "InfBench-Sum", "recshare": 0.5504, "serial": 0.0},
+      {"key": "det", "name": "DetectiveQA", "recshare": 0.0, "serial": 0.0},
+      {"key": "fcmh", "name": "FC-MH", "recshare": 0.0, "serial": 0.9999},
+      {"key": "fcsh", "name": "FC-SH", "recshare": 0.0, "serial": 0.9999}
+    ]
+  },
+  "mab_board": {
+    "source": "paper tab:board; MemoryAgentBench competency means, GPT-4o-mini reader, the rows that reader reads",
+    "columns": ["AR", "TTL", "LRU", "SF", "All"],
+    "rows": [
+      {"system": "MUSTER", "us": true, "values": [73.8, 47.5, 44.2, 64.5, 57.5]},
+      {"system": "True Memory", "values": [63.8, 43.5, 41.2, 26.0, 43.6]},
+      {"system": "GPT-4o-mini 128K", "memory_system": false, "values": [49.2, 48.6, 46.2, 25.0, 42.2]},
+      {"system": "HippoRAG-v2", "values": [65.1, 35.8, 36.2, 29.5, 41.6]},
+      {"system": "BM25", "values": [60.5, 44.5, 35.6, 25.5, 41.5]},
+      {"system": "Honcho", "values": [46.7, 23.8, 45.7, 24.0, 35.0]},
+      {"system": "Hindsight", "values": [61.8, 9.4, 28.4, 26.0, 31.4]},
+      {"system": "Mem0 2.1.0", "values": [49.9, 9.0, 39.1, 9.0, 26.7]},
+      {"system": "EverMemOS", "dagger": "built with GPT-OSS-120B", "values": [36.5, 19.7, 24.7, 11.5, 23.1]}
+    ]
+  },
+  "locomo": {
+    "source": "paper tab:locomo and tab:refined; LoCoMo: GPT-4.1-mini reader under Mem0's and EverMemOS's answer prompts, GPT-4o-mini judge; LoCoMo-Refined: the official judge, by reader; LM calls to build or search memory, LoCoMo then LoCoMo-Refined",
+    "questions": {"LoCoMo": 1540, "LoCoMo-Refined": 1382},
+    "prompts": ["Mem0", "EverMemOS"],
+    "readers": ["GPT-4o-mini", "GLM-5.3-Flash", "Sonnet 5.5"],
+    "rows": [
+      {"system": "MUSTER", "us": true, "locomo": [86.04, 93.46], "refined": [77.57, 88.78, 89.58], "calls": ["0", "0"]},
+      {"system": "EverMemOS", "locomo": [83.87, 93.05], "refined": [75.33, 80.32, 83.86], "calls": ["9,398", "9,034"]},
+      {"system": "True Memory", "locomo": [81.93, 90.58], "refined": [71.56, 80.10, 84.23], "calls": ["1,540", "1,382"], "calls_note": "one HyDE query per question"},
+      {"system": "Mem0", "locomo": [80.50, 89.44], "refined": [73.73, 80.54, 83.50], "calls": ["5,882", "5,882"]},
+      {"system": "HippoRAG-v2", "locomo": [75.09, 84.46], "refined": [67.58, 76.05, 76.85], "calls": ["2,073", "1,926"]},
+      {"system": "Hindsight", "locomo": [73.48, 85.35], "refined": [63.68, 70.91, 73.08], "calls": ["602", "543"]},
+      {"system": "Honcho", "locomo": [67.34, 77.62], "refined": [56.44, 65.56, 68.09], "calls": ["n/o", "n/o"], "calls_note": "not observable"}
+    ]
+  },
+  "extend": {
+    "source": "paper tab:extend; BEAM mean over 100K, 1M and 10M, GLM-5.3-Flash reader, 19.5K tokens of context",
+    "mem0_search": 70.8,
+    "muster_over_mem0": 72.0,
+    "both": 73.1
+  }
+}
