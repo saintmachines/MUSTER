@@ -46,6 +46,21 @@ def test_pages_and_citation_follow_the_headline_data():
     assert "when the paper is public" not in page and "when the paper is public" not in readme
 
 
+def test_every_statement_of_the_build_time_follows_the_headline_data():
+    data = json.loads((ROOT / "docs" / "data" / "headline.json").read_text(encoding="utf-8"))
+    build = next(r for r in data["build_10m"]["rows"] if r["system"] == "MUSTER")["build"].split()[0]
+    stated = re.compile(r'MUSTER[ ,0-9.a-z]*? in (\d+) s\b|(\d+) s · 0 LLM calls|MUSTER takes (\d+) seconds|built in (\d+) seconds'
+                        r'|<th scope="row">MUSTER</th>(?:<td class="n">[^<]*</td>){7}<td class="n">(\d+) s</td></tr>')
+    files = [ROOT / "README.md", ROOT / "docs" / "index.html", *sorted((ROOT / "docs" / "assets").rglob("*.svg"))]
+    texts = {p.relative_to(ROOT).as_posix(): p.read_text(encoding="utf-8").replace("&nbsp;", " ") for p in files}
+    found = [(name, m[m.lastindex]) for name, text in texts.items() for m in stated.finditer(text)]
+    assert len(found) >= 13
+    assert not [f for f in found if f[1] != build], found
+    # The whole set of times in seconds, so a spelling the pattern above does not know still fails here.
+    seconds = {m[1] for text in texts.values() for m in re.finditer(r"(?<![\w.,])(\d+(?:\.\d+)?) ?(?:s|seconds)\b", text)}
+    assert seconds == {"1", "7", "8", "10", "76.8", build}
+
+
 def test_landing_page_links_stay_inside_what_pages_serves():
     page = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
     assert 'href="../' not in page and 'src="../' not in page

@@ -36,7 +36,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/score_vs_build_dark.svg">
-    <img src="docs/assets/readme/score_vs_build_light.svg" width="720" alt="Mean score over six settings against the time to build memory for one 10M-token conversation, log scale: MUSTER 71.45 in 36 s, alone at the upper left; True Memory 64.70 in 39 min; HippoRAG-v2 62.56 in 1.3 h; EverMemOS 57.67 in 39.8 h for all ten conversations in one run; Mem0 57.45 in 13.0 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; the full context 60.59 with nothing to build">
+    <img src="docs/assets/readme/score_vs_build_light.svg" width="720" alt="Mean score over six settings against the time to build memory for one 10M-token conversation, log scale: MUSTER 71.45 in 77 s, alone at the upper left; True Memory 64.70 in 39 min; HippoRAG-v2 62.56 in 1.3 h; EverMemOS 57.67 in 39.8 h for all ten conversations in one run; Mem0 57.45 in 13.0 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; the full context 60.59 with nothing to build">
   </picture>
 </p>
 
@@ -198,7 +198,7 @@ MUSTER stores the text as is and fits its read to the structure: 0 LLM calls to 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/build_cost_dark.svg">
-    <img src="docs/assets/readme/build_cost_light.svg" width="720" alt="Building memory for one 10M-token conversation. Extract with an LLM: EverMemOS 26,080 calls in 39.8 h for all ten conversations in one run; HippoRAG-v2 20,870 calls in 1.3 h; Hindsight 16,425 calls in 3.0 h; Honcho 4,441 to 11,700 calls in 7.8 h; Mem0 10,429 calls in 13.0 h. Store as is: True Memory 0 calls in 39 min; MUSTER 0 calls in 36 s, $0">
+    <img src="docs/assets/readme/build_cost_light.svg" width="720" alt="Building memory for one 10M-token conversation. Extract with an LLM: EverMemOS 26,080 calls in 39.8 h for all ten conversations in one run; HippoRAG-v2 20,870 calls in 1.3 h; Hindsight 16,425 calls in 3.0 h; Honcho 4,441 to 11,700 calls in 7.8 h; Mem0 10,429 calls in 13.0 h. Store as is: True Memory 0 calls in 39 min; MUSTER 0 calls in 77 s, $0">
   </picture>
 </p>
 
