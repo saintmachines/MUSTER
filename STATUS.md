@@ -19,6 +19,6 @@ What was checked for this release, and the evidence for each line.
 | Offline re-score of the main BEAM table from its judge files | done (gate 0b) | `gate/rescore_beam.py` over 51 judge files |
 | Offline re-score of the MemoryAgentBench board from its 48 per-cell result tags | done 2026-10-18 (gate 0b, MemoryAgentBench) | `gate/rescore_mab.md`: 57.52 / 60.92 / 64.71, all 45 values the paper prints for the board (14 cells and Overall at three readers) equal; DetectiveQA the mean of three reads; the result files are on the experiment machine |
 | CPU replay at BEAM-1M and 10M | not run (hours to days on CPU) | the render chain at both scales is byte-identical (gate 0c) |
-| Build times | measured on one RTX PRO 6000, mean of three runs | `gate/build_time_rtx.md` |
+| Build times | measured on one RTX PRO 6000, mean of three runs | `gate/build_time_rtx.md`, driver in `harness/buildtime_rtx/` |
 | Paper PDF | the arXiv version, 33 pages | `paper/MUSTER.pdf` |
 

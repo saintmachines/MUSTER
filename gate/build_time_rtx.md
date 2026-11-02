@@ -22,4 +22,6 @@ timings and in fp32 for the reported scores.
 Before a store's times were kept, its units, parents, statistics output, graph counts and the sha256 of its unit texts,
 embedded texts and parent ids had to equal the values the harness computes for that store on the CPU.
 
+The driver and the steps to run it are in [`harness/buildtime_rtx/`](../harness/buildtime_rtx/README.md).
+
 No generative model is called.

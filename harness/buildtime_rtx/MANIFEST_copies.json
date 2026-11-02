@@ -1,0 +1,360 @@
+{
+ "sources": {
+  "lme_pf29.py": {
+   "path": "harness/lme_pf29.py",
+   "sha256": "de0e46236327cbf76932f5083154bcbd4692087db14fe90282e34fe5b954fdfc"
+  },
+  "derive_config.py": {
+   "path": "harness/derive_config.py",
+   "sha256": "e36dfff462c822838bd7b616fc4a9a456742b17599fcad930c76270510076545"
+  },
+  "real_e1_conflict_killer.py": {
+   "path": "harness/src/real_e1_conflict_killer.py",
+   "sha256": "ac3adfd8f794aad3205644d0ccc48b42139eedabb8d5c1a3c18914656cd22659"
+  },
+  "core2.py": {
+   "path": "harness/core2.py",
+   "sha256": "5a4dd537080315f0fb8cca672bf8152e2beccc0973a0e40a7d91eb5716a09614"
+  }
+ },
+ "outputs": {
+  "ship_lme.py": {
+   "sha256": "8e3ab15ab6641eb3fe5c581da3737086da36a460d7e8770eb067344bcc6526c9",
+   "copied_blocks": [
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      35,
+      35
+     ],
+     "dedent": 0,
+     "sha256": "22a238730335717b8938d4dee719f2853eb55a92574bb85423ee69fb4948b5e9"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      162,
+      177
+     ],
+     "dedent": 0,
+     "sha256": "f6c806e628e5c1d8f92b8243df9597a3b4010455ababe7eec1ccfdb628befb45"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      259,
+      259
+     ],
+     "dedent": 0,
+     "sha256": "b63d098e99eeb5f67e38cf13a31fda2ee65d0a21a559e8eb152edb0f1a5c9591"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      832,
+      832
+     ],
+     "dedent": 0,
+     "sha256": "58f7fa9b85f10f5adad6ab8881a4f5fe7c00eeded50bf19e1d8d36c6e56e36cd"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      836,
+      836
+     ],
+     "dedent": 0,
+     "sha256": "c5fedfa2ca7b683ab3af58e312659bb47fd73e1383021d53b6db25f6741b940e"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      849,
+      850
+     ],
+     "dedent": 0,
+     "sha256": "5e221a691c44db776d1f47d94418a20b0944154ea322346bcd74597e75718f0f"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      853,
+      854
+     ],
+     "dedent": 0,
+     "sha256": "0a92ee437e956a1ddd748555d3a10f977baac3dd0208b614afa6e02927e42e73"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      858,
+      859
+     ],
+     "dedent": 0,
+     "sha256": "4b9e67266b1927768f62d393fbf8d26d5058c6cc998a1843f408f66800a73594"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      864,
+      864
+     ],
+     "dedent": 0,
+     "sha256": "1f175079db425fa14bdce6ddd318fb8c711e49f3fe1f3f5dde665902bd68fcb8"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      869,
+      869
+     ],
+     "dedent": 0,
+     "sha256": "695dbc1dba26fa0477596f6df610adbb7057172afa9fafb4e6483aa9d1b37c63"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      1055,
+      1056
+     ],
+     "dedent": 0,
+     "sha256": "815aa847a44a01db8f16011f8c6c95d8a83c06ce14867b557baa155deb85d516"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      1059,
+      1101
+     ],
+     "dedent": 0,
+     "sha256": "3b397fe68148832f32d9c6b7a3d329f451b6c417d73a530aa48df009805f8394"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      1161,
+      1162
+     ],
+     "dedent": 0,
+     "sha256": "12e5f62d1b53150ec6faf74bfdb003e338b98c79e184d1760118688c3bbae8ec"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      1224,
+      1239
+     ],
+     "dedent": 0,
+     "sha256": "79d006512515fd3cac0558ba2e324507a73022e9a4531b7caa91be8e2e6ef9be"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      1255,
+      1292
+     ],
+     "dedent": 0,
+     "sha256": "abbc84105a39ce94fcc889611275155b0e071bfc3006475c13160af34dd0534c"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      1294,
+      1305
+     ],
+     "dedent": 0,
+     "sha256": "faa57700d59ee3914563f27ef02a0689767109ae6ac3609d59bbb99f9036a9dc"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      1979,
+      1979
+     ],
+     "dedent": 0,
+     "sha256": "dd9f8105c2cb8f52128a63c67fa6d8abc26ee9d7467e9623952c18fff63568bb"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      1983,
+      1983
+     ],
+     "dedent": 0,
+     "sha256": "bc13598a436e9841300917c6c548c8e873af31fbb67eb3d732a20a0eb4f4768f"
+    },
+    {
+     "file": "real_e1_conflict_killer.py",
+     "lines": [
+      26,
+      27
+     ],
+     "dedent": 0,
+     "sha256": "27d939e4b7bd364f778ecad67d8a8449359208b8489980468c526356768a5694"
+    },
+    {
+     "file": "real_e1_conflict_killer.py",
+     "lines": [
+      29,
+      54
+     ],
+     "dedent": 0,
+     "sha256": "847f2e3ce127c6dbb61858a33430de09289d7e49d018c70fe11606a217b906c2"
+    },
+    {
+     "file": "core2.py",
+     "lines": [
+      429,
+      438
+     ],
+     "dedent": 0,
+     "sha256": "f7979433e47dc3dcf9ef42d9222acfa81b6696b3d5985f0c6ba5d7a05ee19cb4"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2026,
+      2027
+     ],
+     "dedent": 0,
+     "sha256": "df49289da8f4fbedc27b45530951d570d3f2dd88df963e0b00b68339e02ff0bf"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2030,
+      2032
+     ],
+     "dedent": 0,
+     "sha256": "c7c544277b987bc73f23093c7a3943a2359807b20e9221221984113cbbe8138d"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2072,
+      2111
+     ],
+     "dedent": 0,
+     "sha256": "115b83b49b9a6c578df288b4b09c8e9db5a0a0b5f1fcc8b5fb1ecf312dd9350d"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2113,
+      2163
+     ],
+     "dedent": 0,
+     "sha256": "85c0c560a5738e127851ed7912c1e2788d14c4c30788a01207fd34112bccb3ee"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2198,
+      2262
+     ],
+     "dedent": 0,
+     "sha256": "d6ccd8eef8dfa332e0b51413f8500c01f892af68d375dc8825c73f27ee34a002"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2411,
+      2412
+     ],
+     "dedent": 4,
+     "sha256": "3b275345d969afdb6cb6a1fd866ac2cc25383628114c2bf376eb61df1e851c2d"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2508,
+      2508
+     ],
+     "dedent": 4,
+     "sha256": "ea220620ff05d6acaf9ea635365777eecd0a11b271855de139845df932ad9d38"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2419,
+      2419
+     ],
+     "dedent": 4,
+     "sha256": "1fc3772059ab9e6ec9f0597aef61dd8bf87fa62d46d31af141943391d389c43f"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2437,
+      2437
+     ],
+     "dedent": 4,
+     "sha256": "836510c085838fc10b16ebfb126fd507ea65206bd6bb213eaa70db6b07e9f08d"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2440,
+      2441
+     ],
+     "dedent": 4,
+     "sha256": "1d4b15dfdfd9ff80265478d26ef516f1e65f1f67ee59da76ee368f5aba5c4683"
+    },
+    {
+     "file": "lme_pf29.py",
+     "lines": [
+      2448,
+      2481
+     ],
+     "dedent": 4,
+     "sha256": "7f7216e4ffc99e32e95f22cd38e5b7236a0d61bc1a98c5d6d9bdf8c811ef8a25"
+    }
+   ],
+   "copied_lines": 383,
+   "verified_blocks": 32
+  },
+  "ship_derive.py": {
+   "sha256": "9e10b5d3e036adcf99bba760122d76524c7b48bfecc10d0eae9afeb7c12d2985",
+   "copied_blocks": [
+    {
+     "file": "derive_config.py",
+     "lines": [
+      33,
+      40
+     ],
+     "dedent": 0,
+     "sha256": "576d95381ed85ad27f69be57d50221326483450960b72a06c679fe04d8c55afe"
+    },
+    {
+     "file": "derive_config.py",
+     "lines": [
+      43,
+      43
+     ],
+     "dedent": 0,
+     "sha256": "5490358b11dbbe89a8823a10cac897791504937fe155f234b3ef3cb1830373b6"
+    },
+    {
+     "file": "derive_config.py",
+     "lines": [
+      45,
+      64
+     ],
+     "dedent": 0,
+     "sha256": "9c9eeb7b53122f42b5510d6d5d2c4944b6e9b49a1fbdc2e6f3085590dd3eea8a"
+    },
+    {
+     "file": "derive_config.py",
+     "lines": [
+      67,
+      87
+     ],
+     "dedent": 0,
+     "sha256": "5c712ea98596751a4ee87002bb321169d557caef699cc34ae7a10a59d0f856d0"
+    }
+   ],
+   "copied_lines": 50,
+   "verified_blocks": 4
+  }
+ }
+}

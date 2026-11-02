@@ -6,9 +6,9 @@ Its four stages are statistics, units, one embedding pass, and BM25.
 
 The paper's current build-time measurements use o200k_base, max_seq 2048,
 and include the parent graph. See ../gate/build_time_rtx.md for the measured
-RTX PRO 6000 fp16 runs and their settings. The driver for those exact runs is
-not included in this directory; running this legacy probe measures a different
-configuration. No generative model is called.
+RTX PRO 6000 fp16 runs and their settings, and buildtime_rtx/ for their driver.
+Running this legacy probe measures a different configuration. No generative
+model is called.
 
 Run on a clean machine (Colab RTX PRO 6000 or an embedding API).
 Usage:

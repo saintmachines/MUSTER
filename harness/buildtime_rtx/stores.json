@@ -1,0 +1,222 @@
+{
+ "schema": 1,
+ "what": "BEAM conversation 0 at 100K, 1M and 10M: the store text the reported legs lz_u20_beam* and lz_u40_beam* (len_legs.tsv lines 19 to 24) index as parquet row 0, its metadata fields, and the leg's env (len_legs.json, the lz_u40 leg differs only in U)",
+ "sources": {
+  "len_legs.tsv": "14017322e56f97a684cfc8048f64021f899acae3302909ca91421f463e6a10cf",
+  "len_legs.json": "78c0df8fdc146e9082046346a144290fb559901da80f87f1d95458f800eb84ab",
+  "cells_registry.py": "49bafacc562495f24274d5583e335a373128b8148e185054c31d07f0db0e49d4"
+ },
+ "stores": {
+  "beam100k": {
+   "file": "beam_100K_conv0.txt",
+   "sha256": "ec3f102c6c7607911a6712fc338e3ad3d3af0dc2620488b8fa83ff7ff3f13bbb",
+   "bytes": 527409,
+   "chars": 527403,
+   "metadata": {
+    "source": "beam_100k",
+    "conv_id": "1"
+   },
+   "prot": 4096,
+   "env": {
+    "PYTHONHASHSEED": "0",
+    "PER_ARM": "1",
+    "BM25LC": "1",
+    "CEML": "2048",
+    "CEBS": "16",
+    "CE_SUBMAX": "0",
+    "DOCFLOOR": "0",
+    "DOCU": "0",
+    "NOREFILL": "0",
+    "XQUOTAS": "4,3,3",
+    "METHODS": "flr_4_3_3",
+    "LPROFILE": "0",
+    "PROFILE": "0",
+    "K1": "200",
+    "HDETECT": "0",
+    "CE_CACHE": "1",
+    "MR_ALPHA": "0",
+    "RENDER": "seg3",
+    "RGROUP_MAX": "-10",
+    "HBOND": "doc",
+    "HMARK": "off",
+    "RESUME": "1",
+    "ATOM": "blank",
+    "CHUNK": "512",
+    "MSCALE": "4096",
+    "TEMP": "0",
+    "U": "20",
+    "NO_EXTRACT": "1",
+    "EMB_MAXLEN": "2048",
+    "ROUTER_ONLY": "1",
+    "DUMP_CTX": "1",
+    "OAMODEL": "gpt-4.1-mini"
+   },
+   "legs": [
+    "lz_u20_beam100k",
+    "lz_u40_beam100k"
+   ],
+   "len_legs_tsv_lines": [
+    19,
+    20
+   ],
+   "parquet": {
+    "path": "beam/beam100k.parquet",
+    "row": 0
+   },
+   "raw": {
+    "path": "beam/100K.parquet",
+    "sha256": "c0519be25907005ba873c927c50877471d550873039d96c041554d0075a78ace",
+    "conversation_id": "1",
+    "builder": "beam/build_parquet.py",
+    "functions": [
+     "s1"
+    ]
+   }
+  },
+  "beam1m": {
+   "file": "beam_1M_conv0.txt",
+   "sha256": "ff00c77aea7c65ab824ec1050dacae7d1ae46534f9fc42d7a47254570947e758",
+   "bytes": 4285727,
+   "chars": 4285727,
+   "metadata": {
+    "source": "beam_1m",
+    "conv_id": "1"
+   },
+   "prot": 4096,
+   "env": {
+    "PYTHONHASHSEED": "0",
+    "PER_ARM": "1",
+    "BM25LC": "1",
+    "CEML": "2048",
+    "CEBS": "16",
+    "CE_SUBMAX": "0",
+    "DOCFLOOR": "0",
+    "DOCU": "0",
+    "NOREFILL": "0",
+    "XQUOTAS": "4,3,3",
+    "METHODS": "flr_4_3_3",
+    "LPROFILE": "0",
+    "PROFILE": "0",
+    "K1": "200",
+    "HDETECT": "0",
+    "CE_CACHE": "1",
+    "MR_ALPHA": "0",
+    "RENDER": "seg3",
+    "RGROUP_MAX": "-10",
+    "HBOND": "doc",
+    "HMARK": "off",
+    "RESUME": "1",
+    "ATOM": "blank",
+    "CHUNK": "512",
+    "MSCALE": "4096",
+    "TEMP": "0",
+    "U": "20",
+    "NO_EXTRACT": "1",
+    "EMB_MAXLEN": "2048",
+    "ROUTER_ONLY": "1",
+    "DUMP_CTX": "1",
+    "OAMODEL": "gpt-4.1-mini"
+   },
+   "legs": [
+    "lz_u20_beam1m",
+    "lz_u40_beam1m"
+   ],
+   "len_legs_tsv_lines": [
+    21,
+    22
+   ],
+   "parquet": {
+    "path": "beam/beam1m.parquet",
+    "row": 0
+   },
+   "raw": {
+    "path": "beam/1M.parquet",
+    "sha256": "41b5acbbb55a586b1305514ef9d9fb03365d9b3331b598a1c2dd7603d93ef533",
+    "conversation_id": "1",
+    "builder": "beam/build_parquet_1m.py",
+    "functions": [
+     "s1"
+    ]
+   }
+  },
+  "beam10m": {
+   "file": "beam_10M_conv0.txt",
+   "sha256": "67e6288d0082b8290d9d9c5447d7b5d7f42f7e76f1670748ae8577c67d0e4efc",
+   "bytes": 49805414,
+   "chars": 49805377,
+   "metadata": {
+    "source": "beam_10m",
+    "conv_id": "1"
+   },
+   "prot": 4096,
+   "env": {
+    "PYTHONHASHSEED": "0",
+    "PER_ARM": "1",
+    "BM25LC": "1",
+    "CEML": "2048",
+    "CEBS": "16",
+    "CE_SUBMAX": "0",
+    "DOCFLOOR": "0",
+    "DOCU": "0",
+    "NOREFILL": "0",
+    "XQUOTAS": "4,3,3",
+    "METHODS": "flr_4_3_3",
+    "LPROFILE": "0",
+    "PROFILE": "0",
+    "K1": "200",
+    "HDETECT": "0",
+    "CE_CACHE": "1",
+    "MR_ALPHA": "0",
+    "RENDER": "seg3",
+    "RGROUP_MAX": "-10",
+    "HBOND": "doc",
+    "HMARK": "off",
+    "RESUME": "1",
+    "ATOM": "blank",
+    "CHUNK": "512",
+    "MSCALE": "4096",
+    "TEMP": "0",
+    "U": "20",
+    "NO_EXTRACT": "1",
+    "EMB_MAXLEN": "2048",
+    "ROUTER_ONLY": "1",
+    "DUMP_CTX": "1",
+    "OAMODEL": "gpt-4.1-mini"
+   },
+   "legs": [
+    "lz_u20_beam10m",
+    "lz_u40_beam10m"
+   ],
+   "len_legs_tsv_lines": [
+    23,
+    24
+   ],
+   "parquet": {
+    "path": "beam/beam10m.parquet",
+    "row": 0
+   },
+   "raw": {
+    "path": "beam/10M.parquet",
+    "sha256": "9b0a7f7d2406f7feb1956004ba338a25294f89ba70fc1ef26bb0847719f581d4",
+    "conversation_id": "1",
+    "builder": "beam/build_parquet_10m.py",
+    "functions": [
+     "flat10m",
+     "s1"
+    ]
+   }
+  }
+ },
+ "tiktoken_cache": {
+  "9b5ad71b2ce5302211f9c61530b329a4922fc6a4": {
+   "sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7",
+   "bytes": 1681126,
+   "encoding": "cl100k_base (derive_config.py:33)"
+  },
+  "fb374d419588a4632f3f557e76b4b70aebbca790": {
+   "sha256": "446a9538cb6c348e3516120d7c08b09f57c36495e2acfffe59a5bf8b0cfb1a2d",
+   "bytes": 3613922,
+   "encoding": "o200k_base (lme_pf29.py:259, gpt-4o-mini)"
+  }
+ }
+}

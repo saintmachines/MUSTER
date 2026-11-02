@@ -1,0 +1,371 @@
+{
+ "schema": 1,
+ "what": "per BEAM conversation-0 store (100K, 1M, 10M): units, parents, the statistics output (derive), the graph counts and sha256 digests of the unit texts, the embedded texts and the parent ids, as the harness's own build path cuts them: lme_pf29.py imported with the reported leg's env (len_legs.json lz_u20_beam*, the u40 legs differ only in U), its load_row on the leg's parquet row 0, derive_config.derive on that row, and the graph lines of lme_pf29.py on load_row's output",
+ "hash_def": "sha256 over the store's one row; b'ROW' + row index (8 bytes LE) + text count (8 bytes LE), then per text in order its UTF-8 length (8 bytes LE) and its UTF-8 bytes (beambt_common.digest_update); parent ids are hashed as str()",
+ "order": [
+  "beam100k",
+  "beam1m",
+  "beam10m"
+ ],
+ "harness": {
+  "lme_pf29.py": "de0e46236327cbf76932f5083154bcbd4692087db14fe90282e34fe5b954fdfc",
+  "derive_config.py": "e36dfff462c822838bd7b616fc4a9a456742b17599fcad930c76270510076545",
+  "real_e1_conflict_killer.py": "ac3adfd8f794aad3205644d0ccc48b42139eedabb8d5c1a3c18914656cd22659",
+  "core2.py": "5a4dd537080315f0fb8cca672bf8152e2beccc0973a0e40a7d91eb5716a09614",
+  "cells_registry.py": "49bafacc562495f24274d5583e335a373128b8148e185054c31d07f0db0e49d4",
+  "len_legs.tsv": "14017322e56f97a684cfc8048f64021f899acae3302909ca91421f463e6a10cf",
+  "len_legs.json": "78c0df8fdc146e9082046346a144290fb559901da80f87f1d95458f800eb84ab"
+ },
+ "package_verbatim": {
+  "ship_lme.py": "8e3ab15ab6641eb3fe5c581da3737086da36a460d7e8770eb067344bcc6526c9",
+  "ship_derive.py": "9e10b5d3e036adcf99bba760122d76524c7b48bfecc10d0eae9afeb7c12d2985",
+  "cells_registry.py": "49bafacc562495f24274d5583e335a373128b8148e185054c31d07f0db0e49d4",
+  "MANIFEST_copies.json": "55b2dacb4fa73be5be4c21a123d469364e8f304fc0995d9e5a76b4aaa2966b35"
+ },
+ "inputs": {
+  "beam_100K_conv0.txt": {
+   "sha256": "ec3f102c6c7607911a6712fc338e3ad3d3af0dc2620488b8fa83ff7ff3f13bbb",
+   "bytes": 527409,
+   "chars": 527403
+  },
+  "beam_1M_conv0.txt": {
+   "sha256": "ff00c77aea7c65ab824ec1050dacae7d1ae46534f9fc42d7a47254570947e758",
+   "bytes": 4285727,
+   "chars": 4285727
+  },
+  "beam_10M_conv0.txt": {
+   "sha256": "67e6288d0082b8290d9d9c5447d7b5d7f42f7e76f1670748ae8577c67d0e4efc",
+   "bytes": 49805414,
+   "chars": 49805377
+  },
+  "stores.json": {
+   "sha256": "15542f9786c4ede8238715de23d46e0bf9c1701ba5302e948a1022b3e90c7f1a"
+  },
+  "tiktoken_cache/9b5ad71b2ce5302211f9c61530b329a4922fc6a4": {
+   "sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7",
+   "bytes": 1681126,
+   "encoding": "cl100k_base (derive_config.py:32)"
+  },
+  "tiktoken_cache/fb374d419588a4632f3f557e76b4b70aebbca790": {
+   "sha256": "446a9538cb6c348e3516120d7c08b09f57c36495e2acfffe59a5bf8b0cfb1a2d",
+   "bytes": 3613922,
+   "encoding": "o200k_base (lme_pf29.py:321, gpt-4o-mini)"
+  }
+ },
+ "model": {
+  "id": "BAAI/bge-m3",
+  "revision": "5617a9f61b028005a4858fdac845db406aefb181",
+  "files": {
+   "tokenizer_config.json": {
+    "bytes": 444,
+    "sha256": "a62b2b6784f990259fddef5f16388693a8043be4f69179e6a5257eeb3f9abac4",
+    "blob": "dc69ac559dcba2694012009aaa108c614541789a"
+   },
+   "special_tokens_map.json": {
+    "bytes": 964,
+    "sha256": "8c785abebea9ae3257b61681b4e6fd8365ceafde980c21970d001e834cf10835",
+    "blob": "b1879d702821e753ffe4245048eee415d54a9385"
+   },
+   "sentencepiece.bpe.model": {
+    "bytes": 5069051,
+    "sha256": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865",
+    "blob": "cfc8146abe2a0488e9e2a0c56de7952f7c11ab059eca145a0a727afce0db2865"
+   },
+   "config.json": {
+    "bytes": 687,
+    "sha256": "26159e7ad065073448460117eb24b7a4572f6f4e78eadff65dc0a11c052449fa",
+    "blob": "e6eda1c72da8f9dc30fdd9b69c73d35af3b7a7ad"
+   },
+   "config_sentence_transformers.json": {
+    "bytes": 123,
+    "sha256": "1eef72430e7194a1e59680e635aed81ffa083f05668dbc5bb1c56c04c0999c38",
+    "blob": "1fba91c78a6c8e17227058ab6d4d3acb5d8630a9"
+   },
+   "tokenizer.json": {
+    "bytes": 17098108,
+    "sha256": "21106b6d7dab2952c1d496fb21d5dc9db75c28ed361a05f5020bbba27810dd08",
+    "blob": "21106b6d7dab2952c1d496fb21d5dc9db75c28ed361a05f5020bbba27810dd08"
+   },
+   "README.md": {
+    "bytes": 15822,
+    "sha256": "0b81ccf9134e5874d620a86e6905062ea999e779c34eb1a7e65eaeb7fe00e450",
+    "blob": "e5a320176edd6ee1cfb256e68ee5ac0004de9447"
+   },
+   "sentence_bert_config.json": {
+    "bytes": 54,
+    "sha256": "eb9b44b13c0f52a3b3685c3b1cbdea1ba8b04bea123b98f61610048940776eb1",
+    "blob": "0140ba1eac83a3c9b857d64baba91969d988624b"
+   },
+   "pytorch_model.bin": {
+    "bytes": 2271145830,
+    "sha256": "b5e0ce3470abf5ef3831aa1bd5553b486803e83251590ab7ff35a117cf6aad38",
+    "blob": "b5e0ce3470abf5ef3831aa1bd5553b486803e83251590ab7ff35a117cf6aad38"
+   },
+   "modules.json": {
+    "bytes": 349,
+    "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf",
+    "blob": "952a9b81c0bfd99800fabf352f69c7ccd46c5e43"
+   },
+   "1_Pooling/config.json": {
+    "bytes": 191,
+    "sha256": "e54c164a07274f2eb45bb724f54a79d1efcc90c41573887cd9a29aeee0597352",
+    "blob": "9bd85925f325e25246d94c4918dc02ab98f2a1b7"
+   }
+  },
+  "note": "make_stores.py downloads exactly these files at this revision before the timed run"
+ },
+ "stores": {
+  "beam100k": {
+   "name": "BEAM 100K",
+   "file": "beam_100K_conv0.txt",
+   "rows": [
+    0
+   ],
+   "units": 247,
+   "parents": 29,
+   "texts_embedded": 247,
+   "chars_embedded": 526729,
+   "units_sha256": "ddbea61aa043a7ae9154a4bd458f831f9c252f75490307c0a23432ceb521f096",
+   "embedded_sha256": "ddbea61aa043a7ae9154a4bd458f831f9c252f75490307c0a23432ceb521f096",
+   "parents_sha256": "e5340a56850872124da8e51e628a357ec4f4190ce080affd3976810e464887c0",
+   "emb_maxlen": 2048,
+   "leg_env": {
+    "PYTHONHASHSEED": "0",
+    "PER_ARM": "1",
+    "BM25LC": "1",
+    "CEML": "2048",
+    "CEBS": "16",
+    "CE_SUBMAX": "0",
+    "DOCFLOOR": "0",
+    "DOCU": "0",
+    "NOREFILL": "0",
+    "XQUOTAS": "4,3,3",
+    "METHODS": "flr_4_3_3",
+    "LPROFILE": "0",
+    "PROFILE": "0",
+    "K1": "200",
+    "HDETECT": "0",
+    "CE_CACHE": "1",
+    "MR_ALPHA": "0",
+    "RENDER": "seg3",
+    "RGROUP_MAX": "-10",
+    "HBOND": "doc",
+    "HMARK": "off",
+    "RESUME": "1",
+    "ATOM": "blank",
+    "CHUNK": "512",
+    "MSCALE": "4096",
+    "TEMP": "0",
+    "U": "20",
+    "NO_EXTRACT": "1",
+    "EMB_MAXLEN": "2048",
+    "ROUTER_ONLY": "1",
+    "DUMP_CTX": "1",
+    "OAMODEL": "gpt-4.1-mini"
+   },
+   "derive": {
+    "cell": "beam100k",
+    "atom": "blank",
+    "chunk": 512,
+    "mscale": 4096,
+    "autostruct": 0,
+    "units": 228,
+    "parents": 28,
+    "atom_cov": 1.0,
+    "numbered": 0.0603
+   },
+   "graph": {
+    "entities": 1841,
+    "hubs": 74,
+    "slots": 247,
+    "structural": false,
+    "slot_edges": 0
+   },
+   "hdet_info": {
+    "rule": "mscale",
+    "npar": 29,
+    "units_per_par": 8.52,
+    "markers": 0,
+    "tried": [
+     [
+      "mscale_label",
+      4096
+     ]
+    ]
+   },
+   "legs": [
+    "lz_u20_beam100k",
+    "lz_u40_beam100k"
+   ],
+   "unit_tokens_o200k_max": 525
+  },
+  "beam1m": {
+   "name": "BEAM 1M",
+   "file": "beam_1M_conv0.txt",
+   "rows": [
+    0
+   ],
+   "units": 2031,
+   "parents": 241,
+   "texts_embedded": 2031,
+   "chars_embedded": 4280015,
+   "units_sha256": "5a52c292793474e54344ba8508ed588c9cb19e61b730d1a898e5ab38fdeb0302",
+   "embedded_sha256": "5a52c292793474e54344ba8508ed588c9cb19e61b730d1a898e5ab38fdeb0302",
+   "parents_sha256": "d0697d28bb127e688063a6e4fcc1ccaeb52187b688157976e7f00e727696556d",
+   "emb_maxlen": 2048,
+   "leg_env": {
+    "PYTHONHASHSEED": "0",
+    "PER_ARM": "1",
+    "BM25LC": "1",
+    "CEML": "2048",
+    "CEBS": "16",
+    "CE_SUBMAX": "0",
+    "DOCFLOOR": "0",
+    "DOCU": "0",
+    "NOREFILL": "0",
+    "XQUOTAS": "4,3,3",
+    "METHODS": "flr_4_3_3",
+    "LPROFILE": "0",
+    "PROFILE": "0",
+    "K1": "200",
+    "HDETECT": "0",
+    "CE_CACHE": "1",
+    "MR_ALPHA": "0",
+    "RENDER": "seg3",
+    "RGROUP_MAX": "-10",
+    "HBOND": "doc",
+    "HMARK": "off",
+    "RESUME": "1",
+    "ATOM": "blank",
+    "CHUNK": "512",
+    "MSCALE": "4096",
+    "TEMP": "0",
+    "U": "20",
+    "NO_EXTRACT": "1",
+    "EMB_MAXLEN": "2048",
+    "ROUTER_ONLY": "1",
+    "DUMP_CTX": "1",
+    "OAMODEL": "gpt-4.1-mini"
+   },
+   "derive": {
+    "cell": "beam1m",
+    "atom": "blank",
+    "chunk": 512,
+    "mscale": 4096,
+    "autostruct": 0,
+    "units": 1928,
+    "parents": 241,
+    "atom_cov": 0.9504,
+    "numbered": 0.08
+   },
+   "graph": {
+    "entities": 11307,
+    "hubs": 63,
+    "slots": 1980,
+    "structural": false,
+    "slot_edges": 0
+   },
+   "hdet_info": {
+    "rule": "mscale",
+    "npar": 241,
+    "units_per_par": 8.43,
+    "markers": 0,
+    "tried": [
+     [
+      "mscale_label",
+      4096
+     ]
+    ]
+   },
+   "legs": [
+    "lz_u20_beam1m",
+    "lz_u40_beam1m"
+   ],
+   "unit_tokens_o200k_max": 529
+  },
+  "beam10m": {
+   "name": "BEAM 10M",
+   "file": "beam_10M_conv0.txt",
+   "rows": [
+    0
+   ],
+   "units": 22746,
+   "parents": 2697,
+   "texts_embedded": 22746,
+   "chars_embedded": 49692999,
+   "units_sha256": "0399efa4c21724bddf0902945952f0aadf17860b6b64133ec47d6425bf49ff9c",
+   "embedded_sha256": "0399efa4c21724bddf0902945952f0aadf17860b6b64133ec47d6425bf49ff9c",
+   "parents_sha256": "bc41016958ce4b4e8084de351477df801a37a396135301acf328208fa7ac5377",
+   "emb_maxlen": 2048,
+   "leg_env": {
+    "PYTHONHASHSEED": "0",
+    "PER_ARM": "1",
+    "BM25LC": "1",
+    "CEML": "2048",
+    "CEBS": "16",
+    "CE_SUBMAX": "0",
+    "DOCFLOOR": "0",
+    "DOCU": "0",
+    "NOREFILL": "0",
+    "XQUOTAS": "4,3,3",
+    "METHODS": "flr_4_3_3",
+    "LPROFILE": "0",
+    "PROFILE": "0",
+    "K1": "200",
+    "HDETECT": "0",
+    "CE_CACHE": "1",
+    "MR_ALPHA": "0",
+    "RENDER": "seg3",
+    "RGROUP_MAX": "-10",
+    "HBOND": "doc",
+    "HMARK": "off",
+    "RESUME": "1",
+    "ATOM": "blank",
+    "CHUNK": "512",
+    "MSCALE": "4096",
+    "TEMP": "0",
+    "U": "20",
+    "NO_EXTRACT": "1",
+    "EMB_MAXLEN": "2048",
+    "ROUTER_ONLY": "1",
+    "DUMP_CTX": "1",
+    "OAMODEL": "gpt-4.1-mini"
+   },
+   "derive": {
+    "cell": "beam10m",
+    "atom": "blank",
+    "chunk": 512,
+    "mscale": 4096,
+    "autostruct": 0,
+    "units": 21556,
+    "parents": 2694,
+    "atom_cov": 0.9803,
+    "numbered": 0.1085
+   },
+   "graph": {
+    "entities": 82309,
+    "hubs": 53,
+    "slots": 22432,
+    "structural": false,
+    "slot_edges": 0
+   },
+   "hdet_info": {
+    "rule": "mscale",
+    "npar": 2697,
+    "units_per_par": 8.43,
+    "markers": 0,
+    "tried": [
+     [
+      "mscale_label",
+      4096
+     ]
+    ]
+   },
+   "legs": [
+    "lz_u20_beam10m",
+    "lz_u40_beam10m"
+   ],
+   "unit_tokens_o200k_max": 571
+  }
+ }
+}
