@@ -101,8 +101,12 @@ version of a slot replaces older ones.
   `muster.build(text, "beam.u20")`. Set sets are iterated as the harness iterated them, so it must run under
   `PYTHONHASHSEED=0` with the gate's package versions. Use this to check a paper number.
 
-Native mode departs from exact mode only where the harness's choice depended on hash or hardware order: canonical
+With the same plan, native mode departs from exact mode only where the harness's choice depended on hash or hardware order: canonical
 iteration over entity sets, and a stable sort for exact dense-score ties.
+
+Automatically derived non-numbered plans use the balanced method with immediate sibling candidates (`flrs`).
+The frozen paper presets retain each published run's policy, including `flr` where it was recorded; explicit or
+JSON-restored plans are not migrated. See [exact.md](exact.md) when choosing between automatic planning and replay.
 
 ## Verification
 

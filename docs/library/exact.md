@@ -5,7 +5,12 @@ mode**: every step runs the paper's harness statements in the harness's order, w
 iteration, float sums and tie orders are the published ones. It needs `PYTHONHASHSEED=0` at interpreter start (the
 library refuses otherwise) and is verified with the package versions in `muster/compat/env.py` on CPython 3.12.13.
 
-**Native mode** (the default for applications) is the same method with no hash seed and no pinned environment. It
+Without an explicit plan, non-numbered stores use balanced floors plus immediate sibling candidates (`flrs`).
+Published presets keep the policy of the recorded run: for example, `beam.u20` and `locomo.u10` use `flr`.
+A plan supplied directly or restored from JSON is used unchanged. A Store opened without a plan derives each new
+head from its records; pass an explicit plan to retain a previous policy.
+
+**Native mode** (the default for applications), for the same plan, needs no hash seed and no pinned environment. It
 departs from exact mode only where the harness's choice depended on hash or hardware order or where the harness stops:
 
 | # | Native mode | Harness | Can it change a published context? |

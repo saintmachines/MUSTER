@@ -67,6 +67,7 @@ def test_openai_sdk_tool_invocation_and_idempotent_add(store):
     assert first == {"version": 1, "duplicate": False, "n_records": 1}
     assert again == {"version": 1, "duplicate": True, "n_records": 0}
     assert store.version == 1
+    assert store.head().plan.policy == "flrs"
     assert output == store.context("Where is the spare cable?", U=5).text
     assert "blue cabinet" in output
     assert [t.name for t in openai_tools(store, include_remember=False)] == ["muster_recall"]

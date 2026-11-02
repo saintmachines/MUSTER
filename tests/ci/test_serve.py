@@ -37,7 +37,7 @@ def test_http_api(tmp_path):
         s = _post(base + "/v1/search", {"query": "bicycle", "units": 1})
         assert len(s["ids"]) == 1
         info = json.loads(urllib.request.urlopen(base + "/v1/info").read())
-        assert info["units"] >= 1 and info["mode"] == "native"
+        assert info["units"] >= 1 and info["mode"] == "native" and info["policy"] == "flrs"
     finally:
         srv.shutdown()
         st.close()

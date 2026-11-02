@@ -51,7 +51,7 @@ def _plan(branch, chunk, units_est, st: Stats, P, trace):
     trace.append("%d units estimated at %d tokens -> %s" % (
         units_est, chunk, ("parents of %d units (%d tokens), %d of them" % (m, ms, npar)) if ms
         else "no parent layer (fewer than %d parents at 2 units each)" % MIN_PARENTS))
-    return Plan(branch=branch, atom=atom, chunk=chunk, mscale=ms, U=U_DEFAULT[branch], policy="flr", render="r4",
+    return Plan(branch=branch, atom=atom, chunk=chunk, mscale=ms, U=U_DEFAULT[branch], policy="flrs", render="r4",
                 reference_chunk=P, stats=st.to_dict(), trace=tuple(trace))
 
 
