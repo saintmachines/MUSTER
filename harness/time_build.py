@@ -1,7 +1,16 @@
-"""MUSTER build-time benchmark on a clean machine (Colab RTX PRO 6000 or an embedding API,
-not a shared machine). MUSTER's write-time work is: read the bytes (two statistics), cut record units (ATOM=blank,
-<=512 cl100k tokens, as BEAM's derived configuration), ONE dense embedding pass over the units (BAAI/bge-m3, max_seq 448,
-batch 32, normalized - lme_pf29.py:2253,2388), and a BM25 index (rank_bm25.BM25Okapi). No generative model is called.
+"""Legacy four-stage build-time probe, retained for the historical measurement and control.
+
+This probe uses cl100k_base, units of up to 512 tokens, bge-m3 at max_seq 448,
+batch 32, and BM25 over lowercased space-split words. It excludes the parent graph.
+Its four stages are statistics, units, one embedding pass, and BM25.
+
+The paper's current build-time measurements use o200k_base, max_seq 2048,
+and include the parent graph. See ../gate/build_time_rtx.md for the measured
+RTX PRO 6000 fp16 runs and their settings. The driver for those exact runs is
+not included in this directory; running this legacy probe measures a different
+configuration. No generative model is called.
+
+Run on a clean machine (Colab RTX PRO 6000 or an embedding API).
 Usage:
   GPU (Colab):  pip install sentence-transformers rank_bm25 tiktoken ; python time_build.py --device cuda
   API:          OPENAI_API_KEY=... python time_build.py --api text-embedding-3-small --workers 8

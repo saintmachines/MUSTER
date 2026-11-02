@@ -1,9 +1,9 @@
 # harness/ — the experiment harness behind the paper's numbers
 
-These files are the harness copied verbatim from the machine that produced every number in the paper
-(sha256 of each file in `../MANIFEST.sha256`). They are **research code**: env-switch driven, one process per
+These files preserve the paper's experiment harness, alongside historical utilities identified in the table below
+(source hashes in `../MANIFEST.sha256`). They are **research code**: env-switch driven, one process per
 benchmark leg, with a spend ledger and a cost cap on every paid call. The cleaned library is the separate
-`muster/` package (`../docs/library/`); this directory exists so that every table cell can be traced to a command.
+`muster/` package (`../docs/library/`); this directory documents the experiment commands and their provenance.
 
 | File | Role |
 |---|---|
@@ -21,7 +21,7 @@ benchmark leg, with a spend ledger and a cost cap on every paid call. The cleane
 | `len_legs.json`, `len_legs.tsv` | the exact environment string of every published retrieval leg (31 rows) and the reader system message; the gate reads the leg it replays from here. The rows are retrieval legs only: for EventQA, DetectiveQA and InfBench-Sum (`lz_evq`, `lz_det`, `lz_summ`) and for the BEAM legs, the paper's contexts are these legs' bundles re-rendered with `render_rule.py R4` (one block per parent, stored order; ATOM, CHUNK and MSCALE of the leg). The recipe for every MemoryAgentBench cell is in `../gate/rescore_mab.md`, and LoCoMo's chain in `../gate/stage0_tier0.md` and `../gate/stage0d_render.md` |
 | `locomo_read.py`, `locomo_rule.py`, `locomo_judge.py`, `locomo_score_judge.py`, `locomo_score1.py`, `locomo_score3.py`, `locomo_f1.py`, `locomo_fmt_check.py` | LoCoMo: rule, read legs under the two answer prompts, judge, scoring (single run, mean of three runs, token F1), answer-format check |
 | `budget_guard.py`, `ledger_profile.py` | the spend ledger and cap (a resumed leg resumes its spend, not its budget) |
-| `time_build.py` | a quick four-stage timing on one GPU: statistics, record units, one embedding pass at max_seq 448, BM25; no generative call. The paper's build times and their settings are in `../gate/build_time_rtx.md` |
+| `time_build.py` | legacy four-stage probe: cl100k units, embedding at max_seq 448, BM25, no parent graph. This measures the historical configuration. The current paper's measured times use different settings, documented in [build_time_rtx.md](../gate/build_time_rtx.md); their exact timing driver is not included here. No generative call. |
 | `honcho_beam_cloud.py`, `mem0_*.py`, `mem0store_parquet.py` | the competitor runs on BEAM and the budget-matched cuts of their stores |
 | `src/real_e1_reader.py`, `src/mirror_store_swap.py`, `src/metrics.py`, `src/stats.py`, `rerender_nomerge.py`, `mab_scorers.py` | modules the files above import at load time |
 | `beam_ser.py`, `beam_merge.py`, `beam/build_parquet.py`, `beam/build_parquet_1m.py`, `beam/build_parquet_10m.py` | data preparation: BEAM conversations to the parquet layout the harness reads (serialization S1), shard merge |
