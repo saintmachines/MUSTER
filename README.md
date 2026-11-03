@@ -8,7 +8,8 @@
 
 <p align="center">
   <a href="https://github.com/saintmachines/MUSTER">GitHub</a> ·
-  <a href="paper/">Paper</a> ·
+  <a href="https://saintmachines.github.io/MUSTER/">Project page</a> ·
+  <a href="paper/MUSTER.pdf">Paper</a> ·
   <a href="#results">Results</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#quick-start">Quick start</a> ·
@@ -229,6 +230,9 @@ Reading is cheap too: per 1,000 questions, MUSTER's contexts cost $2.80 at list 
 
 ## Reproduce
 
+Re-scoring uses a separate artifact bundle containing the per-question BEAM answers and judgments and the Honcho
+context logs. That bundle is being prepared for release; those result files are not included in this source tree.
+
 ```bash
 muster verify cuts --data data_root        # the rule's cuts against the published runs, store by store
 muster verify contexts --data data_root    # the library's contexts against the published ones, question by question
@@ -363,7 +367,7 @@ the store once with bge-m3; a CPU-only configuration is part of the reproduction
 ## Paper, status, license
 
 The paper is *MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure*; the PDF is in
-[`paper/`](paper/). To cite it, use [CITATION.cff](CITATION.cff).
+[`paper/MUSTER.pdf`](paper/MUSTER.pdf). To cite it, use [CITATION.cff](CITATION.cff).
 
 Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Benchmarks (MemoryAgentBench, BEAM, LoCoMo) and the systems we
 compare against keep their own licenses and are fetched, never redistributed, from their sources.

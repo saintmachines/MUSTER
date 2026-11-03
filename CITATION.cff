@@ -3,6 +3,7 @@ message: "If you use MUSTER's configuration rule, implementation, or released ev
 type: software
 title: "MUSTER"
 repository-code: "https://github.com/saintmachines/MUSTER"
+url: "https://saintmachines.github.io/MUSTER/"
 license: Apache-2.0
 authors:
   - family-names: "Lim"

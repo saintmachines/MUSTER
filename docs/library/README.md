@@ -6,13 +6,15 @@ the paper's runs are reproduced by it, question by question (see [Verification](
 
 ## Install
 
+Run these commands in the repository folder. The PyPI distribution is not published yet.
+
 ```bash
-pip install "muster-memory[models]"          # build, add and search (bge-m3 and bge-reranker-v2-m3, run locally)
-pip install "muster-memory[models,mcp]"      # also the MCP server
+pip install ".[models]"                    # build, add and search (bge-m3 and bge-reranker-v2-m3, run locally)
+pip install ".[models,mcp]"                # also the MCP server
 muster fetch                                  # optional: tokenizer and sentence-splitter files for offline use
 ```
 
-`pip install muster-memory` alone gives `muster derive` and `muster.derive()`, which need only `tiktoken`. The
+`pip install .` alone gives `muster derive` and `muster.derive()`, which need only `tiktoken`. The
 package imports as `muster`; `pip install muster` (without `-memory`) installs an unrelated 2017 project.
 Until the first release, install from the repository folder: `pip install ".[models,mcp]"`.
 

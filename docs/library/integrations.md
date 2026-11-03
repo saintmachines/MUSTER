@@ -6,11 +6,11 @@ MUSTER supplies local `remember` and `recall` tools over an open `Store`.
 The application chooses its models, opens and closes the Store, and decides which user or robot owns it.
 Bind a separate Store for each identity that needs separate memory.
 
-Importing `muster.integrations` loads no SDK. Install only the framework you use:
+Importing `muster.integrations` loads no SDK. From the repository folder, install only the framework you use:
 
 ```sh
-pip install 'muster-memory[models,agents]'
-# Or: muster-memory[models,langchain], muster-memory[models,langgraph]
+pip install '.[models,agents]'
+# Or: .[models,langchain], .[models,langgraph]
 ```
 
 For a model-free local example use `Models.fake()` as below. Real retrieval uses the models

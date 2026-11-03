@@ -24,4 +24,7 @@ embedded texts and parent ids had to equal the values the harness computes for t
 
 The driver and the steps to run it are in [`harness/buildtime_rtx/`](../harness/buildtime_rtx/README.md).
 
+A run of that driver on the same card on 2026-11-02, three repeats under the same checks, gave 0.875, 6.781 and 76.461 s for
+the three stores (76.138, 76.627 and 76.617 s at 10M).
+
 No generative model is called.
