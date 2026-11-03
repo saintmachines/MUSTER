@@ -284,6 +284,9 @@ tr.us2>th[scope="row"]{background:var(--tint2-solid)}
 .code pre code{font-size:inherit}
 
 /* figures and details */
+.framing-figure .plate{background:#fff}
+.framing-figure img{display:block}
+.framing-figure figcaption{max-width:72ch}
 figure{margin:var(--s3) 0}
 .plate{background:var(--plate);border:1px solid var(--rule);border-radius:8px;padding:12px}
 .plate img{width:100%;height:auto}
@@ -452,7 +455,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
     <div class="hero-grid">
       <div class="hero-main">
         <h1 id="title">MUSTER</h1>
-        <p class="def"><span class="nw">LLM-written</span> memory takes hours. MUSTER detects each store, picks a strategy in seconds, and matches or beats it.</p>
+        <p class="def">Detect before you construct. MUSTER reads the structure already present in a text store and configures retrieval and context assembly to fit it.</p>
         <p class="measured">57.5 on MemoryAgentBench at its own <span class="nw">GPT-4o-mini</span> reader, first among the retrieval and memory systems the benchmark reports · 93.46 on LoCoMo · 64.3 on <span class="nw">BEAM-10M</span> · a <span class="nw">10M-token</span> memory built in 77&nbsp;seconds with 0&nbsp;LLM&nbsp;calls, where Mem0 makes 10,429&nbsp;calls over 13&nbsp;hours.</p>
         <dl class="tiles">
           <div><dt>MemoryAgentBench overall, <span class="nw">GPT-4o-mini</span> reader</dt><dd class="num">57.5</dd><dd class="src"><a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_mab.py" aria-label="gate/rescore_mab.py">rescore_mab.py</a></dd></div>
@@ -618,6 +621,12 @@ footer .maker svg{display:block;max-width:100%;height:auto}
 <section id="cost" aria-labelledby="cost-h">
   <div class="wrap">
     <h2 id="cost-h">What it costs to build the memory</h2>
+    <figure class="framing-figure" id="framing-efficiency" aria-labelledby="framing-efficiency-title" data-reveal>
+      <p class="tcap plain" id="framing-efficiency-title">BEAM-10M accuracy and generative construction cost</p>
+      <div class="plate"><a href="assets/framing/muster_accuracy_build_calls.svg" aria-label="Open the full-size BEAM accuracy versus generative build calls figure"><img src="assets/framing/muster_accuracy_build_calls.svg" width="1360" height="940" loading="lazy" decoding="async" alt="BEAM-10M with GLM-5.3-Flash: MUSTER scores 64.30 with zero generative build calls; True Memory also uses zero. The plot retains each method's reported settings, shows Honcho's estimated call range, and separately notes EverMemOS's whole-ten-conversation count."></a></div>
+      <figcaption>One reader, GLM-5.3-Flash, and BEAM's official GPT-4.1-mini rubric judge; contexts and memory writers retain the paper's reported settings and are not all matched. Zero means generative build calls only: embedding, reranking and answering still require models. True Memory also uses zero. Honcho's interval is estimated. EverMemOS's 26,080 calls cover all ten conversations in the appendix, so a per-history point is not plotted. <a href="assets/framing/muster_accuracy_build_calls.svg">Full-size SVG</a> · <a href="assets/framing/muster_accuracy_build_calls.pdf">Figure PDF</a> · <a href="data/framing_figures.json">Settings, writers and source scope</a>.</figcaption>
+    </figure>
+
     <p class="tcap plain" id="tcap-2">The cost of making memory for one <span class="nw">10M-token</span> conversation</p>
     <div class="tbl wide cost" data-reveal tabindex="0" role="region" aria-labelledby="tcap-2">
       <table aria-labelledby="tcap-2">
@@ -652,6 +661,12 @@ footer .maker svg{display:block;max-width:100%;height:auto}
 <section id="how" aria-labelledby="how-h">
   <div class="wrap">
     <h2 id="how-h">How it works</h2>
+    <figure class="framing-figure" id="framing-method" aria-labelledby="framing-method-title" data-reveal>
+      <p class="tcap plain" id="framing-method-title">Detect before you construct: from source structure to retrieval and context</p>
+      <div class="plate"><a href="assets/framing/muster_detect_configure.svg" aria-label="Open the full-size MUSTER structure detection and retrieval diagram"><img src="assets/framing/muster_detect_configure.svg" width="1440" height="1080" loading="lazy" decoding="async" alt="Stored text feeds serial and record-share statistics, which configure units, parents, order and retrieval policy, then retrieval and context assembly. MemoryAgentBench ablation: 50.3 without detection, 56.0 with detected representation, 57.5 with its policy gate."></a></div>
+      <figcaption>The source structure chooses how evidence is retrieved and assembled. In the paper's MemoryAgentBench ablation, detected units, parents and order add 5.7 points; the policy gate adds a further 1.5. Neighbour candidates and parent containers apply where configured; newest-per-slot resolution requires valid order and slot checks. LongMemEval keeps its native rounds and sessions. <a href="assets/framing/muster_detect_configure.svg">Full-size SVG</a> · <a href="assets/framing/muster_detect_configure.pdf">Figure PDF</a> · <a href="data/framing_figures.json">Figure data and scope</a>.</figcaption>
+    </figure>
+
     <figure data-reveal>
       <div class="plate">
         <picture>

@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "about": "Independent MUSTER figures made from the paper's own reported results and method; generative build calls only. No new experiment results.",
+  "sources": {
+    "paper": {
+      "path": "paper/MUSTER.pdf",
+      "sha256": "e9b607387a38ed0366039077040317083f6be54669927113bb7e24e3642a68c6"
+    },
+    "numeric_data": {
+      "path": "docs/data/headline.json",
+      "sha256": "0f65c1d3af14bc13c3e9ec61e8d9e912c31a939a4bf7c4f7d5db270c1459baa3"
+    }
+  },
+  "figures": {
+    "method": {
+      "svg": "assets/framing/muster_detect_configure.svg",
+      "pdf": "assets/framing/muster_detect_configure.pdf",
+      "paper_sources": [
+        "Section 3",
+        "Algorithm 1",
+        "Table 2"
+      ],
+      "ablation": {
+        "benchmark_chunks": 50.3,
+        "detected_representation_balanced_policy": 56.0,
+        "detected_representation_and_policy_gate": 57.5,
+        "representation_delta": 5.7,
+        "policy_gate_delta": 1.5
+      },
+      "scope": "Neighbour candidates and parent containers only where configured; supersession only when order and slot checks pass. Serial recognizes integer-dot records; LongMemEval keeps native rounds/sessions. No new native-order feature is depicted."
+    },
+    "efficiency": {
+      "svg": "assets/framing/muster_accuracy_build_calls.svg",
+      "pdf": "assets/framing/muster_accuracy_build_calls.pdf",
+      "paper_sources": [
+        "Table 7",
+        "BEAM score table",
+        "Build cost at every scale / build-cost table"
+      ],
+      "points": [
+        {
+          "system": "MUSTER",
+          "beam_10m_glm_score": 64.3,
+          "generative_build_calls": 0,
+          "writer": "none",
+          "calls_status": "reported",
+          "call_scope": "one 10M-conversation as tab:beamcost reports",
+          "reader_context_at_1m_reported_in_tab_beamscale": "19.5K"
+        },
+        {
+          "system": "True Memory",
+          "beam_10m_glm_score": 62.45,
+          "generative_build_calls": 0,
+          "writer": "none",
+          "calls_status": "reported",
+          "call_scope": "one 10M-conversation as tab:beamcost reports",
+          "reader_context_at_1m_reported_in_tab_beamscale": "19.5K"
+        },
+        {
+          "system": "Mem0",
+          "beam_10m_glm_score": 63.95,
+          "generative_build_calls": 10429,
+          "writer": "GPT-4o-mini",
+          "calls_status": "reported",
+          "call_scope": "one 10M-conversation as tab:beamcost reports",
+          "reader_context_at_1m_reported_in_tab_beamscale": "19.5K"
+        },
+        {
+          "system": "HippoRAG-v2",
+          "beam_10m_glm_score": 59.95,
+          "generative_build_calls": 20870,
+          "writer": "GPT-OSS-120B",
+          "calls_status": "reported",
+          "call_scope": "one 10M-conversation as tab:beamcost reports",
+          "reader_context_at_1m_reported_in_tab_beamscale": "19.5K"
+        },
+        {
+          "system": "Hindsight",
+          "beam_10m_glm_score": 52.19,
+          "generative_build_calls": 16425,
+          "writer": "GPT-OSS-120B",
+          "calls_status": "reported",
+          "call_scope": "one 10M-conversation as tab:beamcost reports",
+          "reader_context_at_1m_reported_in_tab_beamscale": "8.4K"
+        },
+        {
+          "system": "Honcho",
+          "beam_10m_glm_score": 48.89,
+          "generative_build_calls": [
+            4441,
+            11700
+          ],
+          "writer": "Honcho",
+          "calls_status": "estimated range",
+          "call_scope": "one 10M-conversation as tab:beamcost reports",
+          "reader_context_at_1m_reported_in_tab_beamscale": "20.7K"
+        }
+      ],
+      "scope": "BEAM-10M, GLM-5.3-Flash reader and official GPT-4.1-mini rubric judge. Each method retains its reported writer/context; not all contexts are matched. Context values supplied with points are those the BEAM table explicitly reports at 1M, not measured 10M input lengths. Zero calls excludes embedding, reranking and answer generation. Honcho calls are estimated.",
+      "separate_scope_note": {
+        "system": "EverMemOS",
+        "reported_calls": 26080,
+        "scope": "all ten 10M conversations, according to the appendix build-cost prose",
+        "per_history_point": "not plotted; not silently divided by ten"
+      },
+      "muster_build_time": {
+        "seconds": 76.8,
+        "display": "77 s",
+        "scope": "paper measurement of conversation 0; mean of three runs; RTX PRO 6000; fp16; model load and warm-up excluded"
+      }
+    }
+  },
+  "assets": {
+    "muster_accuracy_build_calls.pdf": {
+      "sha256": "4ea923832a2e07e3eba105720c8ba045248070da1df1b56a2da9f66d46d301d5",
+      "bytes": 27013
+    },
+    "muster_accuracy_build_calls.svg": {
+      "sha256": "62f951760a42a00b8f30e276983dda17dd1189884bd93a40623c64b2341bdc47",
+      "bytes": 15511
+    },
+    "muster_detect_configure.pdf": {
+      "sha256": "d6d0d7eb281d614e52d887087140d8c80c7c3d499f5d71270adb70112b73a024",
+      "bytes": 31918
+    },
+    "muster_detect_configure.svg": {
+      "sha256": "50ca11ff05355310099712e225e9f9eb69f805ffded99fbb62370822573e0b1d",
+      "bytes": 17784
+    }
+  }
+}

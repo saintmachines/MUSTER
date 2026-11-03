@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1036.8pt" height="777.6pt" viewBox="0 0 1036.8 777.6" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>MUSTER independent figure candidate; matplotlib</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 777.6 
+L 1036.8 777.6 
+L 1036.8 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 51.84 156.96 
+L 282.96 156.96 
+Q 291.6 156.96 291.6 165.6 
+L 291.6 311.04 
+Q 291.6 319.68 282.96 319.68 
+L 51.84 319.68 
+Q 43.2 319.68 43.2 311.04 
+L 43.2 165.6 
+Q 43.2 156.96 51.84 156.96 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #ffffff; stroke: #dce1ea; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 300.081665 236.16 
+Q 320.761823 236.16 339.653127 236.16 
+" clip-path="url(#p5ccda0800c)" style="fill: none; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 333.653127 233.16 
+L 339.653127 236.16 
+L 333.653127 239.16 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #7d879b; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 368.64 156.96 
+L 610.56 156.96 
+Q 619.2 156.96 619.2 165.6 
+L 619.2 217.44 
+Q 619.2 226.08 610.56 226.08 
+L 368.64 226.08 
+Q 360 226.08 360 217.44 
+L 360 165.6 
+Q 360 156.96 368.64 156.96 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #eef1ff; stroke: #243eb6; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 368.64 239.04 
+L 610.56 239.04 
+Q 619.2 239.04 619.2 247.68 
+L 619.2 321.12 
+Q 619.2 329.76 610.56 329.76 
+L 368.64 329.76 
+Q 360 329.76 360 321.12 
+L 360 247.68 
+Q 360 239.04 368.64 239.04 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #eef1ff; stroke: #243eb6; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 628.402456 236.16 
+Q 648.362156 236.16 666.533001 236.16 
+" clip-path="url(#p5ccda0800c)" style="fill: none; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 660.533001 233.16 
+L 666.533001 236.16 
+L 660.533001 239.16 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #7d879b; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 696.24 156.96 
+L 984.96 156.96 
+Q 993.6 156.96 993.6 165.6 
+L 993.6 311.04 
+Q 993.6 319.68 984.96 319.68 
+L 696.24 319.68 
+Q 687.6 319.68 687.6 311.04 
+L 687.6 165.6 
+Q 687.6 156.96 696.24 156.96 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #ffffff; stroke: #dce1ea; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 51.84 375.84 
+L 318.96 375.84 
+Q 327.6 375.84 327.6 384.48 
+L 327.6 458.64 
+Q 327.6 467.28 318.96 467.28 
+L 51.84 467.28 
+Q 43.2 467.28 43.2 458.64 
+L 43.2 384.48 
+Q 43.2 375.84 51.84 375.84 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #ffffff; stroke: #dce1ea; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 368.64 375.84 
+L 660.96 375.84 
+Q 669.6 375.84 669.6 384.48 
+L 669.6 458.64 
+Q 669.6 467.28 660.96 467.28 
+L 368.64 467.28 
+Q 360 467.28 360 458.64 
+L 360 384.48 
+Q 360 375.84 368.64 375.84 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #ffffff; stroke: #dce1ea; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 710.64 375.84 
+L 984.96 375.84 
+Q 993.6 375.84 993.6 384.48 
+L 993.6 458.64 
+Q 993.6 467.28 984.96 467.28 
+L 710.64 467.28 
+Q 702 467.28 702 458.64 
+L 702 384.48 
+Q 702 375.84 710.64 375.84 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #eef1ff; stroke: #243eb6; stroke-width: 1.4; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 328.158369 420.48 
+Q 340.197882 420.48 350.44854 420.48 
+" clip-path="url(#p5ccda0800c)" style="fill: none; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 344.44854 417.48 
+L 350.44854 420.48 
+L 344.44854 423.48 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #7d879b; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_12">
+    <path d="M 674.47916 420.48 
+Q 684.719303 420.48 693.170592 420.48 
+" clip-path="url(#p5ccda0800c)" style="fill: none; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 687.170592 417.48 
+L 693.170592 420.48 
+L 687.170592 423.48 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #7d879b; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_13">
+    <path d="M 185.04 367.037227 
+Q 185.04 369.717377 185.04 370.608673 
+" clip-path="url(#p5ccda0800c)" style="fill: none; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+    <path d="M 188.04 364.608673 
+L 185.04 370.608673 
+L 182.04 364.608673 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #7d879b; stroke: #7d879b; stroke-width: 1.6; stroke-linecap: round"/>
+   </g>
+   <g id="patch_14">
+    <path d="M 51.84 565.92 
+L 340.56 565.92 
+Q 349.2 565.92 349.2 574.56 
+L 349.2 665.28 
+Q 349.2 673.92 340.56 673.92 
+L 51.84 673.92 
+Q 43.2 673.92 43.2 665.28 
+L 43.2 574.56 
+Q 43.2 565.92 51.84 565.92 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #f7f8fb; stroke: #dce1ea; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_15">
+    <path d="M 379.44 565.92 
+L 668.16 565.92 
+Q 676.8 565.92 676.8 574.56 
+L 676.8 665.28 
+Q 676.8 673.92 668.16 673.92 
+L 379.44 673.92 
+Q 370.8 673.92 370.8 665.28 
+L 370.8 574.56 
+Q 370.8 565.92 379.44 565.92 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #f7f8fb; stroke: #dce1ea; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_16">
+    <path d="M 707.04 565.92 
+L 995.76 565.92 
+Q 1004.4 565.92 1004.4 574.56 
+L 1004.4 665.28 
+Q 1004.4 673.92 995.76 673.92 
+L 707.04 673.92 
+Q 698.4 673.92 698.4 665.28 
+L 698.4 574.56 
+Q 698.4 565.92 707.04 565.92 
+z
+" clip-path="url(#p5ccda0800c)" style="fill: #eef1ff; stroke: #dce1ea; stroke-linejoin: miter"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 840.24 326.88 
+L 840.24 354.96 
+L 185.04 354.96 
+L 185.04 370.08 
+" clip-path="url(#p5ccda0800c)" style="fill: none; stroke: #7d879b; stroke-width: 1.5; stroke-linecap: square"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #243eb6" x="43.2" y="36.597656" transform="rotate(-0 43.2 36.597656)">MUSTER</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 30px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1b1d22" x="43.2" y="76.795313" transform="rotate(-0 43.2 76.795313)">Detect before you construct.</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 17px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="43.2" y="104.357344" transform="rotate(-0 43.2 104.357344)">Use source structure to configure retrieval and context assembly.</text>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="43.2" y="141.598125" transform="rotate(-0 43.2 141.598125)">01  USE THE SOURCE</text>
+   </g>
+   <g id="text_5">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="360" y="141.598125" transform="rotate(-0 360 141.598125)">02  DETECT</text>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="687.6" y="141.598125" transform="rotate(-0 687.6 141.598125)">03  CONFIGURE</text>
+   </g>
+   <g id="text_7">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1b1d22" x="56.16" y="180.6375" transform="rotate(-0 56.16 180.6375)">Stored text as evidence</text>
+   </g>
+   <g id="text_8">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 201.318281)">1. Alice's employer is Zynga</text>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 216.561273)">2. Alice's employer is Google</text>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 231.804266)"/>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 247.047258)">Blank-line records / messages</text>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 262.29025)">Continuous prose</text>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 277.533242)"/>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 292.776234)">No generative rewrite</text>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #243eb6" x="372.96" y="180.6375" transform="rotate(-0 372.96 180.6375)">serial</text>
+   </g>
+   <g id="text_10">
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(372.96 201.698203)">Integer-dot share of non-empty lines.</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(372.96 217.634059)">≥0.80 → numbered branch.</text>
+   </g>
+   <g id="text_11">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #243eb6" x="372.96" y="262.7175" transform="rotate(-0 372.96 262.7175)">recshare</text>
+   </g>
+   <g id="text_12">
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(372.96 283.778203)">Token-weighted bounded-record share.</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(372.96 299.714059)">≥0.90: records; otherwise: prose.</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(372.96 315.649914)">Protocol sets the reference scale.</text>
+   </g>
+   <g id="text_13">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1b1d22" x="700.56" y="180.6375" transform="rotate(-0 700.56 180.6375)">Choose a retrieval plan</text>
+   </g>
+   <g id="text_14">
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(700.56 202.837969)">Unit: record or text chunk</text>
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(700.56 220.852414)">Parent: slot or container</text>
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(700.56 238.866859)">Order: serial, only where derived</text>
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(700.56 256.881305)">Policy: parent-priority or balanced floors</text>
+   </g>
+   <g id="text_15">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="360" y="349.638281" transform="rotate(-0 360 349.638281)">No query, gold label or LLM in this decision.</text>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1b1d22" x="56.16" y="399.5175" transform="rotate(-0 56.16 399.5175)">04  RETRIEVE + RERANK</text>
+   </g>
+   <g id="text_17">
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 420.578203)">Dense + BM25 + parent graph</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 436.514059)">One shared cross-encoder score</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 452.449914)">Neighbour candidates only where configured</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1b1d22" x="372.96" y="399.5175" transform="rotate(-0 372.96 399.5175)">05  ASSEMBLE THE CONTEXT</text>
+   </g>
+   <g id="text_19">
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(372.96 420.578203)">Stored order; parent containers where configured.</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(372.96 436.514059)">Keep newest only when order/slot checks pass.</text>
+    <text style="font-size: 11.5px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(372.96 452.449914)">Keep the persistent store unchanged.</text>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #243eb6" x="714.96" y="399.5175" transform="rotate(-0 714.96 399.5175)">06  ANSWER FROM EVIDENCE</text>
+   </g>
+   <g id="text_21">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(714.96 420.958125)">The reader uses the selected evidence.</text>
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(714.96 437.586844)">Also use it on model-written memories,</text>
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(714.96 454.215563)">without rebuilding the persistent store.</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="43.2" y="518.158125" transform="rotate(-0 43.2 518.158125)">THE ABLATION: STRUCTURE CHANGES THE RESULT</text>
+   </g>
+   <g id="text_23">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="43.2" y="541.198125" transform="rotate(-0 43.2 541.198125)">MemoryAgentBench Overall · GPT-4o-mini reader · reported per-question budget</text>
+   </g>
+   <g id="text_24">
+    <text style="font-weight: 700; font-size: 34px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1b1d22" x="56.16" y="603.274688" transform="rotate(-0 56.16 603.274688)">50.3</text>
+   </g>
+   <g id="text_25">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 631.198125)">Hybrid retrieval + assembly</text>
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(56.16 646.915031)">benchmark chunks, detection off</text>
+   </g>
+   <g id="text_26">
+    <text style="font-size: 18px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="350.64" y="606.237188" transform="rotate(-0 350.64 606.237188)">→</text>
+   </g>
+   <g id="text_27">
+    <text style="font-weight: 700; font-size: 34px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #1b1d22" x="383.76" y="603.274688" transform="rotate(-0 383.76 603.274688)">56.0</text>
+   </g>
+   <g id="text_28">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(383.76 631.198125)">+ detected units, parents, order</text>
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(383.76 646.915031)">balanced floors held fixed</text>
+   </g>
+   <g id="text_29">
+    <text style="font-size: 18px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="678.24" y="606.237188" transform="rotate(-0 678.24 606.237188)">→</text>
+   </g>
+   <g id="text_30">
+    <text style="font-weight: 700; font-size: 34px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #243eb6" x="711.36" y="603.274688" transform="rotate(-0 711.36 603.274688)">57.5</text>
+   </g>
+   <g id="text_31">
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(711.36 631.198125)">+ structure-dependent policy gate</text>
+    <text style="font-size: 12px; font-family: 'DejaVu Sans'; fill: #515867" transform="translate(711.36 646.915031)">MUSTER</text>
+   </g>
+   <g id="text_32">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #243eb6" x="43.2" y="709.037813" transform="rotate(-0 43.2 709.037813)">+5.7 points from detected representation; +1.5 further points from the policy gate.</text>
+   </g>
+   <g id="text_33">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="43.2" y="734.118281" transform="rotate(-0 43.2 734.118281)">Scope: the numbered branch recognizes integer-dot records; arbitrary dates or JSON IDs do not activate it.</text>
+   </g>
+   <g id="text_34">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #515867" x="43.2" y="756.398438" transform="rotate(-0 43.2 756.398438)">Sources: MUSTER §3, Algorithm 1 and Table 2. LongMemEval keeps its native rounds / sessions as the documented exception.</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p5ccda0800c">
+   <rect x="0" y="0" width="1036.8" height="777.6"/>
+  </clipPath>
+ </defs>
+</svg>
