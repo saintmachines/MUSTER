@@ -1,0 +1,15 @@
+{
+  "version": "eval-v1",
+  "asset": "MUSTER_eval_v1.tar.gz",
+  "bytes": 77485798,
+  "sha256": "27059f95c6341fbb1a5e0c477f605043e6ac9251cd6d0f08eb25c532124eba70",
+  "result_files": 108,
+  "result_bytes": 363465839,
+  "manifest_sha256": "853a6f5f14beb802a6b7f425574220e1dd0f8147ae9e262b73e3fe51be09db26",
+  "answer_judgment_pairs": 51,
+  "honcho_query_context_pairs": 1300,
+  "offline_beam_table_values_reproduced": 48,
+  "reference_code_commit": "3aed83d7c2f35bafb39c8e3cc015ec8d6e074996",
+  "download_url": "https://github.com/saintmachines/MUSTER/releases/download/paper-artifacts-v1/MUSTER_eval_v1.tar.gz",
+  "release_tag": "paper-artifacts-v1"
+}

@@ -1,5 +1,8 @@
 # Gate, stage 0b (BEAM), the main table re-scored offline from its 51 judge files
 
+Download the [evaluation artifacts](../data/eval_v1/README.md), verify the archive, and point `MUSTER_HOME` at its extracted
+`MUSTER_eval_v1` directory. The release check reproduces the same 48 values below from the actual downloadable files.
+
 Run 2026-10-28 on the experiment machine, CPU only, pure Python, with no model and no API call. `gate/rescore_beam.py` scores
 each per-question judge file `results/bOR_<tag>_bj_gpt-4.1-mini.jsonl` with `harness/beam_score.py`, which aggregates as
 BEAM does (rubric-item mean per question, mean over a conversation's questions per category, mean over conversations, then

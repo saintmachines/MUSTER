@@ -231,7 +231,8 @@ Reading is cheap too: per 1,000 questions, MUSTER's contexts cost $2.80 at list 
 ## Reproduce
 
 Re-scoring uses a separate artifact bundle containing the per-question BEAM answers and judgments and the Honcho
-context logs. That bundle is being prepared for release; those result files are not included in this source tree.
+query/context logs. The [evaluation artifact download](data/eval_v1/README.md) provides the bundle, SHA-256 manifest
+and offline verification instructions; the large result files are distributed as a release asset.
 
 ```bash
 muster verify cuts --data data_root        # the rule's cuts against the published runs, store by store
