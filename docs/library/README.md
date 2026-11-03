@@ -121,3 +121,9 @@ API call ([exact.md](exact.md) has every check, its script and its count). In sh
 | Render chain of the MemoryAgentBench board from the published dumps | 5,439 of 5,439 questions |
 | BEAM-100K search and R4 context vs the harness replay | 800 of 800 questions |
 | Other cells replayed, context = the published one | 6,753 of 6,753 questions |
+
+## Optional declared record input
+
+An experimental [declared record mode](https://github.com/saintmachines/MUSTER/blob/main/docs/library/declared-records.md) connects explicit
+source boundaries and order metadata to the SDK, CLI and an opt-in HTTP endpoint.
+It keeps all versions and does not change the default or paper replay paths.

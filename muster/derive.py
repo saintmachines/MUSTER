@@ -102,7 +102,10 @@ def explain(plan: Plan) -> str:
     """A plain description of a plan, then the decision step by step."""
     rows = [("store", {"numbered": "numbered log", "record": "record store", "prose": "prose", "rounds": "conversation rounds",
                        "empty": "empty"}[plan.branch])]
-    if plan.branch == "numbered":
+    if plan.source == "declared-order:record-boundaries-v1":
+        rows += [("units", "one per declared record"), ("parents", "one per source occurrence"),
+                 ("order", "declared source sequence; all versions kept")]
+    elif plan.branch == "numbered":
         rows += [("units", "one per record"), ("parents", "one per slot"), ("order", "newest per slot wins")]
     elif plan.branch in ("record", "prose"):
         rows += [("units", "%s tokens%s" % (format(plan.chunk, ","), ", records whole" if plan.atom == "blank" else "")),

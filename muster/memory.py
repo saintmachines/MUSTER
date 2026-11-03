@@ -37,6 +37,7 @@ class Memory:
     vecs: object = None
     models: object = None
     _index: Optional[Index] = field(default=None, repr=False)
+    ordered_records: object = field(default=None, repr=False)
 
     @property
     def units(self):
@@ -199,9 +200,19 @@ def resolve_plan(store_text_, plan):
 
 
 def build(store, plan=None, *, models=None, embed=True, template: str = DEFAULT_TEMPLATE,
-          normalize_newlines: bool = True) -> Memory:
+          normalize_newlines: bool = True, declared_order=None, record_format: str = "content") -> Memory:
     """Cut, index and (unless embed=False) embed a store. `plan`: None derives it, a string names a preset."""
     exact_preset = isinstance(plan, str) or (isinstance(plan, Plan) and plan.mode == "exact")
+    if declared_order is not None:
+        if template != DEFAULT_TEMPLATE:
+            raise PlanError("declared_order uses producer-rendered bodies; custom template is unsupported")
+        if exact_preset:
+            raise PlanError("declared_order is a native opt-in input mode and cannot change exact replay")
+        from .source_order import build_ordered_memory
+        return build_ordered_memory(store, declared_order, record_format=record_format,
+                                    plan=plan, models=models, embed=embed)
+    if record_format != "content":
+        raise PlanError("record_format requires declared_order provenance")
     text, spans, recs = store_text(store, template=template, normalize=(normalize_newlines and not exact_preset))
     p = resolve_plan(text, plan)
     c = cut(text, p)

@@ -147,11 +147,17 @@ def cmd_context(a):
 def cmd_query(a):
     from .memory import build
     from .records import as_record
-    if a.path.endswith(".jsonl") and not a.column_given:
+    if a.declared_records:
+        from .source_order import build_declared
+        with open(a.path, encoding="utf-8") as source:
+            envelope = json.load(source)
+        mem = build_declared(envelope, models=_models(a))
+    elif a.path.endswith(".jsonl") and not a.column_given:
         store = [as_record(json.loads(x)) for x in open(a.path, encoding="utf-8") if x.strip()]
+        mem = build(store, models=_models(a))
     else:
         store = read_store(a.path, a.column, a.row)
-    mem = build(store, models=_models(a))
+        mem = build(store, models=_models(a))
     if a.explain:
         from .derive import explain
         print(explain(mem.plan), file=sys.stderr)
@@ -167,7 +173,8 @@ def cmd_mcp(a):
 def cmd_http(a):
     from .serve import Service, http_server
     from .store import Store
-    srv = http_server(Service(Store.open(a.store, models=_models(a))), a.host, a.port)
+    srv = http_server(Service(Store.open(a.store, models=_models(a)),
+                              allow_declared_records=a.allow_declared_records), a.host, a.port)
     print("muster http on %s:%d (POST /v1/add /v1/context /v1/search, GET /v1/info)" % (a.host, a.port), flush=True)
     srv.serve_forever()
 
@@ -188,6 +195,8 @@ def main(argv=None):
     q.add_argument("--column", default=None)
     q.add_argument("--row", type=int, default=0)
     q.add_argument("--explain", action="store_true", help="print the plan and why, to stderr")
+    q.add_argument("--declared-records", action="store_true",
+                   help="native opt-in: JSON envelope with explicit record boundaries and source-order provenance")
     q.add_argument("--fake-models", action="store_true", help=argparse.SUPPRESS)
     q.set_defaults(fn=cmd_query)
     for name, fn, extra in (("add", cmd_add, ("file",)), ("context", cmd_context, ("query",)),
@@ -206,6 +215,8 @@ def main(argv=None):
         if name == "http":
             p.add_argument("--host", default="127.0.0.1")
             p.add_argument("--port", type=int, default=8765)
+            p.add_argument("--allow-declared-records", action="store_true",
+                           help="enable stateless /v1/declared-context for explicit source-order envelopes")
         p.set_defaults(fn=fn)
     v = sub.add_parser("verify", help="check the library against the paper's tables (no benchmark text needed)")
     v.add_argument("what", choices=["cuts", "contexts"])

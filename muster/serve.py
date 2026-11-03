@@ -32,8 +32,9 @@ def _blocks(ctx, mem):
 class Service:
     """The operations both servers expose, over one Store (thread-safe)."""
 
-    def __init__(self, store: Store):
+    def __init__(self, store: Store, *, allow_declared_records=False):
         self.store = store
+        self.allow_declared_records = allow_declared_records
         self.lock = threading.Lock()
 
     def add(self, records, request_id=None):
@@ -63,6 +64,18 @@ class Service:
         return {"version": mem.version, "units": len(mem), "parents": len(set(mem.parent)), "branch": p.branch,
                 "atom": p.atom, "chunk": p.chunk, "mscale": p.mscale, "U": p.U, "policy": p.policy, "render": p.render,
                 "mode": p.mode}
+
+    def declared_context(self, envelope, query, units=0):
+        """One opt-in, stateless record-preserving context; does not append to Store."""
+        if not self.allow_declared_records:
+            raise ValueError("declared records endpoint is disabled; enable it explicitly")
+        from .source_order import build_declared
+        with self.lock:
+            mem = build_declared(envelope, models=self.store._models())
+            ctx = mem.context(query, U=units or None)
+        return {"text": ctx.text, "ctxhash": ctx.ctxhash, "style": ctx.style,
+                "ids": list(ctx.ids), "blocks": _blocks(ctx, mem),
+                "record_order": mem.ordered_records.diagnostics(), "stateless": True}
 
 
 def mcp_server(service: Service, name="muster"):
@@ -136,6 +149,9 @@ def http_server(service: Service, host="127.0.0.1", port=8765):
                     return self._send(200, service.context(req["query"], int(req.get("units") or 0)))
                 if self.path == "/v1/search":
                     return self._send(200, service.search(req["query"], int(req.get("units") or 0)))
+                if self.path == "/v1/declared-context":
+                    return self._send(200, service.declared_context(req["store"], req["query"],
+                                                                  int(req.get("units") or 0)))
                 return self._send(404, {"error": "not found"})
             except (KeyError, ValueError, TypeError) as e:
                 return self._send(400, {"error": "%s: %s" % (type(e).__name__, e)})
