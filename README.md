@@ -37,7 +37,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/score_vs_build_dark.svg">
-    <img src="docs/assets/readme/score_vs_build_light.svg" width="720" alt="Mean score over six settings against the time to build memory for one 10M-token conversation, log scale: MUSTER 71.45 in 77 s, alone at the upper left; True Memory 64.70 in 39 min; HippoRAG-v2 62.56 in 1.3 h; EverMemOS 57.67 in 39.8 h for all ten conversations in one run; Mem0 57.45 in 13.0 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; the full context 60.59 with nothing to build">
+    <img src="docs/assets/readme/score_vs_build_light.svg" width="720" alt="Mean score over six settings against the time to build memory for one 10M-token conversation, log scale: MUSTER 71.45 in 77 s, alone at the upper left; True Memory 64.70 in 39 min; HippoRAG-v2 62.56 in 1.3 h; EverMemOS 57.67 in 32.7 h per conversation with all ten built at once; Mem0 57.45 in 13.0 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; the full context 60.59 with nothing to build">
   </picture>
 </p>
 
@@ -199,7 +199,7 @@ MUSTER stores the text as is and fits its read to the structure: 0 LLM calls to 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/build_cost_dark.svg">
-    <img src="docs/assets/readme/build_cost_light.svg" width="720" alt="Building memory for one 10M-token conversation. Extract with an LLM: EverMemOS 26,080 calls in 39.8 h for all ten conversations in one run; HippoRAG-v2 20,870 calls in 1.3 h; Hindsight 16,425 calls in 3.0 h; Honcho 4,441 to 11,700 calls in 7.8 h; Mem0 10,429 calls in 13.0 h. Store as is: True Memory 0 calls in 39 min; MUSTER 0 calls in 77 s, $0">
+    <img src="docs/assets/readme/build_cost_light.svg" width="720" alt="Building memory for one 10M-token conversation. Extract with an LLM: EverMemOS 26,080 calls in 32.7 h per conversation with all ten built at once; HippoRAG-v2 20,870 calls in 1.3 h; Hindsight 16,425 calls in 3.0 h; Honcho 4,441 to 11,700 calls in 7.8 h; Mem0 10,429 calls in 13.0 h. Store as is: True Memory 0 calls in 39 min; MUSTER 0 calls in 77 s, $0">
   </picture>
 </p>
 
@@ -212,7 +212,7 @@ list price (the build model's tokens times its price; ≥ where output tokens we
 <!-- BEGIN headline:build -->
 | System | LLM calls | Build time | LLM cost | Notes |
 |:--|--:|--:|--:|:--|
-| EverMemOS | 26,080 | 39.8 h | ≥ $3.19 | build time: all ten conversations in one run; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 106.3M input tokens at $0.03/M, output not recorded |
+| EverMemOS | 26,080 | 32.7 h | ≥ $3.19 | build time: mean per conversation, all ten built at once; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 106.3M input tokens at $0.03/M, output not recorded |
 | HippoRAG-v2 | 20,870 | 1.3 h | $1.49 | build time: mean per conversation; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 30.12M input tokens at $0.03/M, 3.937M output tokens at $0.15/M |
 | Hindsight | 16,425 | 3.0 h | ≥ $1.97 | build time: mean per conversation; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 65.5M input tokens at $0.03/M, output not recorded |
 | Honcho | 4,441–11,700 | 7.8 h | $1.41 | build time: with queue drain; cost: Honcho (honcho.dev list price for ingestion), 0.705M input tokens at $2.00/M; in its own BEAM setup Honcho reasons over the user's turns, 7,051,753 tokens over the ten conversations, 6.5% of the 108.1M sent |
@@ -328,8 +328,8 @@ scale (EverMemOS: all conversations of a scale in one run).
 | Mem0 2.1.0, 19.5K | 75.5 | 73.1 | 63.9 | 70.8 | 19.5K | 10,429 | ≈101M | 11 m / 77 m / 13 h |
 | Honcho | 67.1 | 60.7 | 48.9 | 58.9 | 20.7K | 4.4–11.7K | ≥10.8M | 7 m / 28 m / 7.8 h |
 | Hindsight 0.10.3 | 66.4 | 67.2 | 52.2 | 61.9 | 8.4K | 16,425 | 65.5M | 49 m / 30 m / 3.0 h |
-| EverMemOS | 72.0 | 69.4 | 60.6 | 67.3 | 4.5K | 26.1K | 106M | 60 m / 12.0 h / 39.8 h |
-| EverMemOS, 19.5K | 76.3 | 73.1 | 62.7 | 70.7 | 19.5K | 26.1K | 106M | 60 m / 12.0 h / 39.8 h |
+| EverMemOS | 72.0 | 69.4 | 60.6 | 67.3 | 4.5K | 26.1K | 106M | 43 m / 7.7 h / 32.7 h |
+| EverMemOS, 19.5K | 76.3 | 73.1 | 62.7 | 70.7 | 19.5K | 26.1K | 106M | 43 m / 7.7 h / 32.7 h |
 | True Memory, 9.7K | 75.4 | 72.1 | 61.4 | 69.6 | 9.7K | 0 | 0 | 8 s / 3.3 m / 39 m |
 | True Memory, 19.5K | 78.1 | 74.6 | 62.4 | 71.7 | 19.5K | 0 | 0 | 8 s / 3.3 m / 39 m |
 | **MUSTER, 20 units** | **75.0** | **72.4** | **62.7** | **70.0** | **9.7K** | **0** | **0** | **1 s / 7 s / 77 s** |

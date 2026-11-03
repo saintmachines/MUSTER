@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" width="720" height="380" role="img" aria-labelledby="t d">
 <title id="t">Mean score over six settings against the time to build a 10M-token memory, log time axis</title>
-<desc id="d">MUSTER 71.45 in 77 s; True Memory 64.70 in 39 min; Mem0 57.45 in 13.0 h; EverMemOS 57.67 in 39.8 h (all ten conversations in one run); HippoRAG-v2 62.56 in 1.3 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; Full context 60.59 with nothing to build.</desc>
+<desc id="d">MUSTER 71.45 in 77 s; True Memory 64.70 in 39 min; Mem0 57.45 in 13.0 h; EverMemOS 57.67 in 32.7 h; HippoRAG-v2 62.56 in 1.3 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; Full context 60.59 with nothing to build.</desc>
 <style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif}</style>
 <g stroke="#e6e9ed" stroke-width="1">
 <line x1="48" x2="696" y1="281.3" y2="281.3"/>
@@ -29,9 +29,9 @@
 <circle cx="404.5" cy="126.5" r="6" fill="#8c959f" stroke="#ffffff" stroke-width="2"/>
 <text x="392.5" y="130.5" font-size="12" fill="#424a53" text-anchor="end">True Memory</text>
 <circle cx="601.0" cy="202.9" r="6" fill="#8c959f" stroke="#ffffff" stroke-width="2"/>
-<text x="613.0" y="206.9" font-size="12" fill="#424a53">Mem0</text>
-<circle cx="674.2" cy="200.5" r="6" fill="#8c959f" stroke="#ffffff" stroke-width="2"/>
-<text x="682.2" y="221.5" font-size="12" fill="#424a53" text-anchor="end">EverMemOS · all ten at once</text>
+<text x="589.0" y="206.9" font-size="12" fill="#424a53" text-anchor="end">Mem0</text>
+<circle cx="661.3" cy="200.5" r="6" fill="#8c959f" stroke="#ffffff" stroke-width="2"/>
+<text x="669.3" y="221.5" font-size="12" fill="#424a53" text-anchor="end">EverMemOS</text>
 <circle cx="450.3" cy="149.0" r="6" fill="#8c959f" stroke="#ffffff" stroke-width="2"/>
 <text x="462.3" y="153.0" font-size="12" fill="#424a53">HippoRAG-v2</text>
 <circle cx="505.0" cy="255.4" r="6" fill="#8c959f" stroke="#ffffff" stroke-width="2"/>

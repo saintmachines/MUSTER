@@ -98,7 +98,7 @@ def main():
         "Mem0": ("Mem0 2.1.0", LM_CALLS, "wall-clock", LM_INPUT),
         "Honcho": ("Honcho", "model calls (estimated^S)", "wall-clock (with queue drain)", None),
         "Hindsight": ("Hindsight", LM_CALLS, "per conversation (mean)", LM_INPUT),
-        "EverMemOS": ("EverMemOS", LM_CALLS, "wall-clock, whole scale", LM_INPUT),
+        "EverMemOS": ("EverMemOS", LM_CALLS, ("per conversation (mean), all at once", "wall-clock, whole scale"), LM_INPUT),
         "HippoRAG-v2": ("HippoRAG-v2", LM_CALLS, "per conversation (mean)", LM_INPUT),
     }
 

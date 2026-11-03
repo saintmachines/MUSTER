@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 358" width="720" height="358" role="img" aria-labelledby="t d">
 <title id="t">Building memory for one 10M-token conversation: LLM calls, build time and LLM cost</title>
-<desc id="d">EverMemOS 26,080 LLM calls, 39.8 h (all ten conversations in one run), LLM cost ≥ $3.19; HippoRAG-v2 20,870 LLM calls, 1.3 h, LLM cost $1.49; Hindsight 16,425 LLM calls, 3.0 h, LLM cost ≥ $1.97; Honcho 4,441–11,700 LLM calls, 7.8 h, LLM cost $1.41; Mem0 10,429 LLM calls, 13.0 h, LLM cost ≥ $15.15; True Memory 0 LLM calls, 39 min, LLM cost $0; MUSTER 0 LLM calls, 77 s, LLM cost $0.</desc>
+<desc id="d">EverMemOS 26,080 LLM calls, 32.7 h, LLM cost ≥ $3.19; HippoRAG-v2 20,870 LLM calls, 1.3 h, LLM cost $1.49; Hindsight 16,425 LLM calls, 3.0 h, LLM cost ≥ $1.97; Honcho 4,441–11,700 LLM calls, 7.8 h, LLM cost $1.41; Mem0 10,429 LLM calls, 13.0 h, LLM cost ≥ $15.15; True Memory 0 LLM calls, 39 min, LLM cost $0; MUSTER 0 LLM calls, 77 s, LLM cost $0.</desc>
 <style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif}</style>
 <g stroke="#21262d" stroke-width="1">
 <line x1="130.0" x2="130.0" y1="26" y2="302"/>
@@ -19,8 +19,7 @@
 <text x="120.0" y="69.0" font-size="12" fill="#d1d7e0" text-anchor="end">EverMemOS</text>
 <path d="M130.0 58.0 H386.8 a4 4 0 0 1 4 4 V68.0 a4 4 0 0 1 -4 4 H130.0 Z" fill="#6e7681"/>
 <text x="398.8" y="69.0" font-size="12" fill="#d1d7e0">26,080</text>
-<text x="548.0" y="69.0" font-size="12" fill="#d1d7e0" text-anchor="end">39.8 h</text>
-<text x="548.0" y="83.0" font-size="11" fill="#9198a1" text-anchor="end">all ten at once</text>
+<text x="548.0" y="69.0" font-size="12" fill="#d1d7e0" text-anchor="end">32.7 h</text>
 <text x="704.0" y="69.0" font-size="12" fill="#d1d7e0" text-anchor="end">≥ $3.19</text>
 <text x="120.0" y="103.0" font-size="12" fill="#d1d7e0" text-anchor="end">HippoRAG-v2</text>
 <path d="M130.0 92.0 H334.7 a4 4 0 0 1 4 4 V102.0 a4 4 0 0 1 -4 4 H130.0 Z" fill="#6e7681"/>

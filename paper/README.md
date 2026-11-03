@@ -7,7 +7,7 @@
 The manuscript is prepared for the first arXiv submission, with the reported experiments and retrieval protocol
 clarifications. Its first page links to the planned code repository and project page.
 
-PDF SHA-256: `e9b607387a38ed0366039077040317083f6be54669927113bb7e24e3642a68c6`.
+PDF SHA-256: `8bab90c0736d4d5d39911b653ecfe831fe7f29ed3f1b44c17f9d851221f55f63`.
 
 This repository distributes the paper PDF. The TeX source and source bundle are maintained in the separate arXiv submission package.
 For citation metadata, see [CITATION.cff](../CITATION.cff).

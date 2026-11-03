@@ -3,7 +3,7 @@
   "name": "MUSTER",
   "paper": {
     "title": "MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure",
-    "version": "v211"
+    "version": "v219F"
   },
   "settings": [
     {"bench": "MAB", "reader": "GLM"},
@@ -38,7 +38,7 @@
       {"system": "MUSTER", "llm_cost": "$0", "calls": 0, "build_s": 76.8, "build": "77 s", "build_note": "on one GPU with bge-m3 in fp16", "model": null},
       {"system": "True Memory", "llm_cost": "$0", "calls": 0, "build_s": 2325, "build": "39 min", "build_note": "on one RTX PRO 6000", "model": null},
       {"system": "Mem0", "llm_cost": "≥ $15.15", "calls": 10429, "build_s": 46800, "build": "13.0 h", "build_note": "", "model": "GPT-4o-mini", "tokens_in": "101.0", "tokens_out": null},
-      {"system": "EverMemOS", "llm_cost": "≥ $3.19", "calls": 26080, "build_s": 143280, "build": "39.8 h", "build_note": "all ten conversations in one run", "build_mark": "all ten at once", "model": "GPT-OSS-120B", "tokens_in": "106.3", "tokens_out": null},
+      {"system": "EverMemOS", "llm_cost": "≥ $3.19", "calls": 26080, "build_s": 117720, "build": "32.7 h", "build_note": "mean per conversation, all ten built at once", "model": "GPT-OSS-120B", "tokens_in": "106.3", "tokens_out": null},
       {"system": "HippoRAG-v2", "llm_cost": "$1.49", "calls": 20870, "build_s": 4680, "build": "1.3 h", "build_note": "mean per conversation", "model": "GPT-OSS-120B", "tokens_in": "30.12", "tokens_out": "3.937"},
       {"system": "Hindsight", "llm_cost": "≥ $1.97", "calls": 16425, "build_s": 10800, "build": "3.0 h", "build_note": "mean per conversation", "model": "GPT-OSS-120B", "tokens_in": "65.5", "tokens_out": null},
       {"system": "Honcho", "llm_cost": "$1.41", "calls": [4441, 11700], "build_s": 28080, "build": "7.8 h", "build_note": "with queue drain", "model": "Honcho", "tokens_in": "0.7051753", "tokens_note": "in its own BEAM setup Honcho reasons over the user's turns, 7,051,753 tokens over the ten conversations, 6.5% of the 108.1M sent"}

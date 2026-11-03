@@ -4,11 +4,11 @@
   "sources": {
     "paper": {
       "path": "paper/MUSTER.pdf",
-      "sha256": "e9b607387a38ed0366039077040317083f6be54669927113bb7e24e3642a68c6"
+      "sha256": "8bab90c0736d4d5d39911b653ecfe831fe7f29ed3f1b44c17f9d851221f55f63"
     },
     "numeric_data": {
       "path": "docs/data/headline.json",
-      "sha256": "0f65c1d3af14bc13c3e9ec61e8d9e912c31a939a4bf7c4f7d5db270c1459baa3"
+      "sha256": "0c9ecbf9fcb3527705893134213921c69b862f40384b0dda7f8686b02093586a"
     }
   },
   "figures": {
@@ -94,14 +94,26 @@
           "calls_status": "estimated range",
           "call_scope": "one 10M-conversation as tab:beamcost reports",
           "reader_context_at_1m_reported_in_tab_beamscale": "20.7K"
+        },
+        {
+          "system": "EverMemOS",
+          "beam_10m_glm_score": 62.7,
+          "generative_build_calls": 26080,
+          "writer": "GPT-OSS-120B",
+          "calls_status": "reported",
+          "call_scope": "one 10M-conversation as tab:beamcost reports",
+          "reader_context_at_1m_reported_in_tab_beamscale": "19.5K"
         }
       ],
       "scope": "BEAM-10M, GLM-5.3-Flash reader and official GPT-4.1-mini rubric judge. Each method retains its reported writer/context; not all contexts are matched. Context values supplied with points are those the BEAM table explicitly reports at 1M, not measured 10M input lengths. Zero calls excludes embedding, reranking and answer generation. Honcho calls are estimated.",
       "separate_scope_note": {
         "system": "EverMemOS",
         "reported_calls": 26080,
-        "scope": "all ten 10M conversations, according to the appendix build-cost prose",
-        "per_history_point": "not plotted; not silently divided by ten"
+        "scope": "Rounded per-conversation mean reported in Table 15, not the whole ten-conversation count.",
+        "full_build_calls": 260795,
+        "conversations": 10,
+        "unrounded_mean_calls": 26079.5,
+        "per_history_point": "plotted at the reported 26,080; no additional division by ten"
       },
       "muster_build_time": {
         "seconds": 76.8,
@@ -112,12 +124,12 @@
   },
   "assets": {
     "muster_accuracy_build_calls.pdf": {
-      "sha256": "4ea923832a2e07e3eba105720c8ba045248070da1df1b56a2da9f66d46d301d5",
-      "bytes": 27013
+      "sha256": "0a4d9fa0ac6811681e40287caaaa55484b35dc6b8fe709f2ff95595a048c7ca2",
+      "bytes": 27349
     },
     "muster_accuracy_build_calls.svg": {
-      "sha256": "62f951760a42a00b8f30e276983dda17dd1189884bd93a40623c64b2341bdc47",
-      "bytes": 15511
+      "sha256": "a49bcd67af775f6bd326b213e530d372a1872ec5e9b69706cf2ebdd44167dd4c",
+      "bytes": 16831
     },
     "muster_detect_configure.pdf": {
       "sha256": "d6d0d7eb281d614e52d887087140d8c80c7c3d499f5d71270adb70112b73a024",

@@ -296,7 +296,7 @@ def fig_score_vs_build(d, v, c):
           f'stroke-dasharray="5 4"/>')
     k.text(ml + 8, yf + 15, f"{full['system']}: reads everything, nothing to build", 11, c["muted"])
     off = {"MUSTER": (12, -4, "start"), "True Memory": (-12, 4, "end"), "HippoRAG-v2": (12, 4, "start"),
-           "EverMemOS": (8, 21, "end"), "Mem0": (12, 4, "start"), "Hindsight": (-12, 4, "end"), "Honcho": (12, 4, "start")}
+           "EverMemOS": (8, 21, "end"), "Mem0": (-12, 4, "end"), "Hindsight": (-12, 4, "end"), "Honcho": (12, 4, "start")}
     for r, b in sorted(pts, key=lambda p: bool(p[0].get("us"))):
         cx, cy, us = X(b["build_s"]), Y(r["mean_score"]), bool(r.get("us"))
         k.add(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{8 if us else 6}" fill="{c["accent"] if us else c["ctx"]}" '
