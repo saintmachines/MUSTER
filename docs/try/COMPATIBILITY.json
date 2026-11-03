@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "reference_commit": "3aed83d7c2f35bafb39c8e3cc015ec8d6e074996",
+  "scope": "single-store native derive at reference_chunk=4096; not collection-exact replay or answer accuracy",
+  "python_sdk_comparisons": 125,
+  "exact_plan_and_stats_matches": 125,
+  "oversize_input_refused_without_truncation": true,
+  "browser": [
+    {
+      "width": 1360,
+      "height": 1000,
+      "three_branches": "passed",
+      "input_not_uploaded": true,
+      "no_external_runtime_requests": true,
+      "html_input_not_executed": true,
+      "horizontal_overflow": false
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "three_branches": "passed",
+      "input_not_uploaded": true,
+      "no_external_runtime_requests": true,
+      "html_input_not_executed": true,
+      "horizontal_overflow": false
+    }
+  ],
+  "tokenizer": "js-tiktoken 1.0.21 / cl100k_base; Python tiktoken 0.12.0",
+  "new_model_calls": 0,
+  "new_paid_calls": 0,
+  "hosted_space_deployment": "not performed"
+}

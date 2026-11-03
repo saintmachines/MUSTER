@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MUSTER · Structure Inspector</title>
+  <style>
+    :root{color-scheme:light;--ink:#17202f;--muted:#4e5b70;--blue:#2d43bd;--line:#dce2ed;--bg:#f6f8fc}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    main{max-width:1180px;padding:42px 28px;margin:auto}a{color:var(--blue)}.brand{font-weight:800;letter-spacing:.08em;color:var(--blue);font-size:16px}
+    h1{font-size:clamp(30px,4vw,46px);line-height:1.15;letter-spacing:-.035em;margin:12px 0 16px;max-width:850px}h2{font-size:20px;margin:0 0 14px}.lead{font-size:18px;max-width:850px;color:var(--muted);margin:0 0 25px}
+    .layout{display:grid;grid-template-columns:1.06fr 1fr;gap:22px;align-items:start}.panel{padding:23px;background:white;border:1px solid var(--line);border-radius:15px;min-width:0}
+    label{font-weight:650;display:block;margin:0 0 8px}textarea{font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;width:100%;height:318px;resize:vertical;padding:14px;border:1px solid #aebbd0;border-radius:9px;background:#fbfcff;color:var(--ink)}
+    button{font:inherit;font-weight:650;border:1px solid var(--line);border-radius:8px;padding:9px 13px;background:white;color:var(--ink);cursor:pointer}button:disabled{opacity:.55;cursor:wait}button:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #6c91ef;outline-offset:3px}
+    .examples{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.examples button{font-size:13px;padding:7px 9px}.primary{background:var(--blue);border-color:var(--blue);color:white;margin-top:12px}.minor{font-size:13px;color:var(--muted)}
+    .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0}.metric{border-radius:10px;background:#f0f3fd;padding:13px}.number{color:var(--blue);font-size:28px;font-weight:750;line-height:1.2;display:block}.metric small{color:var(--muted)}
+    #branch{font-size:23px;font-weight:750}.settings{display:grid;grid-template-columns:1fr 1fr;gap:13px 18px;margin:20px 0}.settings dt{font-size:12px;color:var(--muted)}.settings dd{margin:2px 0 0;font-weight:650;font-size:15px}
+    #explanation{font-size:14px;border-top:1px solid var(--line);padding-top:16px}.status{min-height:24px;margin:12px 0 0;font-size:14px;color:var(--muted)}details{margin-top:20px}summary{cursor:pointer;font-weight:650}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:310px;overflow:auto;padding:13px;background:var(--bg);border-radius:8px}
+    footer{font-size:13px;color:var(--muted);margin-top:22px;border-top:1px solid var(--line);padding-top:18px}nav{margin-top:12px;display:flex;gap:20px;flex-wrap:wrap}.pill{font-size:12px;font-weight:650;display:inline-block;background:#eaf0fd;color:var(--blue);border-radius:20px;padding:5px 10px;margin:0 0 20px}
+    @media(max-width:760px){main{padding:26px 17px}.layout{grid-template-columns:1fr}.panel{padding:18px}textarea{height:255px}.lead{font-size:16px}h1{font-size:32px}}
+  </style>
+</head>
+<body><main>
+  <div class="brand">MUSTER</div>
+  <h1>See how your store configures retrieval.</h1>
+  <p class="lead">Two statistics read the structure already in your text. Inspect the units, parent groups and retrieval policy they select.</p>
+  <span class="pill">Runs in your browser · No API key · Text stays here</span>
+  <div class="layout">
+    <section class="panel" aria-labelledby="input-title"><h2 id="input-title">Your memory store</h2>
+      <div class="examples" aria-label="Synthetic examples"><button data-example="numbered">Numbered records</button><button data-example="records">Separated records</button><button data-example="prose">Continuous prose</button></div>
+      <label for="store">Paste text, or select an example</label><textarea id="store" spellcheck="false"></textarea>
+      <div class="minor">Synthetic examples show configuration. Reference chunk: 4,096 tokens.</div>
+      <button id="inspect" class="primary" disabled>Inspect structure</button><p id="status" class="status" role="status" aria-live="polite">Loading the bundled tokenizer…</p>
+    </section>
+    <section class="panel" aria-labelledby="result-title"><h2 id="result-title">Selected configuration</h2>
+      <div id="branch">Choose a store</div>
+      <div class="metrics"><div class="metric"><span id="serial" class="number">—</span><small>Numbered-line share</small></div><div class="metric"><span id="record" class="number">—</span><small>Short-record token share</small></div></div>
+      <dl class="settings"><div><dt>UNIT BUDGET</dt><dd id="unit">—</dd></div><div><dt>UNITS PER READ</dt><dd id="read">—</dd></div><div><dt>PARENT BUDGET</dt><dd id="parent">—</dd></div><div><dt>CHANNEL FLOORS</dt><dd id="policy">—</dd></div></dl>
+      <p id="explanation">The default rule first checks numbered lines, then record boundaries. Other explicit order formats are supported through the Python SDK's metadata adapter.</p>
+      <details><summary>Inspect the plan JSON</summary><pre id="json">{}</pre></details>
+    </section>
+  </div>
+  <footer>This previews single-store native configuration; it does not build an index, generate answers or measure accuracy. cl100k_base counts determine the plan. Full retrieval and paper reproduction use the Python code.<nav><a href="https://github.com/saintmachines/MUSTER" target="_blank" rel="noopener">Code</a><a href="https://saintmachines.github.io/MUSTER/" target="_blank" rel="noopener">Paper &amp; results</a><a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md" target="_blank" rel="noopener">SDK guide</a></nav></footer>
+</main><script type="module" src="ui.js"></script></body></html>

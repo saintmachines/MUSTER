@@ -13,7 +13,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        # Explicit Intel host: macos-latest (arm64) could not acquire runners.
+        # Studio arm64 validation is recorded separately in STATUS.md.
+        os: [ubuntu-latest, macos-15-intel]
         python: ['3.10', '3.11', '3.12']
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15

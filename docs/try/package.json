@@ -1,0 +1,8 @@
+{
+  "name": "muster-structure-inspector",
+  "private": true,
+  "type": "module",
+  "scripts": {"build": "esbuild inspect.js --bundle --format=esm --minify --outfile=inspect.bundle.js"},
+  "dependencies": {"js-tiktoken": "1.0.21"},
+  "devDependencies": {"esbuild": "0.25.12"}
+}

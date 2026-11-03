@@ -287,7 +287,7 @@ def fig_score_vs_build(d, v, c):
     for s in range(50, 80, 5):
         k.text(ml - 8, Y(s) + 4, str(s), 11, c["muted"], "end")
     for t, lab in [(10, "10 s"), (60, "1 min"), (600, "10 min"), (3600, "1 h"), (36000, "10 h")]:
-        k.text(X(t), H - mb + 18, lab, 11, c["muted"], "middle")
+        k.text(X(t) - text_width(lab.split()[0], 11) / 2, H - mb + 18, lab, 11, c["muted"])  # numeral centred on its time
     k.text((ml + W - mr) / 2, H - 8, "time to build one 10M-token conversation, as run (log scale)", 11, c["muted"], "middle")
     k.text(14, (mt + H - mb) / 2, "mean score, six settings", 11, c["muted"], "middle", rotate=-90)
     full = v["full"]
@@ -305,6 +305,7 @@ def fig_score_vs_build(d, v, c):
         label = f"{r['system']} · {b['build']}" if us else r["system"] + (f" · {b['build_mark']}" if b.get("build_mark") else "")
         k.text(cx + dx, cy + dy, label, 13 if us else 12, c["ink"] if us else c["ink2"], anchor, bold=us)
         if us:
+            k.text(cx + dx + text_width(label, 13, True) + 10, cy + dy, "no per-store tuning", 11, c["muted"])
             k.text(cx + 12, cy + 14, f"{v['speedup']}× faster than the next fastest", 11, c["muted"], bold=True)
     return k.done()
 

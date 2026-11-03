@@ -37,11 +37,11 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/score_vs_build_dark.svg">
-    <img src="docs/assets/readme/score_vs_build_light.svg" width="720" alt="Mean score over six settings against the time to build memory for one 10M-token conversation, log scale: MUSTER 71.45 in 77 s, alone at the upper left; True Memory 64.70 in 39 min; HippoRAG-v2 62.56 in 1.3 h; EverMemOS 57.67 in 32.7 h per conversation with all ten built at once; Mem0 57.45 in 13.0 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; the full context 60.59 with nothing to build">
+    <img src="docs/assets/readme/score_vs_build_light.svg" width="720" alt="Mean score over six settings against the time to build memory for one 10M-token conversation, log scale: MUSTER 71.45 in 77 s with no per-store tuning, alone at the upper left; True Memory 64.70 in 39 min; HippoRAG-v2 62.56 in 1.3 h; EverMemOS 57.67 in 32.7 h per conversation with all ten built at once; Mem0 57.45 in 13.0 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; the full context 60.59 with nothing to build">
   </picture>
 </p>
 
-<p align="center"><sub>Mean score over six settings (GLM-5.3-Flash and GPT-6 Luna on MemoryAgentBench, LoCoMo-Refined and BEAM-10M) against the time to build memory for one 10M-token conversation, as run, log scale. Up and to the left is better.</sub></p>
+<p align="center"><sub>Self-configuring MUSTER scores highest and builds fastest. Mean score over six settings (GLM-5.3-Flash and GPT-6 Luna on MemoryAgentBench, LoCoMo-Refined and BEAM-10M) against the time to build memory for one 10M-token conversation, as run, log scale. Up and to the left is better.</sub></p>
 
 > **Status.** Research release. What was checked, and the evidence for each line, is in [STATUS.md](STATUS.md).
 
@@ -149,6 +149,8 @@ change.
 ---
 
 ## Quick start
+
+[Inspect a store in your browser](https://saintmachines.github.io/MUSTER/try/): paste text to see its statistics and selected configuration. The preview runs locally in the browser and uses no API key.
 
 ```bash
 git clone https://github.com/saintmachines/MUSTER.git

@@ -2,10 +2,19 @@
 
 What was checked for this release, and the evidence for each line.
 
-The paper PDF is prepared for the first arXiv submission. [paper/README.md](paper/README.md)
+The paper PDF matches the author's submitted arXiv package, local revision v219I. [paper/README.md](paper/README.md)
 identifies the included manuscript. The [project page](https://saintmachines.github.io/MUSTER/)
 and [repository](https://github.com/saintmachines/MUSTER) are its release addresses.
 Install the library from the repository; the PyPI distribution is not published yet.
+
+The hosted CI matrix runs Ubuntu x64 and macOS 15 Intel at Python 3.10, 3.11 and 3.12, with the same tests and failure policy.
+Earlier `macos-latest` arm64 jobs were cancelled before execution because hosted runners were unavailable, including the retry.
+Studio arm64 validation is a separate result; it must not be reported as a hosted arm64 CI pass. See the actual Actions run
+for the current commit's execution status.
+
+The [browser structure inspector](docs/try/README.md) is included with its source, bundled tokenizer and compatibility
+report: 125 inputs matched the pinned Python SDK's single-store native plans and statistics. It previews configuration;
+it does not generate answers or replace the paper's retrieval evaluation.
 
 | Item | State | Evidence |
 |---|---|---|
