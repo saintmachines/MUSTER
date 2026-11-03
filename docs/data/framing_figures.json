@@ -4,11 +4,11 @@
   "sources": {
     "paper": {
       "path": "paper/MUSTER.pdf",
-      "sha256": "8bab90c0736d4d5d39911b653ecfe831fe7f29ed3f1b44c17f9d851221f55f63"
+      "sha256": "c959e71d7a0e40f335dfa1d86451e7c454e67c4a0b6f80fbfb4c81853cb42c7d"
     },
     "numeric_data": {
       "path": "docs/data/headline.json",
-      "sha256": "0c9ecbf9fcb3527705893134213921c69b862f40384b0dda7f8686b02093586a"
+      "sha256": "7af95c45f75811d7fd405def0c409c40e0c17ca95e4fb96b960d0e2b96413252"
     }
   },
   "figures": {

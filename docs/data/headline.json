@@ -3,7 +3,7 @@
   "name": "MUSTER",
   "paper": {
     "title": "MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure",
-    "version": "v219F"
+    "version": "v219I"
   },
   "settings": [
     {"bench": "MAB", "reader": "GLM"},
