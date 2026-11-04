@@ -5,7 +5,7 @@ What was checked for this release, and the evidence for each line.
 The paper PDF matches the author's submitted arXiv package, local revision v219I. [paper/README.md](paper/README.md)
 identifies the included manuscript. The [project page](https://saintmachines.github.io/MUSTER/)
 and [repository](https://github.com/saintmachines/MUSTER) are its release addresses.
-The Python distribution is `muster-memory`. PyPI publishing is pending; install from this source repository as shown in the library guide. A clone can be installed with `pip install ".[models,mcp]"`.
+The Python distribution is `muster-memory`. PyPI publishing is pending. Install from this source repository as shown in the library guide. A clone can be installed with `pip install ".[models,mcp]"`.
 
 The hosted CI matrix runs Ubuntu x64 and macOS 15 Intel at Python 3.10, 3.11 and 3.12, with the same tests and failure policy.
 Earlier `macos-latest` arm64 jobs were cancelled before execution because hosted runners were unavailable, including the retry.

@@ -144,15 +144,15 @@ are preserved, with supersession off. The existing `step` and `integer_dot` code
 For a record array or `Store`, automatic serial detection reads only the start of each record's `text`/`content`.
 An ID, time, or speaker field never supplies a serial. A literal body beginning `user: Step 1: ...` is not rewritten.
 Numbered records keep their serialized metadata in retrieval and reader text, while slots and revision order come
-from the body. Each record remains one unit; multiline bodies are not split into invented records. Unmarked records
+from the body. Each record remains one unit. Multiline bodies are not split into invented records. Unmarked records
 keep their own occurrence and cannot enable structural replacement. Paper replay and valid, fully marked plain-text
 logs are unchanged. In native lead logs, an unmarked or out-of-bound line keeps its original position and has no
-inferred revision clock; structural replacement is disabled.
+inferred revision clock. Structural replacement is disabled.
 
 For structured records the continuity denominator is the original record pairs, including empty records as missing
 markers, and the length median counts each entire record body, including continuation lines. It does not scan for
 a serial in arbitrary words later in the body. Raw strings retain the existing line-based rule and thresholds.
-An unmarked record has no inferred revision clock; all-marked numbered inputs retain numeric serial display order,
+An unmarked record has no inferred revision clock. All-marked numbered inputs retain numeric serial display order,
 while an array containing unmarked records is displayed in original array order with structural replacement off.
 
 [examples]: https://github.com/saintmachines/MUSTER/tree/main/examples

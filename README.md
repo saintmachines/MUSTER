@@ -159,7 +159,7 @@ up one at a time. [docs/library](docs/library/README.md) gives the exact check.
 
 ## Quick start
 
-The Python distribution is `muster-memory`. PyPI publishing is pending; the command below installs from this repository. Git is required.
+The Python distribution is `muster-memory`. The command below installs from this repository. Git is required.
 
 [Inspect a store in your browser](https://saintmachines.github.io/MUSTER/try/): paste text to see its statistics and selected configuration. The preview runs locally in the browser and uses no API key.
 

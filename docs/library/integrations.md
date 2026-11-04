@@ -17,7 +17,7 @@ For a model-free local example use `Models.fake()` as below. Real retrieval uses
 configured on the Store. Tool construction and `remember` make no provider calls;
 `recall` may load and run the Store's retrieval models.
 
-PyPI publishing is pending; the installation command above uses the source repository.
+PyPI publishing is pending. The installation command above uses the source repository.
 
 ## OpenAI Agents SDK
 

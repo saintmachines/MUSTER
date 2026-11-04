@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="assets/brand/saintmachines_lockup.svg">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121417" media="(prefers-color-scheme: dark)">
@@ -123,7 +124,8 @@ summary h3{margin:0;font-size:var(--fs1)}
 .btn:hover{background:var(--tint)}
 .btn.primary{background:var(--accent);color:var(--on-accent)}
 .btn.primary:hover{background:var(--accent);filter:brightness(1.08)}
-.pip{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:8px 16px;border:1px solid var(--rule);border-radius:6px;background:var(--code);color:var(--ink);font-size:var(--fs-1);line-height:1.5;overflow-wrap:anywhere;-webkit-user-select:all;user-select:all;width:100%;max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:break-word;justify-content:flex-start}
+.pip{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:8px 16px;border:1px solid var(--rule);border-radius:6px;background:var(--code);color:var(--ink);font-size:var(--fs-1);line-height:1.5;white-space:nowrap;overflow-wrap:normal;overflow-x:auto;-webkit-user-select:all;user-select:all;width:100%;max-width:100%;min-width:0;word-break:normal}
+@media (max-width:480px){.pip{font-size:13px;padding:8px 12px;justify-content:safe center}}
 .onpage{font-size:var(--fs-1);color:var(--ink-3);margin-top:var(--s2);display:flex;flex-wrap:wrap;align-items:center;column-gap:var(--s2);row-gap:0}
 .onpage a{color:var(--ink-2)}
 .card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:var(--s2);margin:0;display:flex;flex-direction:column;justify-content:center;min-width:0}
@@ -469,8 +471,6 @@ footer .maker svg{display:block;max-width:100%;height:auto}
         <div class="actions">
           <a class="btn primary" id="cta-run" href="#run-it">Run it, no API key</a>
           <a class="btn" href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER.pdf">Paper (PDF)</a>
-          <span class="caption" style="width:100%">Source install · PyPI publishing pending</span>
-          <code class="pip" tabindex="0" aria-label="Source install of muster-memory with local retrieval models and MCP; PyPI publishing is pending">pip install "muster-memory[models,mcp] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"</code>
         </div>
         <p class="onpage"><span>On this page:</span> <a href="#results">Results</a> <a href="#run-it">Run it</a> <a href="#cost">Cost</a> <a href="#how">How it works</a> <a href="#detailed">Detailed results</a> <a href="#reproduce">Reproduce</a> <a href="#faq">FAQ</a></p>
       </div>
@@ -605,7 +605,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
 <section id="run-it" aria-labelledby="run-h">
   <div class="wrap">
     <h2 id="run-h">Run it</h2>
-    <p>PyPI publishing is pending. Install <code>muster-memory</code> from this source repository with the command below; Git is required.</p>
+    <p>Install <code>muster-memory</code> from this repository with the command below. Git is required.</p>
     <p><a href="try/">Open the browser structure inspector</a> to try your own text. It previews the configuration locally, without an API key.</p>
     <div class="code" data-reveal>
       <div class="code-head"><span>Replace <code>path/to/store.txt</code> with your store file</span></div>
@@ -621,7 +621,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
   order      none: all versions kept
   retrieval  balanced, 3 channels</code></pre>
     </div>
-    <p>For local retrieval and app connections, install <code>muster-memory[models,mcp]</code>. Use the Python <code>Store</code>, MCP or HTTP server, or the OpenAI Agents SDK, LangChain and LangGraph integrations; pass the returned context to your reader. See <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">the library quick start</a>.</p>
+    <p>For local retrieval and app connections, install <code>muster-memory[models,mcp]</code>. Use the Python <code>Store</code>, MCP or HTTP server, or the OpenAI Agents SDK, LangChain and LangGraph integrations, and pass the returned context to your reader. See <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">the library quick start</a>.</p>
   </div>
 </section>
 
