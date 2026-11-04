@@ -243,9 +243,10 @@ Reading is cheap too: per 1,000 questions, MUSTER's contexts cost $2.80 at list 
 
 ## Reproduce
 
-Re-scoring uses a separate artifact bundle containing the per-question BEAM answers and judgments and the Honcho
-query/context logs. The [evaluation artifact download](data/eval_v1/README.md) provides the bundle, SHA-256 manifest
-and offline verification instructions; the large result files are distributed as a release asset.
+Re-scoring uses the [base evaluation artifact](data/eval_v1/README.md) and its
+[v2 supplement](data/eval_v2/README.md). Together they provide saved BEAM answers and judgments, Honcho query/context
+records, source-based ingestion reconstruction, SHA-256 manifests and offline verification instructions.
+The large result files are distributed as release assets.
 
 ```bash
 muster verify cuts --data data_root        # the rule's cuts against the published runs, store by store
@@ -383,7 +384,8 @@ the store once with bge-m3; a CPU-only configuration is part of the reproduction
 The paper is *MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure*; the PDF is in
 [`paper/MUSTER.pdf`](paper/MUSTER.pdf). To cite it, use [CITATION.cff](CITATION.cff).
 
-Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Benchmarks (MemoryAgentBench, BEAM, LoCoMo) and the systems we
-compare against keep their own licenses and are fetched, never redistributed, from their sources.
+The library is Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Benchmark content keeps its own license.
+The evaluation releases include BEAM content under CC BY-SA 4.0 and LoCoMo and LoCoMo-Refined content under
+CC BY-NC 4.0, with attribution and upstream notices in each bundle. The systems we compare against retain their own licenses.
 
 <a href="https://saintmachines.ai"><picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/saintmachines_lockup_white.svg"><img src="docs/assets/brand/saintmachines_lockup.svg" alt="SAINT Machines" height="24"></picture></a>

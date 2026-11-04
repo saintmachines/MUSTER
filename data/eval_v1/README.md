@@ -6,7 +6,7 @@ The per-question BEAM answers and judgments and the Honcho query/context artifac
 - [MUSTER_eval_v1.tar.gz](https://github.com/saintmachines/MUSTER/releases/download/paper-artifacts-v1/MUSTER_eval_v1.tar.gz)
 - [SHA256SUMS](https://github.com/saintmachines/MUSTER/releases/download/paper-artifacts-v1/SHA256SUMS)
 
-The release is staged as a draft during preparation. The links become publicly accessible when the repository and this release are published. A Hugging Face mirror will be linked after it is uploaded and verified.
+This base archive is public and unchanged. The [v2 supplement](../eval_v2/README.md) adds saved BEAM runs, Honcho records from other benchmarks and source-based ingestion reconstruction. It does not replace these files.
 
 | Group | Files | Rows | Uncompressed bytes |
 |---|---:|---:|---:|
