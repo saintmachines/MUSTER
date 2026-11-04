@@ -39,16 +39,21 @@ class Plan:
     stats: Optional[dict] = None
     source: str = "derived"          # derived | preset:<name> | custom
     trace: Tuple[str, ...] = field(default=())
+    serial: str = "dot"              # numbered logs: dot ("12. body") | lead (the log's own style, "Step 12: body")
 
     def __post_init__(self):
         if self.branch not in BRANCHES:
             raise ValueError("unknown branch %r" % self.branch)
         if self.mode not in ("native", "exact"):
             raise ValueError("mode must be native or exact")
+        if self.serial not in ("dot", "lead"):
+            raise ValueError("serial must be dot or lead")
 
     def to_dict(self):
         d = asdict(self)
         d["trace"] = list(self.trace)
+        if d["serial"] == "dot":         # plans from before the field keep their JSON and plan_id
+            del d["serial"]
         return d
 
     @classmethod

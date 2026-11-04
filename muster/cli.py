@@ -1,6 +1,7 @@
 """The `muster` command.
 
-  muster derive PATH [--json]               the plan of a store (same output as scripts/derive.py)
+  muster derive PATH [--json]               the plan of a store (same output as scripts/derive.py, except a log
+                                            numbered under its own spelling, which the paper's script calls records)
   muster query PATH "question"              build a memory from a file once and print what a reader gets
   muster add --store S.muster FILE.jsonl    append records (one JSON object per line: text, speaker, time, ...)
   muster context --store S.muster "query"   what a reader gets for a query
@@ -19,14 +20,14 @@ from . import bpe
 from .derive import MIN_PARENTS, MIN_UNIT, NUMBERED_TAU, PROSE_STEP, RECORD_STEP, RECORD_TAU
 from .errors import MusterError
 from .io import read_store
-from .stats import store_stats
+from .stats import LEAD_LINE_TOKENS, lead_serial, store_stats
 
 P = 4096
 
 
-def _decision(serial, record, total):
-    """The dict scripts/derive.py prints, from the same three numbers."""
-    if serial >= NUMBERED_TAU:
+def _decision(serial, record, total, lead=False):
+    """The dict scripts/derive.py prints, from the same three numbers (`lead`: numbered under its own spelling)."""
+    if serial >= NUMBERED_TAU or lead:
         return dict(store="numbered log", unit_tokens=None, units=None, parent_tokens=None, parents=None,
                     order="newest per slot wins", retrieval="mostly by slot",
                     channel_floors=dict(meaning=2, keyword=0, parent=8, per_selected_units=10))
@@ -46,6 +47,8 @@ def _show(path, total, d):
     if d["store"] == "numbered log":
         rows = [("store", "numbered log"), ("units", "one per record"), ("parents", "one per slot"),
                 ("order", d["order"]), ("retrieval", d["retrieval"])]
+        if "leading_serial_share" in d:
+            rows.append(("serials", "each line's own prefix, shown as written"))
     else:
         if not d["units"]:
             unit = "whole store (under one unit)"
@@ -72,7 +75,11 @@ def cmd_derive(a):
     st = store_stats(text, P)
     if st.tokens == 0:
         sys.exit("%s is empty: nothing to configure" % a.path)
-    d = _decision(st.serial, st.record_share, st.tokens)
+    share, med = lead_serial(text) if st.serial < NUMBERED_TAU else (0.0, None)
+    lead = med is not None and med <= LEAD_LINE_TOKENS
+    d = _decision(st.serial, st.record_share, st.tokens, lead=lead)
+    if lead:
+        d = dict(leading_serial_share=round(share, 4), median_line_tokens=med, **d)
     if a.json:
         print(json.dumps(dict(path=a.path, tokens=st.tokens, serial_fraction=round(st.serial, 4),
                               record_share=round(st.record_share, 4), **d), indent=1))

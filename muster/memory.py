@@ -157,7 +157,7 @@ class Memory:
         elif style == "flat":
             c = flat(ids, self.cut.units)
         elif style == "numbered":
-            c = numbered(ids, self.cut.units, self.cut.order)
+            c = numbered(ids, self.cut.units, self.cut.order, self.cut.prefixes)
         else:
             raise PlanError("unknown render style %r" % style)
         return replace(c, mode=self.plan.mode, memory_version=self.version)

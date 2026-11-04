@@ -22,20 +22,20 @@
 <body><main>
   <div class="brand">MUSTER</div>
   <h1>See how your store configures retrieval.</h1>
-  <p class="lead">Two statistics read the structure already in your text. Inspect the units, parent groups and retrieval policy they select.</p>
+  <p class="lead">Inspect the units, parent groups and retrieval policy selected from your text's own records and serial labels.</p>
   <span class="pill">Runs in your browser · No API key · Text stays here</span>
   <div class="layout">
     <section class="panel" aria-labelledby="input-title"><h2 id="input-title">Your memory store</h2>
-      <div class="examples" aria-label="Synthetic examples"><button data-example="numbered">Numbered records</button><button data-example="records">Separated records</button><button data-example="prose">Continuous prose</button></div>
+      <div class="examples" aria-label="Synthetic examples"><button data-example="numbered">Numbered records</button><button data-example="serial">Serial labels</button><button data-example="records">Separated records</button><button data-example="prose">Continuous prose</button></div>
       <label for="store">Paste text, or select an example</label><textarea id="store" spellcheck="false"></textarea>
       <div class="minor">Synthetic examples show configuration. Reference chunk: 4,096 tokens.</div>
       <button id="inspect" class="primary" disabled>Inspect structure</button><p id="status" class="status" role="status" aria-live="polite">Loading the bundled tokenizer…</p>
     </section>
     <section class="panel" aria-labelledby="result-title"><h2 id="result-title">Selected configuration</h2>
       <div id="branch">Choose a store</div>
-      <div class="metrics"><div class="metric"><span id="serial" class="number">—</span><small>Numbered-line share</small></div><div class="metric"><span id="record" class="number">—</span><small>Short-record token share</small></div></div>
+      <div class="metrics"><div class="metric"><span id="serial" class="number">—</span><small>Integer-dot line share</small></div><div class="metric"><span id="record" class="number">—</span><small>Short-record token share</small></div></div>
       <dl class="settings"><div><dt>UNIT BUDGET</dt><dd id="unit">—</dd></div><div><dt>UNITS PER READ</dt><dd id="read">—</dd></div><div><dt>PARENT BUDGET</dt><dd id="parent">—</dd></div><div><dt>CHANNEL FLOORS</dt><dd id="policy">—</dd></div></dl>
-      <p id="explanation">The default rule first checks numbered lines, then record boundaries. Other explicit order formats are supported through the Python SDK's metadata adapter.</p>
+      <p id="explanation">The library reads integer-dot records and short logs whose serial labels count up one at a time, then checks record boundaries.</p>
       <details><summary>Inspect the plan JSON</summary><pre id="json">{}</pre></details>
     </section>
   </div>

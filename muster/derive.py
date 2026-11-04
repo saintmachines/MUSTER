@@ -10,13 +10,18 @@ The rule (paper, Algorithm 1, Part I; thresholds fixed before any experiment, ha
                 times as many units, so the token budget is unchanged)
 
   Parents are 8 units, or 4 or 2 if fewer than ten parents would remain; else there is no parent layer.
+
+Added after the paper (2026-11, thresholds set on public benchmark logs; `derive` only, not `derive_collection` or the
+presets): a store the serial fraction misses is still a numbered log when >= 95% of its lines after the first carry a
+leading serial one above the previous line's, written in the log's own style ("Step 3: ..."), and its median line is
+at most 20 tokens. The serial is read from that prefix, and the reader sees each line as written.
 """
 from typing import Iterable, Sequence, Union
 
 from .errors import PlanError
 from .plan import Plan
 from .records import DEFAULT_TEMPLATE, as_record, normalize_newlines, serialize
-from .stats import Stats, collection_stats, store_stats
+from .stats import LEAD_LINE_TOKENS, LEAD_TAU, Stats, collection_stats, lead_serial, store_stats
 
 NUMBERED_TAU, RECORD_TAU, MIN_PARENTS = 0.80, 0.90, 10
 RECORD_STEP, MIN_UNIT, PROSE_STEP = 8, 512, 4
@@ -39,13 +44,14 @@ def _parents(units_est, chunk):
     return 0, 0, None
 
 
-def _plan(branch, chunk, units_est, st: Stats, P, trace):
+def _plan(branch, chunk, units_est, st: Stats, P, trace, serial="dot"):
     if branch == "numbered":
-        trace.append("serial fraction %.4f >= %.2f: numbered log; one unit per record, parent = slot, newest serial wins"
-                     % (st.serial, NUMBERED_TAU))
+        if serial == "dot":
+            trace.append("serial fraction %.4f >= %.2f: numbered log; one unit per record, parent = slot, newest "
+                         "serial wins" % (st.serial, NUMBERED_TAU))
         return Plan(branch="numbered", atom=None, chunk=None, mscale=0, U=U_DEFAULT["numbered"],
                     policy="attprio_sess", render="numbered", supersede="numbered", reference_chunk=P,
-                    stats=st.to_dict(), trace=tuple(trace))
+                    stats=st.to_dict(), trace=tuple(trace), serial=serial)
     atom = "blank" if branch == "record" else "sentence"
     ms, npar, m = _parents(units_est, chunk)
     trace.append("%d units estimated at %d tokens -> %s" % (
@@ -57,7 +63,7 @@ def _plan(branch, chunk, units_est, st: Stats, P, trace):
 
 def derive(store, *, reference_chunk: int = 4096, template: str = DEFAULT_TEMPLATE,
            normalize_newlines: bool = True) -> Plan:
-    """The plan of one store (scripts/derive.py exactly)."""
+    """The plan of one store, with the documented native serial-format extension."""
     P = int(reference_chunk)
     text, _, _ = store_text(store, template=template, normalize=normalize_newlines)
     st = store_stats(text, P)
@@ -68,6 +74,12 @@ def derive(store, *, reference_chunk: int = 4096, template: str = DEFAULT_TEMPLA
                     reference_chunk=P, stats=st.to_dict(), trace=tuple(trace))
     if st.serial >= NUMBERED_TAU:
         return _plan("numbered", None, 0, st, P, trace)
+    share, med = lead_serial(text)
+    if med is not None and med <= LEAD_LINE_TOKENS:
+        trace.append("leading serial one above the previous line's on %.4f >= %.2f of lines, median line %g <= %d "
+                     "tokens: numbered log under its own spelling; one unit per record, parent = slot, newest serial "
+                     "wins" % (share, LEAD_TAU, med, LEAD_LINE_TOKENS))
+        return _plan("numbered", None, 0, st, P, trace, serial="lead")
     if st.record_share >= RECORD_TAU:
         chunk = max(P // RECORD_STEP, MIN_UNIT)
         trace.append("record share %.4f >= %.2f: record store; units of %d tokens, records kept whole"
@@ -107,6 +119,8 @@ def explain(plan: Plan) -> str:
                  ("order", "declared source sequence; all versions kept")]
     elif plan.branch == "numbered":
         rows += [("units", "one per record"), ("parents", "one per slot"), ("order", "newest per slot wins")]
+        if plan.serial == "lead":
+            rows.append(("serials", "each line's own prefix, shown as written"))
     elif plan.branch in ("record", "prose"):
         rows += [("units", "%s tokens%s" % (format(plan.chunk, ","), ", records whole" if plan.atom == "blank" else "")),
                  ("parents", ("%s tokens" % format(plan.mscale, ",")) if plan.mscale else "none")]

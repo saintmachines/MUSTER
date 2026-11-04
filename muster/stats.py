@@ -6,8 +6,12 @@ record share     the token-weighted share of blank-line records of at most the r
 `store_stats` is scripts/derive.py:69-79 (one store, CRLF normalized, special-token strings read as text).
 `collection_stats` is harness/derive_config.py:43-64 (the first rows of a benchmark cell, pooled), which the paper's
 per-cell decisions used.
+
+`lead_serial` is not in the paper: it finds a log that numbers its records in its own style ("Step 3: ..."),
+and only `derive` reads it, after the serial fraction has failed.
 """
 import re
+import statistics
 from dataclasses import dataclass
 
 from . import bpe
@@ -15,6 +19,10 @@ from .records import normalize_newlines
 
 NUM = re.compile(r"^\s*\d+\.\s+\S")
 MAX_LINES = 20000
+# a serial under the log's own spelling: an optional bracket and word, the integer, an optional closer, then the body
+# ("Step 3: ", "#3 ", "(3) ", "[3] ", "3. "). Thresholds set after the paper (2026-11) on public benchmark logs.
+LEAD = re.compile(r"^(\s*[\[(#]?\s*(?:[A-Za-z]+\s*)?)(\d{1,8})([\]).:]?\s+)(?=\S)")
+LEAD_TAU, LEAD_LINE_TOKENS = 0.95, 20
 
 
 @dataclass(frozen=True)
@@ -34,6 +42,27 @@ class Stats:
 def _serial(text):
     lines = [ln for ln in text.split("\n") if ln.strip()][:MAX_LINES]
     return (sum(1 for ln in lines if NUM.match(ln)) / float(len(lines)) if lines else 0.0), len(lines)
+
+
+def lead_serial(text):
+    """(share of lines after the first, among the first 20,000 non-empty lines, whose leading serial is the previous
+    line's plus one, median cl100k tokens per line). The median is counted only when the share reaches LEAD_TAU, else
+    it is None. A serial must end within a line's first 32 characters."""
+    lines = [ln for ln in normalize_newlines(text).split("\n") if ln.strip()][:MAX_LINES]
+    if not lines:
+        return 0.0, None
+    prev, step = None, 0
+    for ln in lines:
+        m = LEAD.match(ln)
+        v = int(m.group(2)) if m and m.end(2) <= 32 else None
+        if v is not None and prev is not None and v == prev + 1:
+            step += 1
+        prev = v
+    share = step / float(max(len(lines) - 1, 1))
+    if share < LEAD_TAU:
+        return share, None
+    enc = bpe.cl100k()
+    return share, statistics.median([bpe.count(enc, ln) for ln in lines])
 
 
 def store_stats(text: str, reference_chunk: int = 4096) -> Stats:

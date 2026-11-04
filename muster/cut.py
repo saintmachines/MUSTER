@@ -5,7 +5,8 @@ Three shapes, chosen by the plan:
                   split only if it alone exceeds `chunk`. Parents label each unit with the `mscale`-token block its
                   first token falls in ("m<k>"), or one parent per unit ("u<i>") when there is no parent layer.
   numbered        one unit per "<serial>. <body>" line, serial stripped; order = the serial; parent = the slot the
-                  record updates ("s:" + entity | relation skeleton).
+                  record updates ("s:" + entity | relation skeleton). A plan with serial "lead" reads each line's
+                  own prefix instead ("Step 3: <body>") and keeps it for the render.
   rounds          a LongMemEval-style literal [date, turns, date, turns, ...]: one unit per user turn with the
                   assistant reply, parent = the session.
 
@@ -20,6 +21,7 @@ from typing import Optional, Tuple
 
 from . import bpe
 from .errors import AssetMissing, PlanError, StoreRefused
+from .stats import LEAD
 
 _BLANK = re.compile(r"\n\s*\n")
 JOIN = {"blank": "\n\n", "newline": "\n", "sentence": " "}
@@ -35,6 +37,7 @@ class Cut:
     n_o200k: Tuple[int, ...]
     sep: Optional[str]
     diagnostics: dict = field(default_factory=dict)
+    prefixes: Optional[Tuple[str, ...]] = None   # serial "lead": each line's own prefix, "" where it has none
 
     def __len__(self):
         return len(self.units)
@@ -157,31 +160,35 @@ def slot_of(body):
     return sub + "|" + sk
 
 
-def _numbered(text, exact):
+def _numbered(text, exact, serial="dot"):
     lines = [ln for ln in text.split("\n") if ln.strip()]
-    ms = [_SERIAL.match(ln) for ln in lines]
+    lead = serial == "lead"
+    ms = [(LEAD if lead else _SERIAL).match(ln) for ln in lines]
     share = sum(1 for x in ms if x) / float(max(len(lines), 1))
     if share < AS_MINREC:
         if exact:
             raise StoreRefused("numbered log: only %.3f of lines are `<serial>. <body>` (needs %.1f; lme_pf29.py:2126)"
                                % (share, AS_MINREC))
-        raise PlanError("not a numbered log: %.3f of all lines carry a serial" % share)
-    units, order, parent = [], [], []
+        raise PlanError("not a numbered log: %.3f of all lines carry a %sserial" % (share, "leading " if lead else ""))
+    units, order, parent, prefixes = [], [], [], []
     for x, ln in zip(ms, lines):
-        if x:
-            ser, body = int(x.group(1)), x.group(2).strip()
+        if x and lead:
+            ser, body, pre = int(x.group(2)), ln[x.end():].strip(), ln[:x.end()]
+        elif x:
+            ser, body, pre = int(x.group(1)), x.group(2).strip(), None
         else:
-            ser, body = len(units), ln.strip()
+            ser, body, pre = len(units), ln.strip(), ""
         units.append(body)
         order.append(ser)
         parent.append("s:" + slot_of(body))
+        prefixes.append(pre)
     spans = tuple(sp for _, sp in _with_spans(text, lines))
     enc = bpe.o200k()
     serials = [o for o, x in zip(order, ms) if x]
     diag = dict(numbered_share=round(share, 4), distinct_serial_share=round(len(set(serials)) / float(max(len(serials), 1)), 4),
                 n_parents=len(set(parent)))
     return Cut(tuple(units), tuple(units), tuple(parent), tuple(order), spans,
-               tuple(bpe.count(enc, u) for u in units), "\n", diag)
+               tuple(bpe.count(enc, u) for u in units), "\n", diag, tuple(prefixes) if lead else None)
 
 
 # ---------------------------------------------------------------- rounds (LongMemEval literal)
@@ -230,7 +237,7 @@ def cut(text: str, plan, *, exact: Optional[bool] = None) -> Cut:
     if plan.branch == "empty":
         return Cut((), (), (), (), (), (), None, {})
     if plan.branch == "numbered":
-        return _numbered(text, exact)
+        return _numbered(text, exact, plan.serial)
     if plan.branch == "rounds":
         return _rounds(text)
     enc = bpe.o200k()

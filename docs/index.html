@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121417" media="(prefers-color-scheme: dark)">
 <title>MUSTER: agent memory that sets its own strategy</title>
-<meta name="description" content="LLM-written memory takes hours. MUSTER detects each store, picks a strategy in seconds, and matches or beats it.">
+<meta name="description" content="Detect before you construct. MUSTER reads the structure already present in a text store and configures retrieval and context assembly to fit it.">
 <link rel="canonical" href="https://saintmachines.github.io/MUSTER/">
 <meta property="og:url" content="https://saintmachines.github.io/MUSTER/">
 <meta property="og:type" content="website">
@@ -699,6 +699,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
         <blockquote><p>If serial ≥ 0.80, the unit is the record with its serial stripped, the parent is the record's normalised slot, and the order is the serial.</p><p>Otherwise the unit is the chunk size the benchmark prescribes, cut so a record is never split when record share ≥ 0.90 and refined one documented step under the same condition, the parent is eight times the unit, halved until at least ten parents remain, and no order is claimed.</p></blockquote>
         <p>Three constants appear: the refinement step moves between the only two chunk sizes MemoryAgentBench itself uses (512 and 4096), the parent multiplier of eight is their ratio, and the floor of ten parents is the retrieval budget. The same statistic that chose the representation also gates the retrieval arm: a store where serial fires takes the parent-priority arm, every other store the balanced one.</p>
     <p>Prose that keeps the 4,096-token unit is searched at a quarter of that size, 1,024 tokens, with four times as many units, so the token budget does not change.</p>
+        <p>The library reads a serial written as <code>Step 12:</code>, <code>#12</code> or <code>(12)</code> the same way as <code>12.</code>, when a log's short lines count up one at a time. <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">docs/library</a> gives the exact check.</p>
         <p>Then, per query:</p>
         <ol class="steps">
           <li><b>Reach.</b> Dense, lexical and parent-graph channels each keep a floor of slots; the rest are filled by one shared reranker score.</li>
@@ -830,7 +831,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
 <section id="reproduce" aria-labelledby="repro-h">
   <div class="wrap">
     <h2 id="repro-h">Reproduce</h2>
-    <p class="caption">Re-scoring uses a separate bundle of per-question BEAM answers and judgments and Honcho context logs. Its release is in preparation; the result files are not included in the source tree.</p>
+    <p class="caption">Re-scoring uses a separate bundle of per-question BEAM answers and judgments and Honcho context logs. The <a href="https://github.com/saintmachines/MUSTER/blob/main/data/eval_v1/README.md">evaluation artifact download</a> provides the bundle, its SHA-256 manifest and offline verification instructions. The large result files are distributed as a release asset.</p>
     <p class="lead">Each headline number is one click from the file that recomputes it: MemoryAgentBench rows via <a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_mab.py">gate/rescore_mab.py</a>, the metric of <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/cellscore.py">harness/cellscore.py</a> over the board's per-cell result tags (<a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_mab.md">gate/rescore_mab.md</a>); BEAM rows via <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/beam_score.py">harness/beam_score.py</a> over the judge files (<a href="https://github.com/saintmachines/MUSTER/blob/main/gate/rescore_beam.md">gate/rescore_beam.md</a>); the contexts behind them via the gate (<a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage0_tier0.md">gate/stage0_tier0.md</a>, <a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage0d_render.md">gate/stage0d_render.md</a>, <a href="https://github.com/saintmachines/MUSTER/blob/main/gate/stage1_beam100k.md">gate/stage1_beam100k.md</a>).</p>
     <p class="tcap plain" id="tcap-8">The reproduction gate this code is held to, with its evidence in gate/</p>
     <div class="tbl wide gate" data-reveal tabindex="0" role="region" aria-labelledby="tcap-8">

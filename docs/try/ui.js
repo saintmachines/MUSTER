@@ -1,6 +1,7 @@
 const $ = id => document.getElementById(id);
 const examples = {
   numbered: "0. The studio door is blue.\n1. The meeting starts at nine.\n2. The studio door is green.\n3. The report is in the shared folder.\n4. The meeting starts at ten.\n5. The studio door is white.",
+  serial: "Step 0: The studio door is blue.\nStep 1: The meeting starts at nine.\nStep 2: The studio door is green.\nStep 3: The report is in the shared folder.\nStep 4: The meeting starts at ten.\nStep 5: The studio door is white.",
   records: "Session A\nThe team tested a small robot in the lab. It recorded wheel speed and camera timestamps.\n\nSession B\nThe team added a new sensor and kept the original measurements for comparison.\n\nSession C\nThe report separates decisions, measurements and open questions.",
   prose: "The river curved through the valley as the survey team followed its banks. They described the landscape in continuous prose, connecting each observation to the next rather than separating it into individual records. ".repeat(160)
 };
@@ -27,7 +28,7 @@ worker.onmessage = event => {
   $("read").textContent = String(plan.U);
   $("parent").textContent = plan.branch === "numbered" ? "By derived slot" : plan.mscale ? plan.mscale.toLocaleString() + " tokens" : "No parent layer";
   $("policy").textContent = plan.branch === "empty" ? "—" : (plan.branch === "numbered" ? "2 : 0 : 8" : "4 : 3 : 3") + " · dense / lexical / parent";
-  $("explanation").textContent = plan.branch === "numbered" ? "At least 80% of nonempty lines use the integer-dot format. Construction uses record units and derived slots; order-based replacement applies where a slot is found." : plan.branch === "record" ? "At least 90% of the record tokens fit within the reference chunk. Keep record boundaries when packing units and use balanced retrieval floors." : plan.branch === "prose" ? "Short records cover less than 90% of the text. Search with finer prose units and more units per read; preserve the source text." : "Add text to inspect its structure.";
+  $("explanation").textContent = plan.branch === "numbered" ? (plan.serial === "lead" ? "The short lines count up one at a time in the log's own style: at least 95% of adjacent lines advance by one and the median line uses at most 20 tokens. Construction uses record units and derived slots; order-based replacement applies where a slot is found." : "At least 80% of nonempty lines use the integer-dot format. Construction uses record units and derived slots; order-based replacement applies where a slot is found.") : plan.branch === "record" ? "At least 90% of the record tokens fit within the reference chunk. Keep record boundaries when packing units and use balanced retrieval floors." : plan.branch === "prose" ? "Short records cover less than 90% of the text. Search with finer prose units and more units per read; preserve the source text." : "Add text to inspect its structure.";
   $("json").textContent = JSON.stringify(plan, null, 2);
   $("status").textContent = plan.stats.tokens.toLocaleString() + " tokens · " + plan.stats.lines_used.toLocaleString() + " nonempty lines inspected · nothing uploaded";
 };

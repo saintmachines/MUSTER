@@ -13,7 +13,7 @@ license: apache-2.0
 
 Paste text to see the two store statistics and the retrieval configuration they imply. The app runs in your browser with a bundled cl100k_base tokenizer. Text is not uploaded. There is no model inference or API key.
 
-This is a configuration preview of the SDK's **single-store native** rule at reference chunk 4,096, pinned to MUSTER commit `3aed83d7c2f35bafb39c8e3cc015ec8d6e074996`. It does not generate answers, measure accuracy, construct a retrieval index, or implement collection-exact paper replay. It detects the default integer-dot line syntax; other ordered-record formats need the SDK's explicit metadata adapter.
+This is a configuration preview of the SDK's **single-store native** rule at reference chunk 4,096. `COMPATIBILITY.json` records the tested SDK sources. It detects integer-dot records and the post-paper extension for short logs whose leading serials count up one at a time, including `Step 12:`, `#12` and `(12)`. The extension uses the same 95% consecutive-line and 20-token median checks as the Python SDK. It does not generate answers, measure accuracy, construct a retrieval index, or implement collection-exact paper replay.
 
 Python reference: `muster.derive(your_text)`. Code: https://github.com/saintmachines/MUSTER . Paper and reproduction: https://saintmachines.github.io/MUSTER/ . The public arXiv ID will be linked when announced.
 

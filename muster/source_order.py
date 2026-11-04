@@ -11,6 +11,7 @@ from dataclasses import asdict, dataclass
 from typing import Optional, Tuple
 
 from .errors import RecordError
+from .stats import LEAD
 
 
 @dataclass(frozen=True)
@@ -81,6 +82,8 @@ def normalize_ordered_records(records, order, *, record_format="content"):
 
     `content` accepts content/text mappings or strings. `step` and `integer_dot`
     accept the same explicit record sequence with a producer-declared prefix.
+    `serial` reads the shared leading-serial lexer without detector thresholds;
+    its marker is diagnostic and the declared array remains the source order.
     A single plain-text blob supplies neither trustworthy boundaries nor order.
     The source hash is a caller-supplied provenance assertion; this function
     also records a canonical hash of the received JSON records.
@@ -92,8 +95,8 @@ def normalize_ordered_records(records, order, *, record_format="content"):
             raise RecordError("invalid source order fields") from exc
     if not isinstance(order, SourceOrder):
         raise RecordError("explicit SourceOrder provenance is required")
-    if record_format not in ("content", "step", "integer_dot"):
-        raise RecordError("record_format must be content, step or integer_dot")
+    if record_format not in ("content", "step", "integer_dot", "serial"):
+        raise RecordError("record_format must be content, step, integer_dot or serial")
     if not isinstance(records, (list, tuple)) or not records:
         raise RecordError("explicit nonempty record array required; plain text has no declared boundaries")
     try:
@@ -120,7 +123,16 @@ def normalize_ordered_records(records, order, *, record_format="content"):
             raise RecordError("duplicate record ID %r" % rid)
         seen.add(rid)
         prefix, body, marker = "", raw, None
-        if record_format != "content":
+        if record_format == "serial":
+            m = LEAD.match(raw)
+            if m is None or m.end(2) > 32:
+                raise RecordError("record %d does not match declared serial prefix" % i)
+            try:
+                marker = int(m.group(2))
+            except ValueError as exc:
+                raise RecordError("record %d has an unsupported serial integer" % i) from exc
+            prefix, body = raw[:m.end()], raw[m.end():]
+        elif record_format != "content":
             m = _PREFIX[record_format].fullmatch(raw)
             if m is None:
                 raise RecordError("record %d does not match declared %s prefix" % (i, record_format))

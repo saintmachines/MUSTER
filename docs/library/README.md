@@ -47,6 +47,11 @@ print(mem.context("Where does Caroline live now?").text)    # what your LLM read
 the text sits in short blank-line records, like a chat) or prose (books, documents). `print(muster.explain(mem.plan))`
 shows the decision and why. Nothing is tuned per dataset.
 
+The numbered branch reads a serial written in the log's own style (`Step 12: ...`, `#12 ...`, `(12) ...`) the same way as
+the paper's `12. ...`. It applies when 95% of the lines after the first carry a serial one above the previous line's and
+the median line is at most 20 tokens, and the reader sees each line as written. The check was added after the paper and
+its two thresholds were set on public benchmark logs; the paper's presets and `derive_collection` do not use it.
+
 ## A memory that grows: `Store`
 
 ```python
@@ -58,7 +63,7 @@ ctx = store.context("What is my daughter's name?")
 
 `add` writes records in one transaction and calls no model, so it is safe on a hot path. The next search builds the
 new version exactly as a fresh build of all records would be (tested), embedding only texts it has not seen before.
-Scores and vectors are cached by text, so a restart costs nothing.
+Cached unit vectors and reranker scores survive restarts; new queries still run retrieval models.
 
 ## Connect it
 
@@ -127,3 +132,11 @@ API call ([exact.md](exact.md) has every check, its script and its count). In sh
 An experimental [declared record mode](https://github.com/saintmachines/MUSTER/blob/main/docs/library/declared-records.md) connects explicit
 source boundaries and order metadata to the SDK, CLI and an opt-in HTTP endpoint.
 It keeps all versions and does not change the default or paper replay paths.
+
+For a producer-declared record array, `record_format="serial"` reversibly reads prefixes such as
+`Step 12: ...`, `#12 ...`, `(12) ...`, `[12] ...`, or `12. ...` using the leading-serial lexer (the integer must end
+within the first 32 code points). Pass `declared_order=SourceOrder(...)` to `muster.build`, or use `"format": "serial"`
+in the declared-record CLI/HTTP envelope. Prefixes and metadata remain in `mem.ordered_records.roundtrip()`; the body
+is what retrieval and the reader receive. This explicit codec does not require the automatic detector's 95%/20-token
+conditions. Gaps, resets and repeated markers do not sort or delete records: declared source order and all versions
+are preserved, with supersession off. The existing `step` and `integer_dot` codecs remain strict and unchanged.

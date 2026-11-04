@@ -3,7 +3,8 @@
   r4        one block per parent: units of a block in id order, blocks in order of their first unit,
             "Memory <n>:" before each block (harness/render_rule.py:18-21). The paper's render.
   flat      units in id order, one per line (harness/lme_pf29.py:764-765).
-  numbered  "[<serial>] <unit>" in walk order, stable by serial (lme_pf29.py:3630-3632, without the tag).
+  numbered  "[<serial>] <unit>" in walk order, stable by serial (lme_pf29.py:3630-3632, without the tag); a log
+            numbered under its own spelling is shown as written, "<prefix><unit>".
 """
 import hashlib
 from dataclasses import dataclass, field
@@ -67,8 +68,10 @@ def flat(ids, units) -> Context:
     return Context("\n".join(units[i] for i in s), "flat", tuple(s))
 
 
-def numbered(walk_ids, units, order) -> Context:
+def numbered(walk_ids, units, order, prefixes=None) -> Context:
     w = sorted(walk_ids, key=lambda i: order[i])          # stable: ties keep walk order
+    if prefixes is not None:
+        return Context("\n".join(prefixes[i] + units[i] for i in w), "numbered", tuple(w))
     return Context("\n".join("[%s] %s" % (order[i], units[i]) for i in w), "numbered", tuple(w))
 
 
