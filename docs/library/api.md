@@ -73,7 +73,7 @@ cache_dir=None, local_files_only=False)`
 
 | Command | What it does |
 |---|---|
-| `muster derive PATH [--json]` | the plan of a store (same output as scripts/derive.py) |
+| `muster derive PATH [--json]` | the native plan of a store, including the library's additional serial spellings |
 | `muster query PATH "question" [--units N] [--explain]` | build once from a file and print the context |
 | `muster add --store S FILE.jsonl [--request-id ID]` | append records |
 | `muster context --store S "question" [--units N]` | print the context from a store |

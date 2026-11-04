@@ -18,7 +18,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/saintmachines/MUSTER"
+Homepage = "https://saintmachines.github.io/MUSTER/"
 Repository = "https://github.com/saintmachines/MUSTER"
 Documentation = "https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md"
 Issues = "https://github.com/saintmachines/MUSTER/issues"

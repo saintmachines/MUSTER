@@ -24,7 +24,7 @@ reported and skipped, never compared.
 ## 2. The cut: no model, CPU only
 
 ```bash
-pip install ".[models,parquet]"          # from the repository (on PyPI as muster-memory after release)
+pip install ".[models,parquet]"          # in the repository folder
 muster verify cuts --data data_root
 ```
 

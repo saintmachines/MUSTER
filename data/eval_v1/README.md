@@ -16,10 +16,10 @@ The release is staged as a draft during preparation. The links become publicly a
 
 The two Honcho formats contain the same 1,300 query/context pairs; the repeated BEAM runs are separate run tags. Rows are not pooled into one accuracy figure. The [manifest](MANIFEST.tsv) identifies all 108 files by SHA-256, bytes and rows.
 
-Archive: **77,485,798 bytes**, SHA-256:
+Archive: **77,486,652 bytes**, SHA-256:
 
 ```
-27059f95c6341fbb1a5e0c477f605043e6ac9251cd6d0f08eb25c532124eba70
+617c19d23c02a8bc958fbc5dba7d6e41fae11b8c672a5a96df5b562200bc77f7
 ```
 
 ## Verify and re-score
@@ -44,4 +44,4 @@ This recomputes all 48 printed values of the main BEAM table from the 51 saved j
 
 The saved JSONL contains returned context messages. Its companion JSON joins these messages with questions from the frozen question bundles, checked by identifiers for all 1,300 pairs. The harness called `honcho-ai 2.5.0`, `session.context(summary=True, peer_target="user", search_query=question)` after ingestion drained. These files provide the query/context artifacts, not HTTP traffic captures, intermediate retries, or historical ingestion responses. The public harness retains the ingestion configuration and its no-network dry mode.
 
-MUSTER-produced annotations/code use Apache-2.0; BEAM-origin material retains MIT. Both license texts are included in the archive. This bundle contains evaluation artifacts rather than newly collected conversations; other benchmarks and model weights are not included.
+MUSTER's original annotations and verifier code use Apache-2.0. BEAM source content retains the CC BY-SA 4.0 license declared by the [BEAM](https://huggingface.co/datasets/Mohammadta/BEAM) and [BEAM-10M](https://huggingface.co/datasets/Mohammadta/BEAM-10M) dataset cards. `LICENSE_BEAM` identifies the dataset creators, source and license links and preserves the original BEAM software MIT notice separately. This bundle contains evaluation artifacts rather than newly collected conversations; other benchmarks and model weights are not included.

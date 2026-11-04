@@ -21,7 +21,7 @@ from typing import Optional, Tuple
 
 from . import bpe
 from .errors import AssetMissing, PlanError, StoreRefused
-from .stats import LEAD
+from .stats import LEAD, lead_match
 
 _BLANK = re.compile(r"\n\s*\n")
 JOIN = {"blank": "\n\n", "newline": "\n", "sentence": " "}
@@ -163,7 +163,7 @@ def slot_of(body):
 def _numbered(text, exact, serial="dot"):
     lines = [ln for ln in text.split("\n") if ln.strip()]
     lead = serial == "lead"
-    ms = [(LEAD if lead else _SERIAL).match(ln) for ln in lines]
+    ms = [(lead_match(ln) if not exact else LEAD.match(ln)) if lead else _SERIAL.match(ln) for ln in lines]
     share = sum(1 for x in ms if x) / float(max(len(lines), 1))
     if share < AS_MINREC:
         if exact:
@@ -171,6 +171,7 @@ def _numbered(text, exact, serial="dot"):
                                % (share, AS_MINREC))
         raise PlanError("not a numbered log: %.3f of all lines carry a %sserial" % (share, "leading " if lead else ""))
     units, order, parent, prefixes = [], [], [], []
+    unmarked = []
     for x, ln in zip(ms, lines):
         if x and lead:
             ser, body, pre = int(x.group(2)), ln[x.end():].strip(), ln[:x.end()]
@@ -178,15 +179,20 @@ def _numbered(text, exact, serial="dot"):
             ser, body, pre = int(x.group(1)), x.group(2).strip(), None
         else:
             ser, body, pre = len(units), ln.strip(), ""
+            if lead and not exact:
+                ser, body = -1, ln  # preserve the literal line; no invented revision clock
+                unmarked.append(len(units))
         units.append(body)
         order.append(ser)
-        parent.append("s:" + slot_of(body))
+        parent.append("u:rawline%d" % (len(units) - 1) if lead and not exact and x is None else "s:" + slot_of(body))
         prefixes.append(pre)
     spans = tuple(sp for _, sp in _with_spans(text, lines))
     enc = bpe.o200k()
     serials = [o for o, x in zip(order, ms) if x]
     diag = dict(numbered_share=round(share, 4), distinct_serial_share=round(len(set(serials)) / float(max(len(serials), 1)), 4),
                 n_parents=len(set(parent)))
+    if unmarked:
+        diag["unmarked_records"] = unmarked
     return Cut(tuple(units), tuple(units), tuple(parent), tuple(order), spans,
                tuple(bpe.count(enc, u) for u in units), "\n", diag, tuple(prefixes) if lead else None)
 

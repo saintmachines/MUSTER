@@ -17,7 +17,7 @@ from .errors import EnvironmentRefused, PlanError, StaleSelection
 from .index import Index
 from .plan import Plan
 from .records import DEFAULT_TEMPLATE
-from .render import Context, flat, numbered, r4
+from .render import Block, Context, flat, numbered, r4
 from .search import Scorer, Selection, select
 
 
@@ -38,6 +38,8 @@ class Memory:
     models: object = None
     _index: Optional[Index] = field(default=None, repr=False)
     ordered_records: object = field(default=None, repr=False)
+    _semantic_keys: Optional[tuple] = field(default=None, repr=False)
+    _record_unit_indices: Optional[tuple] = field(default=None, repr=False)
 
     @property
     def units(self):
@@ -50,8 +52,9 @@ class Memory:
     @property
     def index(self) -> Index:
         if self._index is None:
-            self._index = Index(self.cut.units, self.cut.keys, self.cut.parent, self.cut.order,
-                                has_order=(self.plan.branch == "numbered"))
+            keys = self.cut.keys if self._semantic_keys is None else self._semantic_keys
+            ordered = self.plan.branch == "numbered" and not self.cut.diagnostics.get("unmarked_records")
+            self._index = Index(self.cut.units, keys, self.cut.parent, self.cut.order, has_order=ordered)
         return self._index
 
     @property
@@ -62,6 +65,8 @@ class Memory:
         """The records unit `i` was cut from (empty for a memory built from a plain string)."""
         if self.records is None or self.record_spans is None:
             return []
+        if self._record_unit_indices is not None:
+            return [self.records[self._record_unit_indices[i]]]  # includes zero-length record spans
         if not hasattr(self, "_ur"):
             ur, j = [], 0
             spans = self.record_spans
@@ -157,7 +162,15 @@ class Memory:
         elif style == "flat":
             c = flat(ids, self.cut.units)
         elif style == "numbered":
-            c = numbered(ids, self.cut.units, self.cut.order, self.cut.prefixes)
+            order = self.cut.order
+            if self.cut.diagnostics.get("unmarked_records"):
+                order = self._record_unit_indices or tuple(range(len(self.cut.units)))  # source positions, not clocks
+            c = numbered(ids, self.cut.units, order, self.cut.prefixes)
+            if self._record_unit_indices is not None:
+                blocks = tuple(Block(n + 1, self.cut.parent[i], (i,),
+                                     numbered([i], self.cut.units, order, self.cut.prefixes).text)
+                               for n, i in enumerate(c.ids))
+                c = replace(c, blocks=blocks)  # typed records retain structured source IDs and metadata
         else:
             raise PlanError("unknown render style %r" % style)
         return replace(c, mode=self.plan.mode, memory_version=self.version)
@@ -214,9 +227,16 @@ def build(store, plan=None, *, models=None, embed=True, template: str = DEFAULT_
     if record_format != "content":
         raise PlanError("record_format requires declared_order provenance")
     text, spans, recs = store_text(store, template=template, normalize=(normalize_newlines and not exact_preset))
-    p = resolve_plan(text, plan)
-    c = cut(text, p)
-    mem = Memory(plan=p, text=text, cut=c, records=recs, record_spans=spans, models=models)
+    p = (derive(recs, template=template, normalize_newlines=normalize_newlines)
+         if recs is not None and plan is None else resolve_plan(text, plan))
+    semantic, record_indices = None, None
+    if recs is not None and p.mode == "native" and p.branch == "numbered":
+        from .record_serial import cut_record_serials
+        c, semantic, record_indices = cut_record_serials(recs, text, spans, p, normalize=normalize_newlines)
+    else:
+        c = cut(text, p)
+    mem = Memory(plan=p, text=text, cut=c, records=recs, record_spans=spans, models=models,
+                 _semantic_keys=semantic, _record_unit_indices=record_indices)
     if embed and len(c):
         mem.embed(models)
     return mem

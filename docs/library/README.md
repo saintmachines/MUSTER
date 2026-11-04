@@ -6,17 +6,17 @@ the paper's runs are reproduced by it, question by question (see [Verification](
 
 ## Install
 
-Run these commands in the repository folder. The PyPI distribution is not published yet.
+PyPI publishing is pending. These commands install `muster-memory` from this source repository and require Git.
 
 ```bash
-pip install ".[models]"                    # build, add and search (bge-m3 and bge-reranker-v2-m3, run locally)
-pip install ".[models,mcp]"                # also the MCP server
+pip install "muster-memory[models] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"        # build, add and search (bge-m3 and bge-reranker-v2-m3, run locally)
+pip install "muster-memory[models,mcp] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"    # also the MCP server
 muster fetch                                  # optional: tokenizer and sentence-splitter files for offline use
 ```
 
-`pip install .` alone gives `muster derive` and `muster.derive()`, which need only `tiktoken`. The
+`pip install "muster-memory @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"` alone gives `muster derive` and `muster.derive()`, which need only `tiktoken`. The
 package imports as `muster`; `pip install muster` (without `-memory`) installs an unrelated 2017 project.
-Until the first release, install from the repository folder: `pip install ".[models,mcp]"`.
+The paper's harness and the tests run from a clone of the repository.
 
 ```bash
 git clone https://github.com/saintmachines/MUSTER.git
@@ -88,8 +88,8 @@ curl -s localhost:8765/v1/context -d '{"query":"Where did I last see the red mug
 **Python agents**: `Store.context(q).text` is a string; put it in the prompt. `ctx.messages(question)` builds a chat
 message list; `ctx.blocks` gives the groups with the ids of the passages in each.
 
-Examples: [examples/](../../examples/) (agent loop, robot observation log, MCP client configuration, ROS 2 node).
-Reference: [api.md](api.md). Checking it against the paper: [verify.md](verify.md), [exact.md](exact.md).
+Examples: [examples/][examples] (agent loop, robot observation log, MCP client configuration, ROS 2 node).
+Reference: [api.md][api]. Checking it against the paper: [verify.md][verify], [exact.md][exact].
 
 ## How it works, in one paragraph
 
@@ -113,12 +113,12 @@ iteration over entity sets, and a stable sort for exact dense-score ties.
 
 Automatically derived non-numbered plans use the balanced method with immediate sibling candidates (`flrs`).
 The frozen paper presets retain each published run's policy, including `flr` where it was recorded; explicit or
-JSON-restored plans are not migrated. See [exact.md](exact.md) when choosing between automatic planning and replay.
+JSON-restored plans are not migrated. See [exact.md][exact] when choosing between automatic planning and replay.
 
 ## Verification
 
 The library is checked against the paper's harness and its published outputs on the paper's data, CPU only, with no
-API call ([exact.md](exact.md) has every check, its script and its count). In short:
+API call ([exact.md][exact] has every check, its script and its count). In short:
 
 | Check | Equal |
 |---|---|
@@ -140,3 +140,22 @@ in the declared-record CLI/HTTP envelope. Prefixes and metadata remain in `mem.o
 is what retrieval and the reader receive. This explicit codec does not require the automatic detector's 95%/20-token
 conditions. Gaps, resets and repeated markers do not sort or delete records: declared source order and all versions
 are preserved, with supersession off. The existing `step` and `integer_dot` codecs remain strict and unchanged.
+
+For a record array or `Store`, automatic serial detection reads only the start of each record's `text`/`content`.
+An ID, time, or speaker field never supplies a serial. A literal body beginning `user: Step 1: ...` is not rewritten.
+Numbered records keep their serialized metadata in retrieval and reader text, while slots and revision order come
+from the body. Each record remains one unit; multiline bodies are not split into invented records. Unmarked records
+keep their own occurrence and cannot enable structural replacement. Paper replay and valid, fully marked plain-text
+logs are unchanged. In native lead logs, an unmarked or out-of-bound line keeps its original position and has no
+inferred revision clock; structural replacement is disabled.
+
+For structured records the continuity denominator is the original record pairs, including empty records as missing
+markers, and the length median counts each entire record body, including continuation lines. It does not scan for
+a serial in arbitrary words later in the body. Raw strings retain the existing line-based rule and thresholds.
+An unmarked record has no inferred revision clock; all-marked numbered inputs retain numeric serial display order,
+while an array containing unmarked records is displayed in original array order with structural replacement off.
+
+[examples]: https://github.com/saintmachines/MUSTER/tree/main/examples
+[api]: https://github.com/saintmachines/MUSTER/blob/main/docs/library/api.md
+[verify]: https://github.com/saintmachines/MUSTER/blob/main/docs/library/verify.md
+[exact]: https://github.com/saintmachines/MUSTER/blob/main/docs/library/exact.md

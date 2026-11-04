@@ -6,16 +6,18 @@ MUSTER supplies local `remember` and `recall` tools over an open `Store`.
 The application chooses its models, opens and closes the Store, and decides which user or robot owns it.
 Bind a separate Store for each identity that needs separate memory.
 
-Importing `muster.integrations` loads no SDK. From the repository folder, install only the framework you use:
+Importing `muster.integrations` loads no SDK. Install only the framework you use.
 
 ```sh
-pip install '.[models,agents]'
-# Or: .[models,langchain], .[models,langgraph]
+pip install "muster-memory[models,agents] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"
+# Or: muster-memory[models,langchain], muster-memory[models,langgraph]
 ```
 
 For a model-free local example use `Models.fake()` as below. Real retrieval uses the models
 configured on the Store. Tool construction and `remember` make no provider calls;
 `recall` may load and run the Store's retrieval models.
+
+PyPI publishing is pending; the installation command above uses the source repository.
 
 ## OpenAI Agents SDK
 

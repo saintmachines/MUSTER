@@ -17,10 +17,12 @@ leading serial one above the previous line's, written in the log's own style ("S
 at most 20 tokens. The serial is read from that prefix, and the reader sees each line as written.
 """
 from typing import Iterable, Sequence, Union
+from dataclasses import replace
 
 from .errors import PlanError
 from .plan import Plan
 from .records import DEFAULT_TEMPLATE, as_record, normalize_newlines, serialize
+from .record_serial import body_serial_stats
 from .stats import LEAD_LINE_TOKENS, LEAD_TAU, Stats, collection_stats, lead_serial, store_stats
 
 NUMBERED_TAU, RECORD_TAU, MIN_PARENTS = 0.80, 0.90, 10
@@ -65,20 +67,30 @@ def derive(store, *, reference_chunk: int = 4096, template: str = DEFAULT_TEMPLA
            normalize_newlines: bool = True) -> Plan:
     """The plan of one store, with the documented native serial-format extension."""
     P = int(reference_chunk)
-    text, _, _ = store_text(store, template=template, normalize=normalize_newlines)
+    text, _, recs = store_text(store, template=template, normalize=normalize_newlines)
     st = store_stats(text, P)
+    body_stats = body_serial_stats(recs, normalize=normalize_newlines) if recs is not None else None
+    if body_stats is not None:
+        st = replace(st, serial=body_stats[0])  # metadata never supplies a record serial
     trace = ["serial fraction %.4f, record share %.4f, %d tokens (cl100k_base)" % (st.serial, st.record_share, st.tokens)]
     if st.tokens == 0:
         trace.append("empty store")
         return Plan(branch="empty", atom=None, chunk=None, mscale=0, U=0, policy="flr", render="flat",
                     reference_chunk=P, stats=st.to_dict(), trace=tuple(trace))
     if st.serial >= NUMBERED_TAU:
+        if body_stats is not None:
+            trace.append("Serials are read only at the start of original record bodies; metadata is retrieval/display data.")
         return _plan("numbered", None, 0, st, P, trace)
-    share, med = lead_serial(text)
+    share, med = lead_serial(text) if body_stats is None else body_stats[1:]
     if med is not None and med <= LEAD_LINE_TOKENS:
-        trace.append("leading serial one above the previous line's on %.4f >= %.2f of lines, median line %g <= %d "
-                     "tokens: numbered log under its own spelling; one unit per record, parent = slot, newest serial "
-                     "wins" % (share, LEAD_TAU, med, LEAD_LINE_TOKENS))
+        if body_stats is None:
+            trace.append("leading serial one above the previous line's on %.4f >= %.2f of lines, median line %g <= %d "
+                         "tokens: numbered log under its own spelling; one unit per record, parent = slot, newest serial "
+                         "wins" % (share, LEAD_TAU, med, LEAD_LINE_TOKENS))
+        else:
+            trace.append("leading body serial one above the previous record's on %.4f >= %.2f of original record "
+                         "pairs, median entire record body %g <= %d tokens: numbered records; metadata kept for "
+                         "retrieval/display, not slot/order" % (share, LEAD_TAU, med, LEAD_LINE_TOKENS))
         return _plan("numbered", None, 0, st, P, trace, serial="lead")
     if st.record_share >= RECORD_TAU:
         chunk = max(P // RECORD_STEP, MIN_UNIT)

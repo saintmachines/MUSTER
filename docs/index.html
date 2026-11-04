@@ -123,6 +123,7 @@ summary h3{margin:0;font-size:var(--fs1)}
 .btn:hover{background:var(--tint)}
 .btn.primary{background:var(--accent);color:var(--on-accent)}
 .btn.primary:hover{background:var(--accent);filter:brightness(1.08)}
+.pip{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:8px 16px;border:1px solid var(--rule);border-radius:6px;background:var(--code);color:var(--ink);font-size:var(--fs-1);line-height:1.5;overflow-wrap:anywhere;-webkit-user-select:all;user-select:all;width:100%;max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:break-word;justify-content:flex-start}
 .onpage{font-size:var(--fs-1);color:var(--ink-3);margin-top:var(--s2);display:flex;flex-wrap:wrap;align-items:center;column-gap:var(--s2);row-gap:0}
 .onpage a{color:var(--ink-2)}
 .card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:var(--s2);margin:0;display:flex;flex-direction:column;justify-content:center;min-width:0}
@@ -396,7 +397,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
   :root{--gutter:16px;--s7:48px}
   .def{font-size:var(--fs0)}
   .actions{flex-direction:column}
-  .actions .btn{width:100%}
+  .actions .btn,.actions .pip{width:100%}
   .card{padding:12px}
   .tiles dd.src a,.onpage a{display:inline-flex;min-height:44px;min-width:44px;align-items:center}
   .onpage a{justify-content:center}
@@ -468,6 +469,8 @@ footer .maker svg{display:block;max-width:100%;height:auto}
         <div class="actions">
           <a class="btn primary" id="cta-run" href="#run-it">Run it, no API key</a>
           <a class="btn" href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER.pdf">Paper (PDF)</a>
+          <span class="caption" style="width:100%">Source install · PyPI publishing pending</span>
+          <code class="pip" tabindex="0" aria-label="Source install of muster-memory with local retrieval models and MCP; PyPI publishing is pending">pip install "muster-memory[models,mcp] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"</code>
         </div>
         <p class="onpage"><span>On this page:</span> <a href="#results">Results</a> <a href="#run-it">Run it</a> <a href="#cost">Cost</a> <a href="#how">How it works</a> <a href="#detailed">Detailed results</a> <a href="#reproduce">Reproduce</a> <a href="#faq">FAQ</a></p>
       </div>
@@ -602,10 +605,11 @@ footer .maker svg{display:block;max-width:100%;height:auto}
 <section id="run-it" aria-labelledby="run-h">
   <div class="wrap">
     <h2 id="run-h">Run it</h2>
+    <p>PyPI publishing is pending. Install <code>muster-memory</code> from this source repository with the command below; Git is required.</p>
     <p><a href="try/">Open the browser structure inspector</a> to try your own text. It previews the configuration locally, without an API key.</p>
     <div class="code" data-reveal>
-      <div class="code-head"><span>In the repository folder, replace <code>path/to/store.txt</code> with your store file</span></div>
-      <pre tabindex="0"><code>pip install tiktoken &amp;&amp; python scripts/derive.py path/to/store.txt</code></pre>
+      <div class="code-head"><span>Replace <code>path/to/store.txt</code> with your store file</span></div>
+      <pre tabindex="0"><code>pip install "muster-memory @ git+https://github.com/saintmachines/MUSTER.git@source-20261104" &amp;&amp; muster derive path/to/store.txt</code></pre>
     </div>
     <p>It detects the store and sets its own strategy by the paper's rule, with no model or key, and the store never leaves the machine. It decides how to cut the text, how to group the pieces, whether only the newest version counts, and how to weight the three search channels.</p>
     <div class="code" data-reveal>
@@ -617,7 +621,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
   order      none: all versions kept
   retrieval  balanced, 3 channels</code></pre>
     </div>
-    <p>To answer questions it also needs the retrieval and reading models in <a href="https://github.com/saintmachines/MUSTER/blob/main/harness/README.md">harness/</a>, set up as in <a href="#reproduce">Reproduce</a>. The <code>muster</code> library packages the same rule, build and search (<a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">docs/library</a>).</p>
+    <p>For local retrieval and app connections, install <code>muster-memory[models,mcp]</code>. Use the Python <code>Store</code>, MCP or HTTP server, or the OpenAI Agents SDK, LangChain and LangGraph integrations; pass the returned context to your reader. See <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">the library quick start</a>.</p>
   </div>
 </section>
 
@@ -921,7 +925,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
       var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px 120px 0px',threshold:.15});
       for(i=0;i<els.length;i++)if(!els[i].classList.contains('in'))io.observe(els[i]);
     }
-    var lines='pip install tiktoken && python scripts/derive.py path/to/store.txt';
+    var lines='pip install "muster-memory @ git+https://github.com/saintmachines/MUSTER.git@source-20261104" && muster derive path/to/store.txt';
     var pre=d.querySelector('#run-it pre');
     function selectPre(){if(!pre)return;var r=d.createRange();r.selectNodeContents(pre);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);}
     function copied(b){if(!b)return;var t=b.getAttribute('data-label')||b.textContent;b.setAttribute('data-label',t);b.setAttribute('aria-live','polite');b.textContent='Copied';setTimeout(function(){b.textContent=t;},1500);}

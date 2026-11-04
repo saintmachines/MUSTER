@@ -44,6 +44,12 @@ def _serial(text):
     return (sum(1 for ln in lines if NUM.match(ln)) / float(len(lines)) if lines else 0.0), len(lines)
 
 
+def lead_match(s):
+    """LEAD at the start of `s` when its integer ends within the first 32 characters, else None."""
+    m = LEAD.match(s)
+    return m if m and m.end(2) <= 32 else None
+
+
 def lead_serial(text):
     """(share of lines after the first, among the first 20,000 non-empty lines, whose leading serial is the previous
     line's plus one, median cl100k tokens per line). The median is counted only when the share reaches LEAD_TAU, else
@@ -53,8 +59,8 @@ def lead_serial(text):
         return 0.0, None
     prev, step = None, 0
     for ln in lines:
-        m = LEAD.match(ln)
-        v = int(m.group(2)) if m and m.end(2) <= 32 else None
+        m = lead_match(ln)
+        v = int(m.group(2)) if m else None
         if v is not None and prev is not None and v == prev + 1:
             step += 1
         prev = v

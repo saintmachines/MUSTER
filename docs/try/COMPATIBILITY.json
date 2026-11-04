@@ -1,10 +1,10 @@
 {
   "status": "passed",
-  "checked_utc": "2026-11-04T10:24:23.386010+00:00",
-  "reference_base_commit": "8029b4d0794829ce1ad6df0d57cd46c1856f3e5b",
+  "checked_utc": "2026-11-04T13:21:08.264036+00:00",
+  "reference_base_commit": "c71014fc593209e0ef8d216254020252478e7aa4",
   "reference_sdk_source_sha256": {
     "muster/__init__.py": "0bab1106abe5df952c638cf4b7f13484ec67a96c740c04b364b8869721518bd7",
-    "muster/_version.py": "a9b84c8789a0d893280857e52b0211bc0a54eb7451f00c6f62ad4e4ffffcb202",
+    "muster/_version.py": "91447944015cec709e8aa7655f7e9d64e1e4508e7023a57fe3746911c0fc6fed",
     "muster/adapters.py": "6a2e7b9fed37e15ae9629601ccf07159c454992eb79357408a72647a870bdace",
     "muster/bpe.py": "6ae2072e3be2dcd4195d1d57a3758c6b8d5bb67452fe9546874823e8c0736ab5",
     "muster/cache.py": "bb02b611e872af1ce8878081b09d0e0e6f89e4dca2134b6a4d82668e4337ad9a",
@@ -16,8 +16,8 @@
     "muster/compat/intermediates.py": "43b0ed1918da8b58bb4e1476a59a9a2286e6f1a94cbe6a7d64468250f86d6bfd",
     "muster/compat/recover.py": "bae3c4c2ef359c9186c0af394b0db3cabbb8b12dac5280ddd41ffc86b8d34f9c",
     "muster/compat/verify.py": "a84592f4a662f7b5918a129314a4fcc2d352c7c2242a7ef0fe0095cd00712570",
-    "muster/cut.py": "afc9ab5c1df1789b41481dd7fe0d64f404ea9338acf8c737ce6867ee0370192a",
-    "muster/derive.py": "e3ee33a92ee1836835deb3b2f2b03a4ca5db08c0b56f50327580b396d884d2bc",
+    "muster/cut.py": "3a18a5a85877aca1a86e619e8a7abfc402e7f7c1639b2b6b2d6b57f8457484bd",
+    "muster/derive.py": "5dc5313f349d58183d430596c3c2eea617c35674cc02614d145528b6609998ac",
     "muster/errors.py": "b16e6c6e22fff1128a6ebb03f0f74380a597169c11c7842549e69c4ac5e6662f",
     "muster/index.py": "eca0e1deb6bf47bb55e738f7b3429b1e9dccbdb296296a88eabb3035328786ee",
     "muster/integrations/__init__.py": "2769012753ceefe13a964ce54387cdd47e0515c4cb0b33ab42de37721ae53dca",
@@ -26,19 +26,20 @@
     "muster/integrations/langgraph.py": "81ef5b265e18a0956ef970854bbd9eb23dfb61489c3787183497ed974e437243",
     "muster/integrations/openai_agents.py": "f36815a9d006cb653b20f74b8ba47385069f80d9bbd97f12be34290353d84a68",
     "muster/io.py": "f96577ee5b0fb031b7f32bc43c9f61c6a315f24a0e3f5155987f9c9fc3cca907",
-    "muster/memory.py": "cfa20216fd4fb680f089a33dbb5cf145579e5d19ed79c6e0723acec09214dc78",
+    "muster/memory.py": "b9ac0d25f8d938636907007de918cc368ca3d301e4589830a2bc70f787e8baea",
     "muster/models.py": "0b5d17f5d81de309bb1b7168234f9168b80f840cd286892069044fb7c5847006",
     "muster/plan.py": "327134cec72dc96dc0a06b494326a0de4cea5867ef513d27d064ac64de9c604c",
     "muster/presets/__init__.py": "e2f63d104ca271f46e0d0c9223d84c499db9420ca78b1e8eff8e90d05cc71939",
+    "muster/record_serial.py": "6794519df02a7c7aeae6e65fec3c71a788da90fe0d4cca21932aad9e895d60de",
     "muster/records.py": "ac5ad205626cb4e1fb836565cb97b61ff653cefa25d4c1ea545953d329ab86c9",
     "muster/render.py": "b75bb87470551f363d61a048e7d2f30349d1e0fe9739e61494edee610f109e30",
     "muster/search.py": "c8364ac3a6f912c26681777db25437ea677130cb97d8d1de9f1e5e327ac67f32",
     "muster/serve.py": "d4b6117676e4fd4c9daf48008a7833354e17126768313cd7567fbce001e66bc4",
     "muster/source_order.py": "b8899707aaf65b6eab9e0bc1594e66823be0a3fd360d8a0a093f073c042efbb9",
-    "muster/stats.py": "fe701bff83478fcbe7691c8f88800231720b33a36ae7feb4bb8f9b22cfbaacd4",
+    "muster/stats.py": "be73d378cbcc3758b3c109675c119796eb9e96b986c7b7a79fef98dcce72a571",
     "muster/store.py": "19260a28434b19e758fba603ee6552f54c973fded749598953df6fb0ee83aca1"
   },
-  "scope": "single-store native derive at reference_chunk=4096, including the documented post-paper serial extension; not collection-exact replay or answer accuracy",
+  "scope": "single-store native derive on plain-text inputs at reference_chunk=4096, including the post-paper serial extension; not collection-exact replay or answer accuracy",
   "python_sdk_comparisons": 867,
   "exact_plan_and_stats_matches": 867,
   "original_input_regressions": 125,
@@ -67,11 +68,19 @@
   "oversize_input_refused_without_truncation": true,
   "browser_local_fixture": "The local validation server returned empty204 for its origin favicon; deployed hosting was not tested.",
   "evidence_sha256": {
-    "plan_parity": "38431acbd57509a954d01b1772e734b51048d504301bac8bfb1a3ad0c87d8032",
+    "plan_parity": "25c3923c380afb7921bcb5a008edc1ed78c10623ac865f4478316a0c2c6b7219",
     "browser": "a5399bbb6784659d6eb11fd606355a4b2ac4278cb2819db1e83bc8b3e1752372",
-    "installed_wheel": "8911ef194237542182c27932785c71973d0944cb50fcc40c72cfea809d9a2646"
+    "installed_wheel": "b2b8bcb6f2be929b8d1fa5b6a59017365b896daa6dd4fbe90d0a06ee51494a0a"
   },
   "new_model_calls": 0,
   "new_paid_calls": 0,
-  "hosted_space_deployment": "not performed"
+  "hosted_space_deployment": "not performed",
+  "browser_source_sha256": {
+    "docs/try/ui.js": "dd61914adcb1a37d50b2c80bed70ba014eb538f1b8a9cd7cdc943cb7edd13a80",
+    "docs/try/inspect.bundle.js": "4a723685725eb56c524b2cdc3ee3b39985595065c379734f4536481a37249660",
+    "docs/try/inspect.js": "3b8c117784d2f5edd50aadf34b406366d22b18d63aec30a166566433e00b806c",
+    "docs/try/decimal-ranges.js": "2cc8d3b063a3a54213aa2a99fc37bb6994357584c7defe70f879858cc8f8992c"
+  },
+  "structured_records": "The inspector accepts plain text. The SDK separately checks serials in record bodies, preserving metadata and unmarked records.",
+  "installed_record_and_transport_checks": 41
 }
