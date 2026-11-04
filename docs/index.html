@@ -471,6 +471,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
         <div class="actions">
           <a class="btn primary" id="cta-run" href="#run-it">Run it, no API key</a>
           <a class="btn" href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER.pdf">Paper (PDF)</a>
+          <code class="pip" tabindex="0" aria-label="Install muster-memory for structure inspection">pip install muster-memory</code>
         </div>
         <p class="onpage"><span>On this page:</span> <a href="#results">Results</a> <a href="#run-it">Run it</a> <a href="#cost">Cost</a> <a href="#how">How it works</a> <a href="#detailed">Detailed results</a> <a href="#reproduce">Reproduce</a> <a href="#faq">FAQ</a></p>
       </div>
@@ -605,11 +606,11 @@ footer .maker svg{display:block;max-width:100%;height:auto}
 <section id="run-it" aria-labelledby="run-h">
   <div class="wrap">
     <h2 id="run-h">Run it</h2>
-    <p>Install <code>muster-memory</code> from this repository with the command below. Git is required.</p>
+    <p>The basic install inspects store structure. Add <code>[models]</code> for local retrieval with a persistent Python <code>Store</code>.</p>
     <p><a href="try/">Open the browser structure inspector</a> to try your own text. It previews the configuration locally, without an API key.</p>
     <div class="code" data-reveal>
       <div class="code-head"><span>Replace <code>path/to/store.txt</code> with your store file</span></div>
-      <pre tabindex="0"><code>pip install "muster-memory @ git+https://github.com/saintmachines/MUSTER.git@source-20261104" &amp;&amp; muster derive path/to/store.txt</code></pre>
+      <pre tabindex="0"><code>pip install muster-memory &amp;&amp; muster derive path/to/store.txt</code></pre>
     </div>
     <p>It detects the store and sets its own strategy by the paper's rule, with no model or key, and the store never leaves the machine. It decides how to cut the text, how to group the pieces, whether only the newest version counts, and how to weight the three search channels.</p>
     <div class="code" data-reveal>
@@ -621,7 +622,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
   order      none: all versions kept
   retrieval  balanced, 3 channels</code></pre>
     </div>
-    <p>For local retrieval and app connections, install <code>muster-memory[models,mcp]</code>. Use the Python <code>Store</code>, MCP or HTTP server, or the OpenAI Agents SDK, LangChain and LangGraph integrations, and pass the returned context to your reader. See <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">the library quick start</a>.</p>
+    <p>For local retrieval, install <code>muster-memory[models]</code> and use the Python <code>Store</code> or HTTP server. Use <code>muster-memory[models,mcp]</code> for MCP, or add <code>agents</code>, <code>langchain</code> or <code>langgraph</code> with <code>models</code> for the corresponding integration. Pass the returned context to your reader. See <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">the library quick start</a>.</p>
   </div>
 </section>
 
@@ -925,7 +926,7 @@ footer .maker svg{display:block;max-width:100%;height:auto}
       var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px 120px 0px',threshold:.15});
       for(i=0;i<els.length;i++)if(!els[i].classList.contains('in'))io.observe(els[i]);
     }
-    var lines='pip install "muster-memory @ git+https://github.com/saintmachines/MUSTER.git@source-20261104" && muster derive path/to/store.txt';
+    var lines='pip install muster-memory && muster derive path/to/store.txt';
     var pre=d.querySelector('#run-it pre');
     function selectPre(){if(!pre)return;var r=d.createRange();r.selectNodeContents(pre);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);}
     function copied(b){if(!b)return;var t=b.getAttribute('data-label')||b.textContent;b.setAttribute('data-label',t);b.setAttribute('aria-live','polite');b.textContent='Copied';setTimeout(function(){b.textContent=t;},1500);}

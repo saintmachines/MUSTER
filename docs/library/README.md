@@ -6,15 +6,16 @@ the paper's runs are reproduced by it, question by question (see [Verification](
 
 ## Install
 
-PyPI publishing is pending. These commands install `muster-memory` from this source repository and require Git.
+Install `muster-memory` from PyPI. The basic install provides structure inspection.
+The commands below add local retrieval models and the optional MCP server.
 
 ```bash
-pip install "muster-memory[models] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"        # build, add and search (bge-m3 and bge-reranker-v2-m3, run locally)
-pip install "muster-memory[models,mcp] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"    # also the MCP server
+pip install "muster-memory[models]"        # build, add and search (bge-m3 and bge-reranker-v2-m3, run locally)
+pip install "muster-memory[models,mcp]"    # also the MCP server
 muster fetch                                  # optional: tokenizer and sentence-splitter files for offline use
 ```
 
-`pip install "muster-memory @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"` alone gives `muster derive` and `muster.derive()`, which need only `tiktoken`. The
+`pip install muster-memory` alone gives `muster derive` and `muster.derive()`, which need only `tiktoken`. The
 package imports as `muster`; `pip install muster` (without `-memory`) installs an unrelated 2017 project.
 The paper's harness and the tests run from a clone of the repository.
 

@@ -23,10 +23,10 @@
   <a href="gate/"><img src="https://img.shields.io/badge/reproduction%20gate-contexts%20byte--identical-blue" alt="reproduction gate"></a>
 </p>
 
-**Source install · PyPI publishing is pending.**
+**Install for local retrieval and MCP.**
 
 ```bash
-pip install "muster-memory[models,mcp] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"
+pip install "muster-memory[models,mcp]"
 ```
 
 <!-- BEGIN headline:kpis -->
@@ -159,12 +159,13 @@ up one at a time. [docs/library](docs/library/README.md) gives the exact check.
 
 ## Quick start
 
-The Python distribution is `muster-memory`. The command below installs from this repository. Git is required.
+The Python distribution is `muster-memory`. The command below adds local retrieval models and the MCP server.
+For structure inspection alone, use `pip install muster-memory`.
 
 [Inspect a store in your browser](https://saintmachines.github.io/MUSTER/try/): paste text to see its statistics and selected configuration. The preview runs locally in the browser and uses no API key.
 
 ```bash
-pip install "muster-memory[models,mcp] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"    # imports as muster
+pip install "muster-memory[models,mcp]"    # imports as muster
 # or, in a clone of this repository: pip install ".[models,mcp]"
 ```
 
@@ -187,7 +188,7 @@ word, and makes no LLM call to build or grow.
 To see what the rule decides for a store of your own, with no model or key (the store never leaves the machine):
 
 ```bash
-pip install "muster-memory @ git+https://github.com/saintmachines/MUSTER.git@source-20261104" && muster derive path/to/store.txt
+pip install muster-memory && muster derive path/to/store.txt
 ```
 
 What it prints for BEAM, conversation 0, saved as text:

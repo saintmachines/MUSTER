@@ -9,7 +9,7 @@ Bind a separate Store for each identity that needs separate memory.
 Importing `muster.integrations` loads no SDK. Install only the framework you use.
 
 ```sh
-pip install "muster-memory[models,agents] @ git+https://github.com/saintmachines/MUSTER.git@source-20261104"
+pip install "muster-memory[models,agents]"
 # Or: muster-memory[models,langchain], muster-memory[models,langgraph]
 ```
 
@@ -17,7 +17,8 @@ For a model-free local example use `Models.fake()` as below. Real retrieval uses
 configured on the Store. Tool construction and `remember` make no provider calls;
 `recall` may load and run the Store's retrieval models.
 
-PyPI publishing is pending. The installation command above uses the source repository.
+Use `models` for local retrieval alongside the `agents`, `langchain` or `langgraph` extra for your framework.
+For the MCP server, install `muster-memory[models,mcp]`. HTTP needs no extra beyond `models`.
 
 ## OpenAI Agents SDK
 
