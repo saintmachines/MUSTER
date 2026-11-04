@@ -148,7 +148,7 @@ Numbered records keep their serialized metadata in retrieval and reader text, wh
 from the body. Each record remains one unit. Multiline bodies are not split into invented records. Unmarked records
 keep their own occurrence and cannot enable structural replacement. Paper replay and valid, fully marked plain-text
 logs are unchanged. In native lead logs, an unmarked or out-of-bound line keeps its original position and has no
-inferred revision clock. Structural replacement is disabled.
+inferred revision clock, and structural replacement is disabled.
 
 For structured records the continuity denominator is the original record pairs, including empty records as missing
 markers, and the length median counts each entire record body, including continuation lines. It does not scan for
