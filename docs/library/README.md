@@ -68,6 +68,9 @@ Cached unit vectors and reranker scores survive restarts; new queries still run 
 
 ## Connect it
 
+Start with the [app connection guide](apps.md) to choose Python, MCP or HTTP,
+wire memory around your existing model call, and try copyable client requests.
+
 **MCP** (Claude Desktop, Claude Code, Cursor, any MCP client):
 
 ```bash

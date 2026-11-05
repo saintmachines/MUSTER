@@ -323,6 +323,12 @@ table.tx.gate tbody th{font:500 15px var(--sans);letter-spacing:0;text-transform
 .copy{font:600 12px var(--mono);color:var(--text);background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:6px 14px;min-height:36px;cursor:pointer}
 .copy:hover{border-color:var(--acc-line)}
 .code-panels > div[hidden]{display:none}
+.qs-why{margin:0;font-size:15px;color:var(--text2);max-width:72ch}
+.qs-block{margin-top:14px}
+.qs-head{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:36px;margin-bottom:6px;font:500 12px var(--mono);letter-spacing:.04em;color:var(--muted)}
+.qs-block.out pre{background:transparent;border-style:dashed}
+.qs-note{margin:14px 0 0;font-size:15px;color:var(--muted);max-width:72ch}
+.ul li>span{min-width:0;overflow-wrap:anywhere}
 .ul{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:8px;font-size:15px;max-width:72ch}
 .ul li{display:flex;gap:10px}
 .ul li::before{content:"→";color:var(--acc)}
@@ -513,13 +519,14 @@ footer .flinks a:hover{color:var(--text)}
 <div class="codebox">
 <div class="codehead">
 <div aria-label="Interface" class="tabs" id="codeTabs" role="tablist" style="margin-top:0"></div>
-<button class="copy" id="copyCode" type="button">Copy</button>
 </div>
 <div class="code-panels" id="codePanels" role="tabpanel"></div>
 </div>
 <ul class="ul">
+<li><span>Retrieval runs on your machine. The first search downloads BGE-M3 and its reranker once, and your app keeps its own answer model.</span></li>
 <li><span>The store measures its own structure as it grows (<code>muster.explain(store.head().plan)</code> shows what it chose) and keeps every word.</span></li>
-<li><span>Agent frameworks: OpenAI Agents SDK, LangChain and LangGraph through <code>muster.integrations</code>.</span></li>
+<li><span>Agent frameworks connect through <code>muster.integrations</code>, with <code>openai_tools</code> for the OpenAI Agents SDK, <code>langchain_tools</code> for LangChain and <code>langgraph_node</code> for LangGraph (<a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/integrations.md">integration docs</a>).</span></li>
+<li><span><a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/apps.md">The app guide</a> shows where recall and remember go in an app you already run, with <a href="https://github.com/saintmachines/MUSTER/tree/main/examples">examples</a>.</span></li>
 </ul>
 </div>
 </section><section class="sec" id="more"><div class="wrap"><div class="eyebrow">More</div><h2>Where the lead comes from, reproduction and questions.</h2><details class="more" id="lead"><summary><span id="leadH2">Retrieval and assembly lead. Matching them to the structure adds the rest.</span></summary>
@@ -1724,16 +1731,44 @@ muster verify contexts --data data_root    <span class="c"># the library's conte
 
   // ------------------------------------------------------------------------------------------------ 05 code + cite
   function renderCode(D) {
+    // One block per place a reader pastes into, each with its own Copy. Shell blocks carry no comments, since
+    // interactive zsh (the macOS default) runs a pasted # as a command. Outputs (third field 1) have no Copy.
     var panes = [
-      ['Python', '<span class="c"># install local retrieval and the MCP interface from PyPI</span>\npip install <span class="s">"muster-memory[models,mcp]"</span>\n\n<span class="k">import</span> muster\n\nstore = muster.Store.open(<span class="s">"agent.muster"</span>)                   <span class="c"># one file; survives restarts</span>\nstore.add({<span class="s">"speaker"</span>: <span class="s">"user"</span>, <span class="s">"text"</span>: <span class="s">"I moved to Lisbon in May."</span>, <span class="s">"time"</span>: <span class="s">"2026-05-02"</span>})\n<span class="k">print</span>(store.context(<span class="s">"Where does the user live now?"</span>).text)   <span class="c"># the stored passages, verbatim, in stored order</span>'],
-      ['MCP', '<span class="c"># Claude, Cursor or any MCP client</span>\nmuster mcp --store agent.muster'],
-      ['HTTP', '<span class="c"># any app or robot over HTTP: POST /v1/add, /v1/context</span>\nmuster http --store agent.muster'],
-      ['Inspect a store', '<span class="c"># what the rule decides for a store of your own, with no model or key</span>\npip install muster-memory &amp;&amp; muster derive path/to/store.txt\n\n<span class="c"># BEAM, conversation 0, saved as text</span>\nMUSTER  beam_conv0.txt  115,630 tokens\n  store      record store\n  units      512 tokens, records whole\n  parents    4,096 tokens, 28 of them\n  order      none: all versions kept\n  retrieval  balanced, 3 channels']
+      { tab: 'Python', why: 'Inside your own Python process, next to the model call your app already makes.', blocks: [
+        ['Terminal · Python 3.10+', 'pip install <span class="s">"muster-memory[models]"</span>'],
+        ['Python · paste into your app or Python interpreter', '<span class="k">import</span> muster\n\n<span class="k">with</span> muster.Store.open(<span class="s">"python-demo.muster"</span>) <span class="k">as</span> store:\n    store.add(\n        {<span class="s">"speaker"</span>: <span class="s">"user"</span>, <span class="s">"text"</span>: <span class="s">"I moved to Lisbon in May."</span>, <span class="s">"time"</span>: <span class="s">"2026-05-02"</span>},\n        request_id=<span class="s">"quickstart-lisbon"</span>,\n    )\n    question = <span class="s">"Where does the user live now?"</span>\n    context = store.context(question)\n    <span class="k">print</span>(context.text)                  <span class="c"># stored passages, verbatim</span>\n    messages = context.messages(question) <span class="c"># pass to your app’s chat model</span>\n'],
+        ['Output', 'Memory 1:\n[2026-05-02] user: I moved to Lisbon in May.', 1]
+      ] },
+      { tab: 'MCP', why: 'For Claude Code, Claude Desktop, Cursor and other MCP clients. The assistant decides when to remember and recall.', blocks: [
+        ['Terminal · Python 3.10+', 'pip install <span class="s">"muster-memory[models,mcp]"</span>\nmuster fetch --models'],
+        ['Claude Code', 'claude mcp add muster -- <span class="s">"$(command -v muster)"</span> mcp --store <span class="s">"$PWD/mcp-demo.muster"</span>'],
+        ['Claude Desktop or Cursor · prints the entry to add', 'python - &lt;&lt;<span class="s">\'EOF\'</span>\nimport json, os, sys\nstore = os.path.abspath(<span class="s">"mcp-demo.muster"</span>)\nserver = {<span class="s">"command"</span>: sys.executable, <span class="s">"args"</span>: [<span class="s">"-m"</span>, <span class="s">"muster.cli"</span>, <span class="s">"mcp"</span>, <span class="s">"--store"</span>, store]}\nprint(json.dumps({<span class="s">"mcpServers"</span>: {<span class="s">"muster"</span>: server}}, indent=2))\nEOF']
+      ], note: '<code>muster fetch --models</code> downloads the two models now, so the first recall does not wait for them. Add what the last block prints to Claude Desktop’s config (Settings › Developer › Edit Config) or to <code>~/.cursor/mcp.json</code>, then restart the app. The assistant then has <code>remember</code>, <code>recall</code>, <code>search_memory</code>, <code>remember_many</code> and <code>memory_info</code>.' },
+      { tab: 'HTTP', why: 'For a backend, service or robot in any language. The server listens on 127.0.0.1, so your server code calls it.', blocks: [
+        ['Terminal · Python 3.10+', 'pip install <span class="s">"muster-memory[models]"</span>'],
+        ['Terminal 1 · memory server', 'muster http --store http-demo.muster'],
+        ['Terminal 2 · your app', 'curl --fail --silent --show-error localhost:8765/v1/add -H <span class="s">\'Content-Type: application/json\'</span> -d <span class="s">\'{"records": [{"speaker": "user", "text": "I moved to Lisbon in May.", "time": "2026-05-02"}], "request_id": "quickstart-lisbon"}\'</span>\ncurl --fail --silent --show-error localhost:8765/v1/context -H <span class="s">\'Content-Type: application/json\'</span> -d <span class="s">\'{"query": "Where does the user live now?"}\'</span>'],
+        ['Replies · first run', '{"version": 1, "duplicate": false, "n_records": 1}\n{"text": "Memory 1:\\n[2026-05-02] user: I moved to Lisbon in May.", "ctxhash": "abade98ea66c", "style": "r4", "ids": [0], "blocks": [{"index": 1, "parent": "u0", "ids": [0], "text": "[2026-05-02] user: I moved to Lisbon in May.", "records": [{"id": null, "time": "2026-05-02", "speaker": "user"}]}], "version": 1}', 1]
+      ], note: 'Keep terminal 1 running. <code>text</code> in the second reply is the memory to put in your model’s prompt. Repeating this demo keeps one record; use a new <code>request_id</code> for each new fact.' },
+      { tab: 'Inspect a store', why: 'The rule alone, before you install any model. It needs no model and no key.', blocks: [
+        ['Terminal · Python 3.10+', 'pip install muster-memory'],
+        ['Terminal', 'cat &gt; notes.txt &lt;&lt;<span class="s">\'EOF\'</span>\n[2026-05-02 09:14] user: I moved to Lisbon in May.\n[2026-05-02 09:15] assistant: Noted. You live in Lisbon from May.\n[2026-06-10 18:02] user: My sister Ana lives in Porto.\nEOF\nmuster derive notes.txt'],
+        ['Output', 'MUSTER  notes.txt  66 tokens\n  store      record store\n  units      whole store (under one unit)\n  parents    none (too short)\n  order      none: all versions kept\n  retrieval  balanced, 3 channels', 1]
+      ], note: 'Point it at any text file of your own, such as a chat export, a log or notes. On BEAM conversation 0 (115,630 tokens) it finds a record store with 28 parents of 4,096 tokens. The <a href="try/">browser inspector</a> runs the same rule with nothing to install.' }
     ];
     var tabs = document.getElementById('codeTabs'), host = document.getElementById('codePanels');
     panes.forEach(function (p, i) {
-      var b = H('button', null, tabs, esc(p[0])); b.type = 'button'; b.setAttribute('role', 'tab');
-      H('pre', null, H('div', null, host), p[1]);
+      var b = H('button', null, tabs, esc(p.tab)); b.type = 'button'; b.setAttribute('role', 'tab');
+      var pane = H('div', 'qs-pane', host);
+      H('p', 'qs-why', pane, p.why);
+      p.blocks.forEach(function (k) {
+        var box = H('div', 'qs-block' + (k[2] ? ' out' : ''), pane), head = H('div', 'qs-head', box, '<span>' + esc(k[0]) + '</span>');
+        var pre = H('pre', null, box, k[1]);
+        if (k[2]) return;
+        var c = H('button', 'copy', head, 'Copy'); c.type = 'button'; c.setAttribute('aria-label', 'Copy ' + k[0].split(' · ').join(', '));
+        copyBtn(c, function () { return pre; });
+      });
+      if (p.note) H('p', 'qs-note', pane, p.note);
       b.onclick = function () { show(i); };
     });
     tabsA11y(tabs, 'codePanels', 'code');
@@ -1748,7 +1783,6 @@ muster verify contexts --data data_root    <span class="c"># the library's conte
       show(j); tabs.children[j].focus(); e.preventDefault();
     });
     show(0);
-    copyBtn(document.getElementById('copyCode'), function () { return [].filter.call(host.children, function (d) { return !d.hidden; })[0].querySelector('pre'); });
     copyBtn(document.getElementById('copyVerify'), function () { return document.getElementById('verify'); });
     document.getElementById('bib').textContent = '@misc{muster2026,\n  title  = {' + D.paper.title + '},\n  author = {Woosang Lim},\n  year   = {2026}\n}';
     copyBtn(document.getElementById('copyBib'), function () { return document.getElementById('bib'); });

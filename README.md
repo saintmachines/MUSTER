@@ -195,14 +195,14 @@ up one at a time. [docs/library](docs/library/README.md) gives the exact check.
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_04_dark.svg"><img src="docs/assets/readme/h2_04_light.svg" alt="" height="18"></picture>Quick start
 
-The Python distribution is `muster-memory`. The command below adds local retrieval models and the MCP server.
+The Python distribution is `muster-memory` and imports as `muster`. The command below adds local retrieval models and the MCP
+server (in a clone of this repository, `pip install ".[models,mcp]"`).
 For structure inspection alone, use `pip install muster-memory`.
 
 [Inspect a store in your browser](https://saintmachines.github.io/MUSTER/try/): paste text to see its statistics and selected configuration. The preview runs locally in the browser and uses no API key.
 
 ```bash
-pip install "muster-memory[models,mcp]"    # imports as muster
-# or, in a clone of this repository: pip install ".[models,mcp]"
+pip install "muster-memory[models,mcp]"
 ```
 
 ```python
@@ -220,6 +220,10 @@ word, and makes no LLM call to build or grow.
 * **Any app or robot over HTTP:** `muster http --store agent.muster` (`POST /v1/add`, `/v1/context`)
 * **Agent frameworks:** OpenAI Agents SDK, LangChain and LangGraph through `muster.integrations`
   ([docs/library](docs/library/README.md))
+
+[Connect it to your app](docs/library/apps.md): choose an interface, configure an
+MCP host, send HTTP requests, or put memory around the model call you already use.
+The guide links a runnable wiring demo and the three framework adapters.
 
 To see what the rule decides for a store of your own, with no model or key (the store never leaves the machine):
 
@@ -335,9 +339,13 @@ records, source-based ingestion reconstruction, SHA-256 manifests and offline ve
 The large result files are distributed as release assets.
 
 ```bash
-muster verify cuts --data data_root        # the rule's cuts against the published runs, store by store
-muster verify contexts --data data_root    # the library's contexts against the published ones, question by question
+muster verify cuts --data data_root
+muster verify contexts --data data_root
 ```
+
+The first command checks the rule's cuts store by store; the second checks the
+library's contexts question by question against the published runs. Replace
+`data_root` with your downloaded evaluation data folder.
 
 | Check | Result | Evidence |
 |---|---|---|

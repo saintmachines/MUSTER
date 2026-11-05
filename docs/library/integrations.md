@@ -1,5 +1,8 @@
 # Use MUSTER in an agent application
 
+For the install-to-first-recall path, MCP host configuration, HTTP requests and
+a reader callback example, start with [Connect MUSTER to your app](apps.md).
+
 MUSTER supplies local `remember` and `recall` tools over an open `Store`.
 `remember` appends a record and returns its version, duplicate status, and record count.
 `recall` returns exactly `Store.context(query).text`, including the chosen renderer's headers.
