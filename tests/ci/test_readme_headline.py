@@ -54,11 +54,23 @@ def test_every_statement_of_the_build_time_follows_the_headline_data():
     files = [ROOT / "README.md", ROOT / "docs" / "index.html", *sorted((ROOT / "docs" / "assets").rglob("*.svg"))]
     texts = {p.relative_to(ROOT).as_posix(): p.read_text(encoding="utf-8").replace("&nbsp;", " ") for p in files}
     found = [(name, m[m.lastindex]) for name, text in texts.items() for m in stated.finditer(text)]
-    assert len(found) >= 13
+    # The R landing renders its charts from embedded canonical data. Keep the
+    # ten static README/SVG checks and check every embedded value, rather than
+    # requiring three copies of a phrase from the previous page template.
+    assert len([f for f in found if f[0] != "docs/index.html"]) >= 10
+    embedded = re.search(r'<script id="hd" type="application/json">(.*?)</script>',
+                         texts["docs/index.html"], re.S)
+    assert embedded, "the landing must include the canonical headline data"
+    assert json.loads(embedded.group(1)) == data
     assert not [f for f in found if f[1] != build], found
     # The whole set of times in seconds, so a spelling the pattern above does not know still fails here.
-    seconds = {m[1] for text in texts.values() for m in re.finditer(r"(?<![\w.,])(\d+(?:\.\d+)?) ?(?:s|seconds)\b", text)}
-    assert seconds == {"1", "7", "8", "10", "76.8", build}
+    # An animation pacing explanation in a JS source comment is not a reported
+    # build time. The unrounded value is covered by full embedded-data equality.
+    seconds = {m[1] for text in texts.values()
+               for m in re.finditer(r"(?<![\w.,])(\d+(?:\.\d+)?) ?(?:s|seconds)\b",
+                                    re.sub(r"(?m)^\s*//[^\n]*", "", text))}
+    assert seconds == {"1", "7", "8", "10", build,
+                       str(data["mechanism"]["detect"]["seconds"])}
 
 
 def test_landing_page_links_stay_inside_what_pages_serves():
