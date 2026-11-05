@@ -10,12 +10,17 @@ tools/make_readme_media.js; they fall back to the light figures where <picture> 
     score_vs_build_{light,dark}.svg   mean score over the six settings against the time to build a 10M-token memory
     build_cost_{light,dark}.svg       LLM calls, build time and LLM cost of that build
     lead_{light,dark}.svg             where the lead comes from: retrieval and assembly alone, then matched to each store's detected structure
+Section numbers, one file per theme, in the same folder: h2_NN_{light,dark}.svg, the number before each H2, as the project
+page numbers its sections. The story sections (Results, Cost, How it works, Quick start) take the page's eyebrow azure and
+the rest its muted eyebrow colour. The script opens every H2 with its own number's picture, in README order, so a section
+added or moved is renumbered by running it.
 
 Nothing is typed twice. Before writing, the derived columns of the overview table (per-setting ranks, mean rank, worst rank,
 top-3 count, mean score) are recomputed from the scores and must equal the stored ones, and every LLM cost is recomputed
 from build tokens and the list prices in the same file and must equal the stored cost.
-Run from anywhere:  python tools/make_readme.py            write README.md blocks and the six SVGs
-                    python tools/make_readme.py --check    exit 1 if any of them differs from what the data gives
+Run from anywhere:  python tools/make_readme.py            write README.md blocks, its section numbers and the SVGs
+                    python tools/make_readme.py --check    exit 1 if any of them differs from what the data and the
+                                                           README's sections give
 """
 import argparse
 import json
@@ -38,6 +43,12 @@ THEMES = {
                  ctx="#6e7681", accent="#4493f8", tint="#0f2238"),
 }
 FONT = '-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif'
+
+# Section numbers: the project page's eyebrow colours, azure for the story sections and muted for the rest (in light,
+# GitHub's accent and a blue-grey of the page's hue at GitHub's muted lightness), in mono digits.
+STORY = ("Results", "Cost", "How it works", "Quick start")
+NUMBER = {"light": dict(story="#0969da", rest="#50637e"), "dark": dict(story="#92cbfb", rest="#93a0af")}
+MONO = "ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace"
 
 # Helvetica/Arial advance widths in 1/1000 em (others count as 600); used to keep
 # every label inside the canvas and clear of the others.
@@ -200,6 +211,37 @@ def fill_readme(text, d, v):
             sys.exit(f"README.md needs exactly one headline:{name} block")
         text = pat.sub(lambda m: m.group(1) + fn(d, v) + "\n" + m.group(2), text)
     return text
+
+
+def number_picture(n):
+    return (f'<picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_{n:02d}_dark.svg">'
+            f'<img src="docs/assets/readme/h2_{n:02d}_light.svg" alt="" height="18"></picture>')
+
+
+NUMBERED = re.compile(r'<picture><source media="\(prefers-color-scheme: dark\)" srcset="docs/assets/readme/h2_\d\d_dark\.svg">'
+                      r'<img src="docs/assets/readme/h2_\d\d_light\.svg" alt="" height="18"></picture>')
+
+
+def number_sections(text):
+    """Open every H2 with its number's picture, in README order, and draw each number: 16 px digits in an 18 px picture,
+    centred on the capitals of GitHub's 24 px H2. No space follows the picture, so GitHub's anchor stays the title's."""
+    lines, svgs, n, fenced = text.split("\n"), {}, 0, False
+    for i, line in enumerate(lines):
+        if line.startswith("```"):
+            fenced = not fenced
+        if fenced or not line.startswith("## "):
+            continue
+        n += 1
+        title = line[3:]
+        old = NUMBERED.match(title)
+        title = title[old.end():] if old else title
+        lines[i] = "## " + number_picture(n) + title
+        for theme, c in NUMBER.items():
+            svgs[ASSETS / f"h2_{n:02d}_{theme}.svg"] = (
+                '<svg xmlns="http://www.w3.org/2000/svg" width="30" height="18" viewBox="0 0 30 18">'
+                f'<text x="0" y="15.5" font-family="{MONO}" font-size="16" font-weight="600" letter-spacing="0.9" '
+                f'fill="{c["story" if title in STORY else "rest"]}">{n:02d}</text></svg>\n')
+    return "\n".join(lines), svgs
 
 
 # ---------------------------------------------------------------------------------------------------- SVG helpers
@@ -409,7 +451,8 @@ FIGURES = {"score_vs_build": fig_score_vs_build, "build_cost": fig_build_cost, "
 def outputs():
     d = json.loads(DATA.read_text(encoding="utf-8"))
     v = derive(d)
-    files = {README: fill_readme(README.read_text(encoding="utf-8"), d, v)}
+    readme, numbers = number_sections(fill_readme(README.read_text(encoding="utf-8"), d, v))
+    files = {README: readme, **numbers}
     for name, fn in FIGURES.items():
         for theme, c in THEMES.items():
             files[ASSETS / f"{name}_{theme}.svg"] = fn(d, v, c)
@@ -420,8 +463,13 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--check", action="store_true", help="compare instead of writing; exit 1 on any difference")
     args = ap.parse_args()
-    stale = []
-    for path, text in outputs().items():
+    stale, files = [], outputs()
+    for path in sorted(ASSETS.glob("h2_*.svg")):
+        if re.fullmatch(r"h2_\d\d_(light|dark)\.svg", path.name) and path not in files:
+            stale.append(path.relative_to(ROOT).as_posix())
+            if not args.check:
+                path.unlink()
+    for path, text in files.items():
         old = path.read_text(encoding="utf-8") if path.exists() else None
         if old == text:
             continue

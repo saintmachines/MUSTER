@@ -28,11 +28,11 @@
 pip install "muster-memory[models,mcp]"
 ```
 
----
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_01_dark.svg"><img src="docs/assets/readme/h2_01_light.svg" alt="" height="18"></picture>Results
 
-## Results
+### The highest mean score across six settings.
 
-**The highest mean score across six settings.** Two frontier readers, GLM-5.3-Flash and GPT-6 Luna, read every system's
+Two frontier readers, GLM-5.3-Flash and GPT-6 Luna, read every system's
 context on three benchmarks of different character, each scored by its own official judge. MemoryAgentBench has fourteen
 stores from numbered assertion logs to a detective novel, LoCoMo-Refined has long conversations, and BEAM-10M has
 conversations of 10M tokens. In each setting every system has the same reader, answer prompt and judge.
@@ -52,7 +52,7 @@ system at both readers (p < 0.001), and it reads 5K to 20K tokens per question, 
 Results at each benchmark's own reader are in [Detailed results](#detailed-results).
 
 <details>
-<summary><b>The table as text</b></summary>
+<summary>The table as text</summary>
 
 <!-- BEGIN headline:overview -->
 | System | MAB<br>GLM | MAB<br>Luna | LoCoMo-Ref.<br>GLM | LoCoMo-Ref.<br>Luna | BEAM-10M<br>GLM | BEAM-10M<br>Luna | Mean<br>rank | Mean<br>score | Worst<br>rank | Top 3<br>(of 6) | LLM calls<br>10M build |
@@ -71,11 +71,11 @@ Results at each benchmark's own reader are in [Detailed results](#detailed-resul
 
 </details>
 
----
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_02_dark.svg"><img src="docs/assets/readme/h2_02_light.svg" alt="" height="18"></picture>Cost
 
-## Cost
+### 77 s to build. 1/34 of the read cost.
 
-**77 s to build. 1/34 of the read cost.** Memory usually costs one of two ways. An LLM extracts it when you write, or
+Memory usually costs one of two ways. An LLM extracts it when you write, or
 the model reads everything when you answer. MUSTER stores the text as is and fits its read to the structure, with 0 LLM
 calls to build and 5K to 20K tokens per question.
 
@@ -88,7 +88,7 @@ calls to build and 5K to 20K tokens per question.
 </p>
 
 <details>
-<summary><b>As a table, with how each cost is counted</b></summary>
+<summary>As a table, with how each cost is counted</summary>
 
 <!-- BEGIN headline:build -->
 | System | LLM calls | Build time | LLM cost | Notes |
@@ -105,11 +105,11 @@ calls to build and 5K to 20K tokens per question.
 
 </details>
 
----
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_03_dark.svg"><img src="docs/assets/readme/h2_03_light.svg" alt="" height="18"></picture>How it works
 
-## How it works
+### Detect the structure. Retrieve by it. Assemble in order.
 
-**Detect the structure. Retrieve by it. Assemble in order.** Most stores already record their structure. Logs number
+Most stores already record their structure. Logs number
 their lines, example banks separate their records, conversations keep their order. MUSTER measures that structure
 instead of paying an LLM to rebuild it, and fits the two steps that decide an answer to it, what to retrieve and in what
 order to show it.
@@ -145,7 +145,7 @@ Units, parents and order add 5.7, the retrieval mix 1.5. A query costs one embed
 and nothing is written back.
 
 <details>
-<summary><b>The bars as a table</b></summary>
+<summary>The bars as a table</summary>
 
 <!-- BEGIN headline:lead -->
 | | MemoryAgentBench Overall | What it is |
@@ -161,7 +161,7 @@ and nothing is written back.
 </details>
 
 <details>
-<summary><b>The two statistics and the rule, verbatim</b></summary>
+<summary>The two statistics and the rule, verbatim</summary>
 
 | Statistic | Definition | Question it answers |
 |---|---|---|
@@ -193,9 +193,7 @@ up one at a time. [docs/library](docs/library/README.md) gives the exact check.
 
 <p align="center"><sub>One rule on two real stores, replayed on a CPU. The contexts are byte-identical to the published runs.</sub></p>
 
----
-
-## Quick start
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_04_dark.svg"><img src="docs/assets/readme/h2_04_light.svg" alt="" height="18"></picture>Quick start
 
 The Python distribution is `muster-memory`. The command below adds local retrieval models and the MCP server.
 For structure inspection alone, use `pip install muster-memory`.
@@ -240,12 +238,10 @@ MUSTER  beam_conv0.txt  115,630 tokens
   retrieval  balanced, 3 channels
 ```
 
----
-
-## Detailed results
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_05_dark.svg"><img src="docs/assets/readme/h2_05_light.svg" alt="" height="18"></picture>Detailed results
 
 <details>
-<summary><b>MemoryAgentBench (GPT-4o-mini reader, the benchmark's own protocol)</b></summary>
+<summary><b>MemoryAgentBench</b> (GPT-4o-mini reader, the benchmark's own protocol)</summary>
 
 Fourteen stores across four competencies: accurate retrieval (AR), test-time learning (TTL), long-range understanding (LRU)
 and selective forgetting (SF, the two FactConsolidation cells). "All" averages the four competencies.
@@ -276,7 +272,7 @@ by 14.0 points at GPT-4.1-mini and 4.1 at GPT-5-mini (64.7 against 60.6).
 </details>
 
 <details>
-<summary><b>LoCoMo (1,540 questions; GPT-4.1-mini reader, GPT-4o-mini judge)</b></summary>
+<summary><b>LoCoMo</b> (1,540 questions; GPT-4.1-mini reader, GPT-4o-mini judge)</summary>
 
 LoCoMo prescribes no answer prompt and the two in use move scores by 6.5 to 11.9 points on the same contexts, so every
 store is read under both. "Before answering" counts the language-model calls and input each system spends over the ten
@@ -301,7 +297,7 @@ prompt it leads every store by 2.2 to 18.7 points (86.04 against EverMemOS's 83.
 </details>
 
 <details>
-<summary><b>BEAM, 100K to 10M tokens (GLM-5.3-Flash reader, BEAM's official judge)</b></summary>
+<summary><b>BEAM, 100K to 10M tokens</b> (GLM-5.3-Flash reader, BEAM's official judge)</summary>
 
 The rule set on MemoryAgentBench runs on BEAM unchanged. Score is the ten-category macro of the official rubric judge;
 "build" is the cost of making memory for one 10M-token conversation, and build time is for one conversation at each
@@ -328,12 +324,10 @@ to build the 10M conversation where MUSTER takes 77 seconds.
 
 </details>
 
----
-
-## Reproduce
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_06_dark.svg"><img src="docs/assets/readme/h2_06_light.svg" alt="" height="18"></picture>Reproduce
 
 <details>
-<summary><b>The reproduction gate, the data and the pinned code</b></summary>
+<summary>The reproduction gate, the data and the pinned code</summary>
 
 Re-scoring uses the [base evaluation artifact](data/eval_v1/README.md) and its
 [v2 supplement](data/eval_v2/README.md). Together they provide saved BEAM answers and judgments, Honcho query/context
@@ -364,12 +358,10 @@ above from it, and `node tools/make_readme_media.js` renders the pictures from t
 
 </details>
 
----
-
-## FAQ
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_07_dark.svg"><img src="docs/assets/readme/h2_07_light.svg" alt="" height="18"></picture>FAQ
 
 <details>
-<summary><b>Five questions people ask first</b></summary>
+<summary>Five questions people ask first</summary>
 
 **Does it need a language model at all?** Not before the first query. Detection, unit cutting, embedding and BM25 are
 the whole write path. A query uses one reader call, like any retrieval system.
@@ -388,9 +380,7 @@ the store once with bge-m3; a CPU-only configuration is part of the reproduction
 
 </details>
 
----
-
-## Cite
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_08_dark.svg"><img src="docs/assets/readme/h2_08_light.svg" alt="" height="18"></picture>Cite
 
 ```bibtex
 @misc{muster2026,
@@ -402,9 +392,7 @@ the store once with bge-m3; a CPU-only configuration is part of the reproduction
 
 GitHub's *Cite this repository* button reads [CITATION.cff](CITATION.cff).
 
----
-
-## Paper, status, license
+## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_09_dark.svg"><img src="docs/assets/readme/h2_09_light.svg" alt="" height="18"></picture>Paper, status, license
 
 The paper is *MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure*; the PDF is in
 [`paper/MUSTER.pdf`](paper/MUSTER.pdf). This is a research release. What was checked, and the evidence for each line,
