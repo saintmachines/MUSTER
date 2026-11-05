@@ -75,7 +75,7 @@
     ]
   },
   "detect_stats": {
-    "source": "gate/stage0_derive.md (the two statistics the rule prints for each MemoryAgentBench store), the rule in paper Section 3.2 (sec:rule) and Figure 1 (fig:rule)",
+    "source": "gate/stage0_derive.md (the two statistics the rule prints for each MemoryAgentBench store), the rule in paper Section 3.2 (sec:rule) and Figure 2 (fig:rule)",
     "tau": {"serial": 0.80, "recshare": 0.90},
     "gap": {"serial": 0.998, "recshare": 0.425},
     "stores": [

@@ -1,0 +1,74 @@
+{
+  "about": "Pictures of the project page for the README, made by tools/make_readme_media.js from the inputs below. Run it again after the page or the headline data changes.",
+  "inputs": {
+    "docs/index.html": "f70d6efef231be1304caae487f5998aa2a25112c82604fa774279031d817abc8",
+    "docs/data/headline.json": "b30210cfbd01400b084af6171a10eb6c6dccda1b4ebc42387e547e54533aa562"
+  },
+  "css_width": {
+    "desk": 838,
+    "phone": 324
+  },
+  "scale": 2,
+  "files": {
+    "hero.png": {
+      "sha256": "e7f6ad08ef5fb9fc846b20b93c13fbdbbffb04bab8d7634d710f8fafda8f6298",
+      "bytes": 366922,
+      "pixels": "1676x1594"
+    },
+    "hero_phone.png": {
+      "sha256": "26f07696cdfe1601964fb683ac59e94020bb8fb58101cfc748216ec836ba9454",
+      "bytes": 289539,
+      "pixels": "648x1838"
+    },
+    "results.png": {
+      "sha256": "afac6294ed79922dd34452acb0c9eaeaaee37c28de6d41c55c6b756f7cbe7b0d",
+      "bytes": 322896,
+      "pixels": "2002x1380"
+    },
+    "results_phone.png": {
+      "sha256": "ed6c3e5629f9175e0918ca294db6623d0202965ed9033193d175500290073384",
+      "bytes": 115953,
+      "pixels": "732x1072"
+    },
+    "cost.png": {
+      "sha256": "eb01a7e5c4324478027334e4a69ce54b61638b97c921b70e7f8589c55d68998d",
+      "bytes": 262465,
+      "pixels": "1676x1584"
+    },
+    "cost_phone.png": {
+      "sha256": "63b1b57791c87ebb2280def4f4d0a2f006b8c090dbcc213e177a73ac99997116",
+      "bytes": 262329,
+      "pixels": "648x2156"
+    },
+    "steps.png": {
+      "sha256": "fa3a82f9405b223fe5e5a4e4a4985b8a919c11e0cb34e34a952b9b38926efc5f",
+      "bytes": 219313,
+      "pixels": "1936x778"
+    },
+    "steps_phone.png": {
+      "sha256": "053cef39d89eba45e49d8578cd059f0be28b399a3476186f863d1962f8049515",
+      "bytes": 227099,
+      "pixels": "648x2420"
+    },
+    "lead.png": {
+      "sha256": "3bba60b8ec9aad6439d02ce8cc24337c489df04606dd3c54720c78bda668daed",
+      "bytes": 92309,
+      "pixels": "1672x604"
+    },
+    "lead_phone.png": {
+      "sha256": "6206b788651639cc36e1ed83b7bcb14777036ede7960cb07749f3dc7f58508e8",
+      "bytes": 86479,
+      "pixels": "644x758"
+    },
+    "film.gif": {
+      "sha256": "358662e9da5602f5d0ee64eb3b3e8abbad6e0d0224141924f1033cc3f4805cba",
+      "bytes": 3502749,
+      "pixels": "1104x2784"
+    },
+    "film_phone.gif": {
+      "sha256": "c3f00643e9ec4ffb4e76ad2595b98d0ce480e5eedb5cbea2b7605994680dc72d",
+      "bytes": 2234546,
+      "pixels": "648x2508"
+    }
+  }
+}

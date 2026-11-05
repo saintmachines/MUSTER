@@ -2,11 +2,11 @@
 """Write the README's headline blocks and figures from docs/data/headline.json, the one source of their numbers.
 
 Blocks are the text between `<!-- BEGIN headline:NAME -->` and `<!-- END headline:NAME -->` in README.md:
-    kpis       the four numbers under the title
     overview   the paper's overview table: six settings, two readers, eight systems
     build      building memory for one 10M-token conversation, as a table
     lead       MemoryAgentBench Overall at the benchmark's reader, as a table
-Figures, one file per GitHub theme (the README picks one with <picture>), in docs/assets/readme/:
+Figures, one file per theme, in docs/assets/readme/ (the README's pictures are the project page's own panels, rendered by
+tools/make_readme_media.js; they fall back to the light figures where <picture> is not read):
     score_vs_build_{light,dark}.svg   mean score over the six settings against the time to build a 10M-token memory
     build_cost_{light,dark}.svg       LLM calls, build time and LLM cost of that build
     lead_{light,dark}.svg             where the lead comes from: retrieval and assembly alone, then matched to each store's detected structure
@@ -139,19 +139,6 @@ def derive(d):
 
 # ---------------------------------------------------------------------------------------------------- README blocks
 
-def block_kpis(d, v):
-    us = v["us"]
-    cells = [
-        (f"{us['mean_rank']:.2f}", f"mean rank of {len(v['rows'])} over six settings,<br>two frontier readers"),
-        (f"{dec(us['mean_score'], 1)}", f"mean score over the six;<br>next best {dec(v['next_score'], 1)}"),
-        (f"1/{v['read_ratio']}", "the full context's read cost<br>per 1,000 questions"),
-        (f"{us['build_calls']} · {v['build'][us['system']]['build']}", "LLM calls and time to build<br>a 10M-token memory"),
-    ]
-    out = ['<table align="center">', "<tr>"]
-    out += [f'<td align="center"><b>{a}</b><br><sub>{b}</sub></td>' for a, b in cells]
-    return "\n".join(out + ["</tr>", "</table>"])
-
-
 def block_overview(d, v):
     rows, ranks = v["rows"], v["ranks"]
     head = ["System"] + [f"{s['bench'].replace('LoCoMo-Refined', 'LoCoMo-Ref.')}<br>{s['reader']}" for s in d["settings"]]
@@ -203,7 +190,7 @@ def block_lead(d, v):
     return "\n".join(out)
 
 
-BLOCKS = {"kpis": block_kpis, "overview": block_overview, "build": block_build, "lead": block_lead}
+BLOCKS = {"overview": block_overview, "build": block_build, "lead": block_lead}
 
 
 def fill_readme(text, d, v):

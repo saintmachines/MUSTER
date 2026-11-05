@@ -1,64 +1,67 @@
-<h1 align="center">MUSTER</h1>
+<h1 align="center">
+  <a href="https://saintmachines.github.io/MUSTER/"><picture>
+    <source media="(max-width: 1011px)" srcset="docs/assets/readme_page/hero_phone.png">
+    <source media="(min-width: 1012px)" srcset="docs/assets/readme_page/hero.png">
+    <img src="docs/assets/readme/score_vs_build_light.svg" alt="MUSTER, long-term memory for AI agents. Read the order, don't extract it. Mean rank 1.33 of 8 over six settings with two frontier readers. Mean score 71.45, next best 64.70. MUSTER 71.45 in 77 s, a 10M-token memory built with 0 LLM calls, 30 times faster than the next fastest. 1/34 of the full context's read cost per 1,000 questions. The chart plots the mean score against the time to build one 10M-token conversation on a log scale, with True Memory 64.70 in 39 min, HippoRAG-v2 62.56 in 1.3 h, Hindsight 52.46 in 3.0 h, Honcho 50.30 in 7.8 h, Mem0 57.45 in 13.0 h, EverMemOS 57.67 in 32.7 h, and the full context at 60.59 with nothing to build.">
+  </picture></a>
+</h1>
 
-<p align="center"><b>Agent memory that knows a log from a novel.</b></p>
-
-<p align="center">Long-term memory for AI agents. It detects the structure your data already records, then matches retrieval and context assembly to it. No LLM call to build it.</p>
-
-<p align="center"><b>1&nbsp;Detect</b> the structure &nbsp;→&nbsp; <b>2&nbsp;Match</b> retrieval to it &nbsp;→&nbsp; <b>3&nbsp;Assemble</b> in its order</p>
+<p align="center"><b>MUSTER</b> detects the structure a store already records, then matches retrieval and context assembly to it. No language model builds or grows the memory.</p>
 
 <p align="center">
-  <a href="https://github.com/saintmachines/MUSTER">GitHub</a> ·
-  <a href="https://saintmachines.github.io/MUSTER/">Project page</a> ·
-  <a href="paper/MUSTER.pdf">Paper</a> ·
-  <a href="#results">Results</a> ·
-  <a href="#how-it-works">How it works</a> ·
-  <a href="#quick-start">Quick start</a> ·
-  <a href="#reproduce">Reproduce</a> ·
-  <a href="docs/library/README.md">Docs</a>
+  <a href="https://saintmachines.github.io/MUSTER/"><b>Project page</b></a> ·
+  <a href="paper/MUSTER.pdf"><b>Paper (PDF)</b></a> ·
+  <a href="https://pypi.org/project/muster-memory/"><b>PyPI</b></a> ·
+  <a href="https://saintmachines.github.io/MUSTER/try/"><b>Inspect a store in your browser</b></a> ·
+  <a href="https://huggingface.co/datasets/saintmachines/MUSTER-eval"><b>Evaluation data</b></a> ·
+  <a href="#cite"><b>Cite</b></a>
 </p>
 
 <p align="center">
+  <a href="https://pypi.org/project/muster-memory/"><img src="https://img.shields.io/pypi/v/muster-memory?color=4495ea" alt="PyPI version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-green" alt="Apache-2.0"></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
   <a href="gate/"><img src="https://img.shields.io/badge/reproduction%20gate-contexts%20byte--identical-blue" alt="reproduction gate"></a>
 </p>
 
-**Install for local retrieval and MCP.**
-
 ```bash
 pip install "muster-memory[models,mcp]"
 ```
 
-<!-- BEGIN headline:kpis -->
-<table align="center">
-<tr>
-<td align="center"><b>1.33</b><br><sub>mean rank of 8 over six settings,<br>two frontier readers</sub></td>
-<td align="center"><b>71.5</b><br><sub>mean score over the six;<br>next best 64.7</sub></td>
-<td align="center"><b>1/34</b><br><sub>the full context's read cost<br>per 1,000 questions</sub></td>
-<td align="center"><b>0 · 77 s</b><br><sub>LLM calls and time to build<br>a 10M-token memory</sub></td>
-</tr>
-</table>
-<!-- END headline:kpis -->
-
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/score_vs_build_dark.svg">
-    <img src="docs/assets/readme/score_vs_build_light.svg" width="720" alt="Mean score over six settings against the time to build memory for one 10M-token conversation, log scale: MUSTER 71.45 in 77 s with no per-store tuning, alone at the upper left; True Memory 64.70 in 39 min; HippoRAG-v2 62.56 in 1.3 h; EverMemOS 57.67 in 32.7 h per conversation with all ten built at once; Mem0 57.45 in 13.0 h; Hindsight 52.46 in 3.0 h; Honcho 50.30 in 7.8 h; the full context 60.59 with nothing to build">
+    <source media="(max-width: 1011px)" srcset="docs/assets/readme_page/film_phone.gif">
+    <img src="docs/assets/readme_page/film.gif" width="552" alt="Animation of one rule on two real stores. Store A is a numbered log from MemoryAgentBench FactConsolidation-SH. Detection finds the numbered lines and takes the numbered-log branch, with one fact as the unit, its slot as the parent and the serial as the order. Asked which city Jerry Lee Lewis worked in, the slot graph takes most of the units, the context shows the facts in serial order with the newest per slot, the older Memphis fact is struck out, and both readers answer Helsinki. Store B is a LoCoMo-Refined conversation. Detection finds records and takes the record-store branch, and for where Melanie has camped the context is assembled one block per parent in stored order, and both readers answer in the mountains, at the beach and in the forest. Per query, 1 embedding, 1 rerank and 1 reader call.">
   </picture>
 </p>
 
-<p align="center"><sub>Self-configuring MUSTER scores highest and builds fastest. Mean score over six settings (GLM-5.3-Flash and GPT-6 Luna on MemoryAgentBench, LoCoMo-Refined and BEAM-10M) against the time to build memory for one 10M-token conversation, as run, log scale. Up and to the left is better.</sub></p>
-
-> **Status.** Research release. What was checked, and the evidence for each line, is in [STATUS.md](STATUS.md).
+<p align="center"><sub>One rule on two real stores, replayed on a CPU. The contexts are byte-identical to the published runs.</sub></p>
 
 ---
 
 ## Results
 
-Two current readers, GLM-5.3-Flash and GPT-6 Luna, on three benchmarks of different character: MemoryAgentBench (MAB,
-fourteen stores from numbered assertion logs to a detective novel), LoCoMo-Refined (long conversations, official
-evaluation) and BEAM-10M (conversations of 10M tokens). In each setting every system has the same reader, answer prompt
-and judge. Rows are sorted by mean rank.
+**The highest mean score across six settings.** Two frontier readers, GLM-5.3-Flash and GPT-6 Luna, read every system's
+context on three benchmarks of different character, each scored by its own official judge. MemoryAgentBench has fourteen
+stores from numbered assertion logs to a detective novel, LoCoMo-Refined has long conversations, and BEAM-10M has
+conversations of 10M tokens. In each setting every system has the same reader, answer prompt and judge.
+
+<p align="center">
+  <picture>
+    <source media="(max-width: 1011px)" srcset="docs/assets/readme_page/results_phone.png">
+    <img src="docs/assets/readme_page/results.png" alt="Table 7 of the paper, all six settings, three benchmarks with two frontier readers each, GLM-5.3-Flash and GPT-6 Luna, with rank chips. MUSTER is first on mean rank (1.33), mean score (71.45), worst rank (2) and top 3 (6 of 6), with 0 LLM calls to build. Every cell is in the table under the picture.">
+  </picture>
+</p>
+
+<sub>\*Full context reads the whole store as is, and on BEAM-10M the newest 850K tokens that fit the reader's window. It is
+not a memory system.</sub>
+
+MUSTER ranks first or second in all six settings. On MemoryAgentBench and LoCoMo-Refined it is above every other memory
+system at both readers (p < 0.001), and it reads 5K to 20K tokens per question, 1/34 of the full context's read cost.
+Results at each benchmark's own reader are in [Detailed results](#detailed-results).
+
+<details>
+<summary><b>The table as text</b></summary>
 
 <!-- BEGIN headline:overview -->
 | System | MAB<br>GLM | MAB<br>Luna | LoCoMo-Ref.<br>GLM | LoCoMo-Ref.<br>Luna | BEAM-10M<br>GLM | BEAM-10M<br>Luna | Mean<br>rank | Mean<br>score | Worst<br>rank | Top 3<br>(of 6) | LLM calls<br>10M build |
@@ -73,47 +76,82 @@ and judge. Rows are sorted by mean rank.
 | Honcho | 41.73 | 38.81 | 65.56 | 62.16 | 48.89 | 44.64 | 6.67 | 50.30 | 8 | 0 | 4.4–11.7K |
 <!-- END headline:overview -->
 
-<sub>Bold: MUSTER. \*Full context reads the
-whole store as is; on BEAM-10M, the newest 850K tokens that fit the reader's window. LLM calls: calls to build memory
-for one 10M-token conversation.</sub>
+<sub>Bold: MUSTER. LLM calls: calls to build memory for one 10M-token conversation.</sub>
 
-MUSTER ranks first or second in all six settings. On MAB and LoCoMo-Refined it is above every other memory system at
-both readers (p < 0.001), and it reads 5K to 20K tokens per question, 1/34 of the full context's read cost. Results at
-each benchmark's own reader are in [Detailed results](#detailed-results).
+</details>
+
+---
+
+## Cost
+
+**77 s to build. 1/34 of the read cost.** Memory usually costs one of two ways. An LLM extracts it when you write, or
+the model reads everything when you answer. MUSTER stores the text as is and fits its read to the structure, with 0 LLM
+calls to build and 5K to 20K tokens per question.
+
+<p align="center">
+  <picture>
+    <source media="(max-width: 1011px)" srcset="docs/assets/readme_page/cost_phone.png">
+    <source media="(min-width: 1012px)" srcset="docs/assets/readme_page/cost.png">
+    <img src="docs/assets/readme/build_cost_light.svg" alt="Building one 10M-token conversation, as run, with LLM calls, build time on a log scale and LLM cost. Extract with an LLM, EverMemOS 26,080 calls in 32.7 h for at least $3.19, HippoRAG-v2 20,870 calls in 1.3 h for $1.49, Hindsight 16,425 calls in 3.0 h for at least $1.97, Honcho 4.4–11.7K calls in 7.8 h for $1.41, Mem0 10,429 calls in 13.0 h for at least $15.15. Store as is, True Memory 0 calls in 39 min for $0, MUSTER 0 calls in 77 s for $0. Reading, per 1,000 questions, costs $94.91 with the full context and $2.80 with MUSTER, 1/34.">
+  </picture>
+</p>
+
+<details>
+<summary><b>As a table, with how each cost is counted</b></summary>
+
+<!-- BEGIN headline:build -->
+| System | LLM calls | Build time | LLM cost | Notes |
+|:--|--:|--:|--:|:--|
+| EverMemOS | 26,080 | 32.7 h | ≥ $3.19 | build time: mean per conversation, all ten built at once; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 106.3M input tokens at $0.03/M, output not recorded |
+| HippoRAG-v2 | 20,870 | 1.3 h | $1.49 | build time: mean per conversation; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 30.12M input tokens at $0.03/M, 3.937M output tokens at $0.15/M |
+| Hindsight | 16,425 | 3.0 h | ≥ $1.97 | build time: mean per conversation; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 65.5M input tokens at $0.03/M, output not recorded |
+| Honcho | 4,441–11,700 | 7.8 h | $1.41 | build time: with queue drain; cost: Honcho (honcho.dev list price for ingestion), 0.705M input tokens at $2.00/M; in its own BEAM setup Honcho reasons over the user's turns, 7,051,753 tokens over the ten conversations, 6.5% of the 108.1M sent |
+| Mem0 | 10,429 | 13.0 h | ≥ $15.15 | cost: GPT-4o-mini (OpenAI list price), 101.0M input tokens at $0.15/M, output not recorded |
+| True Memory | 0 | 39 min | $0 | no generative call; built on one RTX PRO 6000 |
+| **MUSTER** | 0 | 77 s | $0 | no generative call; built on one GPU with bge-m3 in fp16 |
+| Full context | 0 | nothing to build | $0 | reads everything for every question, 849K tokens per BEAM-10M question |
+<!-- END headline:build -->
+
+</details>
 
 ---
 
 ## How it works
 
+**Detect the structure. Retrieve by it. Assemble in order.** Most stores already record their structure. Logs number
+their lines, example banks separate their records, conversations keep their order. MUSTER measures that structure
+instead of paying an LLM to rebuild it, and fits the two steps that decide an answer to it, what to retrieve and in what
+order to show it.
+
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/lead_dark.svg">
-    <img src="docs/assets/readme/lead_light.svg" width="720" alt="MemoryAgentBench Overall at the benchmark's reader, GPT-4o-mini: BM25 41.5, full context 42.2, True Memory 43.6; MUSTER's retrieval and assembly with no detection 50.3, with detected units, parents and order 56.0, with the retrieval mix matched too 57.5">
+    <source media="(max-width: 1011px)" srcset="docs/assets/readme_page/steps_phone.png">
+    <img src="docs/assets/readme_page/steps.png" alt="MUSTER in five steps. Store, your data as recorded, every word kept. Detect, two byte counts with no model, the share of numbered lines and the share of text in records short enough to keep whole. Structure, unit, parent and order set for each store, fourteen stores in three seconds, with no model. Retrieve, dense, BM25 and a parent graph, each with a floor of slots set by the structure, and one rerank fills the rest, with one query embedding and one rerank. Assemble, the context in stored order, one block per parent, the newest version of a numbered fact, then one reader call. Nothing is written back.">
   </picture>
 </p>
 
-<p align="center"><sub>MemoryAgentBench Overall at the benchmark's own reader, GPT-4o-mini, with its official scoring. The
-three blue bars are MUSTER: retrieval and assembly with no detection, then matched to each store's detected structure in two
-steps.</sub></p>
-
-Most stores already record their structure: logs number their lines, example banks separate their records,
-conversations keep their order. MUSTER measures that structure instead of paying an LLM to rebuild it, and fits the two
-steps that decide an answer to it: what to retrieve, and in what order to show it.
-
 1. **Detect the structure.** Two counts over the bytes, the share of numbered lines and the share of text in records
-   short enough to keep whole, set each store's unit, parent and order. No model, no labels, no candidate runs:
-   fourteen stores in three seconds.
-2. **Match retrieval to it.** Dense search, BM25 and a parent graph each keep a floor of slots, set by the structure:
-   on a numbered log the parent graph takes most of them, elsewhere the three are balanced. One rerank fills the rest.
-   *Parent graph first on numbered logs: +6.0 on selective forgetting.*
+   short enough to keep whole, set each store's unit, parent and order. No model, no labels, no candidate runs.
+   Fourteen stores take three seconds.
+2. **Match retrieval to it.** Dense search, BM25 and a parent graph each keep a floor of slots, set by the structure.
+   On a numbered log the parent graph takes most of them, elsewhere the three are balanced. One rerank fills the rest.
+   *Parent graph first on numbered logs adds 6.0 on selective forgetting.*
 3. **Assemble in its order.** The context is shown in stored order, one block per parent. Where the store numbers its
    records, only the newest version of each fact is shown, at read time, so nothing is deleted. *Fact consolidation,
-   one store: 92 in the recorded order, 64 with none, 59 shuffled.*
+   one store, scores 92 in the recorded order, 64 with none and 59 shuffled.*
+
+<p align="center">
+  <picture>
+    <source media="(max-width: 1011px)" srcset="docs/assets/readme_page/lead_phone.png">
+    <source media="(min-width: 1012px)" srcset="docs/assets/readme_page/lead.png">
+    <img src="docs/assets/readme/lead_light.svg" alt="MemoryAgentBench Overall at the benchmark's reader, GPT-4o-mini. BM25 41.5, full context with a 128K window 42.2, True Memory 43.6. MUSTER's retrieval and assembly with no detection 50.3, with detected units, parents and order 56.0, with the retrieval mix matched too 57.5.">
+  </picture>
+</p>
 
 With no detection, on the benchmark's own chunks, retrieval and assembly already score 50.3, above every other
-retrieval and memory system on the benchmark (best 43.6). Matched to each store's detected structure they reach 57.5:
-units, parents and order add 5.7, the retrieval mix 1.5. A query costs one embedding, one rerank and one reader call;
-nothing is written back.
+retrieval and memory system on the benchmark (best 43.6). Matched to each store's detected structure they reach 57.5.
+Units, parents and order add 5.7, the retrieval mix 1.5. A query costs one embedding, one rerank and one reader call,
+and nothing is written back.
 
 <details>
 <summary><b>The bars as a table</b></summary>
@@ -201,74 +239,6 @@ MUSTER  beam_conv0.txt  115,630 tokens
   order      none: all versions kept
   retrieval  balanced, 3 channels
 ```
-
----
-
-## Why it's cheap
-
-Memory usually costs one of two ways: an LLM extracts it when you write, or the model reads everything when you answer.
-MUSTER stores the text as is and fits its read to the structure: 0 LLM calls to build, 5K to 20K tokens per question.
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/build_cost_dark.svg">
-    <img src="docs/assets/readme/build_cost_light.svg" width="720" alt="Building memory for one 10M-token conversation. Extract with an LLM: EverMemOS 26,080 calls in 32.7 h per conversation with all ten built at once; HippoRAG-v2 20,870 calls in 1.3 h; Hindsight 16,425 calls in 3.0 h; Honcho 4,441 to 11,700 calls in 7.8 h; Mem0 10,429 calls in 13.0 h. Store as is: True Memory 0 calls in 39 min; MUSTER 0 calls in 77 s, $0">
-  </picture>
-</p>
-
-<p align="center"><sub>Building memory for one 10M-token BEAM conversation, as run: LLM calls, build time, and LLM cost at
-list price (the build model's tokens times its price; ≥ where output tokens were not recorded).</sub></p>
-
-<details>
-<summary><b>As a table, with how each cost is counted</b></summary>
-
-<!-- BEGIN headline:build -->
-| System | LLM calls | Build time | LLM cost | Notes |
-|:--|--:|--:|--:|:--|
-| EverMemOS | 26,080 | 32.7 h | ≥ $3.19 | build time: mean per conversation, all ten built at once; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 106.3M input tokens at $0.03/M, output not recorded |
-| HippoRAG-v2 | 20,870 | 1.3 h | $1.49 | build time: mean per conversation; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 30.12M input tokens at $0.03/M, 3.937M output tokens at $0.15/M |
-| Hindsight | 16,425 | 3.0 h | ≥ $1.97 | build time: mean per conversation; cost: GPT-OSS-120B (cheapest OpenRouter route, Near AI), 65.5M input tokens at $0.03/M, output not recorded |
-| Honcho | 4,441–11,700 | 7.8 h | $1.41 | build time: with queue drain; cost: Honcho (honcho.dev list price for ingestion), 0.705M input tokens at $2.00/M; in its own BEAM setup Honcho reasons over the user's turns, 7,051,753 tokens over the ten conversations, 6.5% of the 108.1M sent |
-| Mem0 | 10,429 | 13.0 h | ≥ $15.15 | cost: GPT-4o-mini (OpenAI list price), 101.0M input tokens at $0.15/M, output not recorded |
-| True Memory | 0 | 39 min | $0 | no generative call; built on one RTX PRO 6000 |
-| **MUSTER** | 0 | 77 s | $0 | no generative call; built on one GPU with bge-m3 in fp16 |
-| Full context | 0 | nothing to build | $0 | reads everything for every question, 849K tokens per BEAM-10M question |
-<!-- END headline:build -->
-
-</details>
-
-Reading is cheap too: per 1,000 questions, MUSTER's contexts cost $2.80 at list price, the full context's $94.91.
-
----
-
-## Reproduce
-
-Re-scoring uses the [base evaluation artifact](data/eval_v1/README.md) and its
-[v2 supplement](data/eval_v2/README.md). Together they provide saved BEAM answers and judgments, Honcho query/context
-records, source-based ingestion reconstruction, SHA-256 manifests and offline verification instructions.
-The large result files are distributed as release assets.
-
-```bash
-muster verify cuts --data data_root        # the rule's cuts against the published runs, store by store
-muster verify contexts --data data_root    # the library's contexts against the published ones, question by question
-```
-
-| Check | Result | Evidence |
-|---|---|---|
-| Detection on the fourteen MemoryAgentBench stores | twelve exact; the two FactConsolidation stores take the numbered-log branch | [gate/stage0_derive.md](gate/stage0_derive.md) |
-| Rendered contexts, BEAM 100K, 1M and 10M and LoCoMo | 14 of 14 files sha256-identical | [gate/stage0_tier0.md](gate/stage0_tier0.md) |
-| Every context the MemoryAgentBench board read | 5,439 of 5,439 per-question hashes equal | [gate/stage0d_render.md](gate/stage0d_render.md) |
-| CPU retrieval replay, BEAM-100K at 20 units | 400 of 400 contexts byte-identical | [gate/stage1_beam100k.md](gate/stage1_beam100k.md) |
-| MemoryAgentBench board, re-scored from its per-cell results | 57.52 / 60.92 / 64.71, all 45 values equal | [gate/rescore_mab.md](gate/rescore_mab.md) |
-| BEAM main table, re-scored from its judge files | every score equal | [gate/rescore_beam.md](gate/rescore_beam.md) |
-
-Data, pinned versions and the two checks are in [docs/library/verify.md](docs/library/verify.md). `harness/` is the code
-that produced every table, pinned file by file in `MANIFEST.sha256`; the benchmarks' templates, judge prompts and scorers
-are fetched from their own repositories at pinned commits (`scripts/fetch_mab_repo.sh`, `scripts/fetch_beam_repo.sh`),
-never redistributed. Readers run through one pinned provider per model, and a reader-swap bundle pins every context by
-sha256, so a new reader reads byte-identical contexts. The numbers at the top of this page live in
-[docs/data/headline.json](docs/data/headline.json); `python tools/make_readme.py` regenerates every table and figure
-above from it.
 
 ---
 
@@ -360,7 +330,46 @@ to build the 10M conversation where MUSTER takes 77 seconds.
 
 ---
 
+## Reproduce
+
+<details>
+<summary><b>The reproduction gate, the data and the pinned code</b></summary>
+
+Re-scoring uses the [base evaluation artifact](data/eval_v1/README.md) and its
+[v2 supplement](data/eval_v2/README.md). Together they provide saved BEAM answers and judgments, Honcho query/context
+records, source-based ingestion reconstruction, SHA-256 manifests and offline verification instructions.
+The large result files are distributed as release assets.
+
+```bash
+muster verify cuts --data data_root        # the rule's cuts against the published runs, store by store
+muster verify contexts --data data_root    # the library's contexts against the published ones, question by question
+```
+
+| Check | Result | Evidence |
+|---|---|---|
+| Detection on the fourteen MemoryAgentBench stores | twelve exact; the two FactConsolidation stores take the numbered-log branch | [gate/stage0_derive.md](gate/stage0_derive.md) |
+| Rendered contexts, BEAM 100K, 1M and 10M and LoCoMo | 14 of 14 files sha256-identical | [gate/stage0_tier0.md](gate/stage0_tier0.md) |
+| Every context the MemoryAgentBench board read | 5,439 of 5,439 per-question hashes equal | [gate/stage0d_render.md](gate/stage0d_render.md) |
+| CPU retrieval replay, BEAM-100K at 20 units | 400 of 400 contexts byte-identical | [gate/stage1_beam100k.md](gate/stage1_beam100k.md) |
+| MemoryAgentBench board, re-scored from its per-cell results | 57.52 / 60.92 / 64.71, all 45 values equal | [gate/rescore_mab.md](gate/rescore_mab.md) |
+| BEAM main table, re-scored from its judge files | every score equal | [gate/rescore_beam.md](gate/rescore_beam.md) |
+
+Data, pinned versions and the two checks are in [docs/library/verify.md](docs/library/verify.md). `harness/` is the code
+that produced every table, pinned file by file in `MANIFEST.sha256`; the benchmarks' templates, judge prompts and scorers
+are fetched from their own repositories at pinned commits (`scripts/fetch_mab_repo.sh`, `scripts/fetch_beam_repo.sh`),
+never redistributed. Readers run through one pinned provider per model, and a reader-swap bundle pins every context by
+sha256, so a new reader reads byte-identical contexts. The numbers at the top of this page live in
+[docs/data/headline.json](docs/data/headline.json); `python tools/make_readme.py` regenerates every table
+above from it, and `node tools/make_readme_media.js` renders the pictures from the project page.
+
+</details>
+
+---
+
 ## FAQ
+
+<details>
+<summary><b>Five questions people ask first</b></summary>
 
 **Does it need a language model at all?** Not before the first query. Detection, unit cutting, embedding and BM25 are
 the whole write path. A query uses one reader call, like any retrieval system.
@@ -377,12 +386,29 @@ numbered store, and MUSTER reads them beside the conversation under the same rul
 **Can I run it without a GPU?** Detection, yes, anywhere, in well under a second per store. The retrieval path embeds
 the store once with bge-m3; a CPU-only configuration is part of the reproduction gate.
 
+</details>
+
+---
+
+## Cite
+
+```bibtex
+@misc{muster2026,
+  title  = {MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure},
+  author = {Woosang Lim},
+  year   = {2026}
+}
+```
+
+GitHub's *Cite this repository* button reads [CITATION.cff](CITATION.cff).
+
 ---
 
 ## Paper, status, license
 
 The paper is *MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure*; the PDF is in
-[`paper/MUSTER.pdf`](paper/MUSTER.pdf). To cite it, use [CITATION.cff](CITATION.cff).
+[`paper/MUSTER.pdf`](paper/MUSTER.pdf). This is a research release. What was checked, and the evidence for each line,
+is in [STATUS.md](STATUS.md).
 
 The library is Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Benchmark content keeps its own license.
 The evaluation releases include BEAM content under CC BY-SA 4.0 and LoCoMo and LoCoMo-Refined content under

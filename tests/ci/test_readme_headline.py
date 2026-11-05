@@ -1,5 +1,6 @@
 """The README's headline numbers come from one file, docs/data/headline.json: tools/make_readme.py generates the README's
 tables and figures from it, and neither the README nor that data carries a private pattern."""
+import hashlib
 import json
 import os
 import re
@@ -12,7 +13,8 @@ import pytest
 from test_packaging import _private_patterns, _violations
 
 ROOT = Path(__file__).resolve().parents[2]
-PUBLIC = (ROOT / "README.md", ROOT / "docs" / "data", ROOT / "docs" / "assets" / "readme")
+PUBLIC = (ROOT / "README.md", ROOT / "docs" / "data", ROOT / "docs" / "assets" / "readme",
+          ROOT / "docs" / "assets" / "readme_page" / "MANIFEST.json")
 
 
 def _run(*args):
@@ -31,6 +33,20 @@ def test_readme_and_its_data_carry_no_private_pattern():
     bad = ["%s:%d" % (p.relative_to(ROOT).as_posix(), i)
            for p in files for i, line in enumerate(p.read_text(encoding="utf-8").splitlines(), 1) if _violations(line, private)]
     assert not bad, "privacy scan failed; values suppressed:\n" + "\n".join(bad)
+
+
+def test_readme_pictures_are_the_rendered_page():
+    # The README shows the project page's own panels, rendered by tools/make_readme_media.js. Its MANIFEST.json records
+    # the headline data they were made from and each file's hash, so new numbers or a hand-edited picture fail here.
+    folder = ROOT / "docs" / "assets" / "readme_page"
+    manifest = json.loads((folder / "MANIFEST.json").read_text(encoding="utf-8"))
+    named = set(re.findall(r'(?:src|srcset)="(docs/assets/[^"]+)"', (ROOT / "README.md").read_text(encoding="utf-8")))
+    assert not [p for p in named if not (ROOT / p).is_file()], named
+    assert {p for p in named if p.startswith("docs/assets/readme_page/")} == {"docs/assets/readme_page/" + f for f in manifest["files"]}
+    data = hashlib.sha256((ROOT / "docs" / "data" / "headline.json").read_bytes()).hexdigest()
+    assert manifest["inputs"]["docs/data/headline.json"] == data, "headline.json changed: run node tools/make_readme_media.js"
+    for name, made in manifest["files"].items():
+        assert hashlib.sha256((folder / name).read_bytes()).hexdigest() == made["sha256"], name
 
 
 def test_pages_and_citation_follow_the_headline_data():
