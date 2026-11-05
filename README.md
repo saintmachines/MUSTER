@@ -28,15 +28,6 @@
 pip install "muster-memory[models,mcp]"
 ```
 
-<p align="center">
-  <picture>
-    <source media="(max-width: 1011px)" srcset="docs/assets/readme_page/film_phone.gif">
-    <img src="docs/assets/readme_page/film.gif" width="552" alt="Animation of one rule on two real stores. Store A is a numbered log from MemoryAgentBench FactConsolidation-SH. Detection finds the numbered lines and takes the numbered-log branch, with one fact as the unit, its slot as the parent and the serial as the order. Asked which city Jerry Lee Lewis worked in, the slot graph takes most of the units, the context shows the facts in serial order with the newest per slot, the older Memphis fact is struck out, and both readers answer Helsinki. Store B is a LoCoMo-Refined conversation. Detection finds records and takes the record-store branch, and for where Melanie has camped the context is assembled one block per parent in stored order, and both readers answer in the mountains, at the beach and in the forest. Per query, 1 embedding, 1 rerank and 1 reader call.">
-  </picture>
-</p>
-
-<p align="center"><sub>One rule on two real stores, replayed on a CPU. The contexts are byte-identical to the published runs.</sub></p>
-
 ---
 
 ## Results
@@ -192,6 +183,15 @@ The library reads a serial written as `Step 12:`, `#12` or `(12)` the same way a
 up one at a time. [docs/library](docs/library/README.md) gives the exact check.
 
 </details>
+
+<p align="center">
+  <picture>
+    <source media="(max-width: 1011px)" srcset="docs/assets/readme_page/film_phone.gif">
+    <img src="docs/assets/readme_page/film.gif" width="552" alt="Animation of one rule on two real stores. Store A is a numbered log from MemoryAgentBench FactConsolidation-SH. Detection finds the numbered lines and takes the numbered-log branch, with one fact as the unit, its slot as the parent and the serial as the order. Asked which city Jerry Lee Lewis worked in, the slot graph takes most of the units, the context shows the facts in serial order with the newest per slot, the older Memphis fact is struck out, and both readers answer Helsinki. Store B is a LoCoMo-Refined conversation. Detection finds records and takes the record-store branch, and for where Melanie has camped the context is assembled one block per parent in stored order, and both readers answer in the mountains, at the beach and in the forest. Per query, 1 embedding, 1 rerank and 1 reader call.">
+  </picture>
+</p>
+
+<p align="center"><sub>One rule on two real stores, replayed on a CPU. The contexts are byte-identical to the published runs.</sub></p>
 
 ---
 
