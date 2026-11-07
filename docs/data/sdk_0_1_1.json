@@ -2,7 +2,7 @@
   "schema_version": "muster.sdk0.1.1.followup.v1",
   "status": "review_candidate_not_published",
   "dataset": "MemoryAgentBench FactConsolidation",
-  "evaluation_scope": "Followup designed on FC6K/32K/64K;262K was used for a subject-cap fix before reader evaluation.",
+  "evaluation_scope": "Followup designed on FactConsolidation; before reader evaluation, the 262K stores informed the slot key and a subject-length cap.",
   "quality_rows": [
     {
       "dataset": "MemoryAgentBench FactConsolidation",
