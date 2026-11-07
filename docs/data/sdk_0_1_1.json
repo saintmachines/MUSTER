@@ -584,7 +584,7 @@
     },
     "input_identity_percent": 100.0,
     "new_quality_run": false,
-    "claim": "All563 MINT state reader inputs remain byte-identical to0.1.0."
+    "claim": "All 563 MINTEval state reader inputs remain byte-identical to 0.1.0."
   },
   "notes": [
     "FC table uses saved baseline600; live010 rebuild matches599/600, and599 sensitivity leaves gains/losses andp unchanged.",
@@ -593,10 +593,10 @@
     "Inputidentity percentages are not answeraccuracy and are not new reader runs."
   ],
   "source_ledger": {
-    "file": "PERFORMANCE_EVIDENCE_LEDGER.json",
+    "origin_name": "PERFORMANCE_EVIDENCE_LEDGER.json",
     "sha256": "cc14f8c02523726ec6fdae017e374cfe1c4f8c7c8ca1bc7a16dab4c6bfc688cd"
   },
   "new_api_calls": 0,
   "tested_sdk_commit": "12c7e6fb6d9b1c14ce0bade08cc32ee535ee00da",
-  "source_public_subset_file": "SDK_0_1_1_PUBLIC_SUBSET.json"
+  "source_public_subset_origin_name": "SDK_0_1_1_PUBLIC_SUBSET.json"
 }
