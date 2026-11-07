@@ -12,7 +12,7 @@
     .layout{display:grid;grid-template-columns:1.06fr 1fr;gap:22px;align-items:start}.panel{padding:23px;background:white;border:1px solid var(--line);border-radius:15px;min-width:0}
     label{font-weight:650;display:block;margin:0 0 8px}textarea{font:14px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;width:100%;height:318px;resize:vertical;padding:14px;border:1px solid #aebbd0;border-radius:9px;background:#fbfcff;color:var(--ink)}
     button{font:inherit;font-weight:650;border:1px solid var(--line);border-radius:8px;padding:9px 13px;background:white;color:var(--ink);cursor:pointer}button:disabled{opacity:.55;cursor:wait}button:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid #6c91ef;outline-offset:3px}
-    .examples{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.examples button{font-size:13px;padding:7px 9px}.primary{background:var(--blue);border-color:var(--blue);color:white;margin-top:12px}.minor{font-size:13px;color:var(--muted)}
+    .examples{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.examples button{font-size:13px;padding:7px 9px}.primary{background:var(--blue);border-color:var(--blue);color:white;margin-top:12px}.minor{font-size:13px;color:var(--muted)}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.actions .primary{margin-top:0}[hidden]{display:none!important}
     .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0}.metric{border-radius:10px;background:#f0f3fd;padding:13px}.number{color:var(--blue);font-size:28px;font-weight:750;line-height:1.2;display:block}.metric small{color:var(--muted)}
     #branch{font-size:23px;font-weight:750}.settings{display:grid;grid-template-columns:1fr 1fr;gap:13px 18px;margin:20px 0}.settings dt{font-size:12px;color:var(--muted)}.settings dd{margin:2px 0 0;font-weight:650;font-size:15px}
     #explanation{font-size:14px;border-top:1px solid var(--line);padding-top:16px}.status{min-height:24px;margin:12px 0 0;font-size:14px;color:var(--muted)}details{margin-top:20px}summary{cursor:pointer;font-weight:650}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;max-height:310px;overflow:auto;padding:13px;background:var(--bg);border-radius:8px}
@@ -30,9 +30,9 @@
       <div class="examples" aria-label="Synthetic examples"><button data-example="numbered">Numbered records</button><button data-example="serial">Serial labels</button><button data-example="records">Separated records</button><button data-example="prose">Continuous prose</button></div>
       <label for="store">Paste text, or select an example</label><textarea id="store" spellcheck="false"></textarea>
       <div class="minor">Synthetic examples show configuration. Reference chunk: 4,096 tokens.</div>
-      <button id="inspect" class="primary" disabled>Inspect structure</button><p id="status" class="status" role="status" aria-live="polite">Loading the bundled tokenizer…</p>
+      <div class="actions"><button id="inspect" class="primary" disabled>Inspect structure</button><button id="cancel" hidden>Cancel inspection</button></div><p id="status" class="status" role="status" aria-live="polite">Loading the bundled tokenizer…</p>
     </section>
-    <section class="panel" aria-labelledby="result-title"><h2 id="result-title">Selected configuration</h2>
+    <section id="result-panel" class="panel" aria-labelledby="result-title"><h2 id="result-title">Selected configuration</h2>
       <div id="branch">Choose a store</div>
       <div class="metrics"><div class="metric"><span id="serial" class="number">—</span><small>Integer-dot line share</small></div><div class="metric"><span id="record" class="number">—</span><small>Short-record token share</small></div></div>
       <dl class="settings"><div><dt>UNIT BUDGET</dt><dd id="unit">—</dd></div><div><dt>UNITS PER READ</dt><dd id="read">—</dd></div><div><dt>PARENT BUDGET</dt><dd id="parent">—</dd></div><div><dt>CHANNEL FLOORS</dt><dd id="policy">—</dd></div></dl>

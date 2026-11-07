@@ -6,9 +6,14 @@
 : `store` is a string, or records: `muster.Record`, mappings (`text` or `content`, `id`, `time` or `timestamp`,
   `speaker` or `role`, `session`, other keys go to `meta`) or plain strings. `plan=None` derives the plan from the
   text; a string names a preset (exact mode); a `Plan` is used as given. `embed=False` defers the embedding pass.
+  One mapping or `Record` alone is a list of one. A `content` list of chat parts keeps its text parts, joined by a new
+  line; any other part is refused, so pass what should be remembered as text. Text holding half of a surrogate pair
+  (usually an emoji cut by a stream) raises `RecordError` at the call that brought it in.
 
 `Memory.search(query, *, U=None, models=None, cache=None, scores=None) -> Selection`
-: `U` overrides the plan's read budget. `cache` is a published reranker-cache file's contents (reproduction);
+: `U` overrides the plan's read budget: a positive whole number (an int or a numpy integer), or `None` or 0 for the plan's
+  own; a bool, a fraction or a numeric string raises `PlanError`. A query that is empty, not text or not valid UTF-8 raises
+  `QueryError`. `cache` is a published reranker-cache file's contents (reproduction);
   `scores` a `ScoreCache` (text-keyed, persistent). Exact plans require `PYTHONHASHSEED=0` and the plan's model lengths.
 
 `Memory.render(selection, *, style=None) -> Context`
@@ -85,5 +90,5 @@ cache_dir=None, local_files_only=False)`
 
 ## Errors
 
-All are `muster.MusterError`: `PlanError`, `RecordError`, `StoreRefused` (exact mode refuses what the harness refuses,
+All are `muster.MusterError`: `PlanError`, `RecordError`, `QueryError`, `StoreRefused` (exact mode refuses what the harness refuses,
 naming the harness line), `EnvironmentRefused`, `AssetMissing`, `StaleSelection`, `PlanViolation`, `StoreLocked`.

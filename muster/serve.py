@@ -8,7 +8,20 @@ import json
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
+from .errors import MusterError
 from .store import Store
+
+MAX_BODY = 256 * 1024 * 1024  # a larger request is refused before it is read
+
+
+def _units(req):
+    """A request's `units`: absent, null or 0 reads the memory's own count; otherwise a positive whole number."""
+    u = req.get("units")
+    if u is None or (type(u) is int and u == 0):
+        return 0
+    if type(u) is not int or u < 1:
+        raise ValueError("units must be a positive whole number")
+    return u
 
 INSTRUCTIONS = ("Long-term memory that keeps every word. Call `remember` for anything worth keeping (one fact, "
                 "message or observation per call, with who said it and when if known). Call `recall` with a question "
@@ -121,7 +134,7 @@ def mcp_server(service: Service, name="muster"):
 def http_server(service: Service, host="127.0.0.1", port=8765):
     class H(BaseHTTPRequestHandler):
         def _send(self, code, obj):
-            body = json.dumps(obj, ensure_ascii=False).encode()
+            body = json.dumps(obj, ensure_ascii=False).encode("utf-8", "backslashreplace")
             self.send_response(code)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -141,18 +154,28 @@ def http_server(service: Service, host="127.0.0.1", port=8765):
         def do_POST(self):
             try:
                 n = int(self.headers.get("Content-Length") or 0)
+                if n < 0:
+                    raise ValueError("Content-Length must not be negative")
+                if n > MAX_BODY:
+                    return self._send(413, {"error": "a request holds at most %d bytes" % MAX_BODY})
                 req = json.loads(self.rfile.read(n) or b"{}")
+                if not isinstance(req, dict):
+                    raise ValueError("a request body is one JSON object")
                 if self.path == "/v1/add":
                     recs = req.get("records") if "records" in req else [req]
                     return self._send(200, service.add(recs, request_id=req.get("request_id")))
                 if self.path == "/v1/context":
-                    return self._send(200, service.context(req["query"], int(req.get("units") or 0)))
+                    return self._send(200, service.context(req["query"], _units(req)))
                 if self.path == "/v1/search":
-                    return self._send(200, service.search(req["query"], int(req.get("units") or 0)))
+                    return self._send(200, service.search(req["query"], _units(req)))
                 if self.path == "/v1/declared-context":
                     return self._send(200, service.declared_context(req["store"], req["query"],
-                                                                  int(req.get("units") or 0)))
+                                                                  _units(req)))
                 return self._send(404, {"error": "not found"})
             except (KeyError, ValueError, TypeError) as e:
                 return self._send(400, {"error": "%s: %s" % (type(e).__name__, e)})
+            except MusterError as e:  # the store or the machine, not the request
+                return self._send(500, {"error": "%s: %s" % (type(e).__name__, e)})
+            except Exception as e:  # the client always gets an answer
+                return self._send(500, {"error": type(e).__name__})
     return ThreadingHTTPServer((host, port), H)

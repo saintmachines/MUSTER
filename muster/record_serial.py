@@ -36,7 +36,7 @@ def cut_record_serials(records, text, spans, plan, *, normalize=True):
     Return (Cut, body semantic keys, original record indices). Unmarked entries
     receive a sentinel, not an inferred revision clock, and their own parent.
     """
-    from .cut import AS_MINREC, Cut, _SERIAL, slot_of
+    from .cut import AS_MINREC, Cut, _SERIAL, serial_text, serial_value, slot_of, value_slots
     from .errors import PlanError
     bodies = _bodies(records, normalize)
     lead = plan.serial == "lead"
@@ -53,7 +53,7 @@ def cut_record_serials(records, text, spans, plan, *, normalize=True):
     for i, (raw, m) in enumerate(zip(bodies, matches)):
         shown = text[spans[i][0]:spans[i][1]]
         if m is not None:
-            marker = int(m.group(2) if lead else m.group(1))
+            marker = serial_value(m.group(2) if lead else m.group(1))
             body = (raw[m.end():] if lead else m.group(2)).strip()
             prefix = raw[:m.end()] if lead else None
             parent = "s:" + slot_of(body)
@@ -74,10 +74,14 @@ def cut_record_serials(records, text, spans, plan, *, normalize=True):
         parents.append(parent)
         order.append(marker)
         prefixes.append(pre)
+    if not lead:  # N8 reads dot-serial records; records under their own spelling keep the paper's slot (0.1.0)
+        marked = [i for i, p in enumerate(parents) if p.startswith("s:")]
+        for i, k in zip(marked, value_slots([semantic[i] for i in marked])):
+            parents[i] = "s:" + k
     # If a dot array mixes decorated and undecorated records, spell the latter
     # like the existing dot renderer without dropping the decorated metadata.
     if not lead and display_needed:
-        prefixes = ["[%s] " % order[i] if p is None else p for i, p in enumerate(prefixes)]
+        prefixes = ["[%s] " % serial_text(order[i]) if p is None else p for i, p in enumerate(prefixes)]
     actual = [o for o, m in zip(order, matches) if m is not None]
     diagnostics = dict(numbered_share=round(share, 4),
         distinct_serial_share=round(len(set(actual)) / float(max(len(actual), 1)), 4),

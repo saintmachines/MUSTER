@@ -78,12 +78,12 @@ def test_floors_follow_the_rule():
 
 def test_numbered_log_newest_slot_wins():
     m = Models.fake(16)
-    facts = ["Paris is the capital of France.", "The Atlas project is led by Maria.",
-             "The Atlas project is led by Jorge.", "Seoul is the capital of Korea."] * 5
+    facts = [f for i in range(10) for f in ("Project%d is led by Maria." % i, "Project%d is led by Jorge." % i)]
     mem = muster.build(muster.numbered(facts), models=m)
     assert mem.plan.branch == "numbered"
-    ctx = mem.context("Who leads the Atlas project?")
+    ctx = mem.context("Who leads Project3?")
     assert ctx.style == "numbered" and ctx.text.startswith("[")
+    assert "Jorge" in ctx.text and "Maria" not in ctx.text
 
 
 def test_store_add_search_reopen(tmp_path):

@@ -21,7 +21,7 @@ NUM = re.compile(r"^\s*\d+\.\s+\S")
 MAX_LINES = 20000
 # a serial under the log's own spelling: an optional bracket and word, the integer, an optional closer, then the body
 # ("Step 3: ", "#3 ", "(3) ", "[3] ", "3. "). Thresholds set after the paper (2026-11) on public benchmark logs.
-LEAD = re.compile(r"^(\s*[\[(#]?\s*(?:[A-Za-z]+\s*)?)(\d{1,8})([\]).:]?\s+)(?=\S)")
+LEAD = re.compile(r"^(\s*(?:[\[(#]\s*)?(?:[A-Za-z]+\s*)?)(\d{1,8})([\]).:]?\s+)(?=\S)")
 LEAD_TAU, LEAD_LINE_TOKENS = 0.95, 20
 
 

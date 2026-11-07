@@ -3,6 +3,7 @@
 A store is text. A list of records is written as one line per record, records separated by a blank line, which is
 the shape of the paper's conversation stores (LoCoMo's "<id> [<time>] <speaker>: <text>").
 """
+import numbers
 import re
 from dataclasses import dataclass, field
 from datetime import date, datetime
@@ -12,6 +13,17 @@ from .errors import RecordError
 
 DEFAULT_TEMPLATE = "{id} [{time}] {speaker}: {text}"
 RECORD_SEP = "\n\n"
+
+
+def require_text(value, what):
+    """Refuse a string that is not valid UTF-8. Half of a surrogate pair reaches no tokenizer, database or reader, so
+    keeping it would stop every later read of the store."""
+    try:
+        value.encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise RecordError("%s is not valid UTF-8 text: position %d holds half of a surrogate pair, usually an emoji cut "
+                          "by a stream; clean it first with s.encode('utf-16', 'surrogatepass').decode('utf-16', "
+                          "'replace')" % (what, exc.start)) from exc
 
 
 @dataclass(frozen=True)
@@ -45,6 +57,46 @@ class Record:
                 object.__setattr__(self, k, str(v))
         if self.status not in ("accepted", "candidate", "rejected"):
             raise RecordError("Record.status must be accepted, candidate or rejected")
+        for k in ("text", "id", "time", "speaker", "session", "slot", "ref"):
+            v = getattr(self, k)
+            if isinstance(v, str):
+                require_text(v, "Record." + k)
+        if not isinstance(self.meta, Mapping):
+            raise RecordError("Record.meta must be a mapping, got %s" % type(self.meta).__name__)
+
+
+def _content_text(content):
+    """The words of a record's text or content. A list is a chat message's parts: its text parts are joined in order.
+    Any other part needs the application's decision, so it is refused, not stored as Python's printout of it."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, numbers.Number):
+        return str(content)
+    if isinstance(content, (list, tuple)):
+        parts = []
+        for p in content:
+            if isinstance(p, str):
+                parts.append(p)
+            elif isinstance(p, Mapping) and p.get("type", "text") == "text" and isinstance(p.get("text"), str):
+                parts.append(p["text"])
+            else:
+                kind = p.get("type") if isinstance(p, Mapping) else type(p).__name__
+                raise RecordError("a record's content holds a part of type %r; only text is remembered, so pass the "
+                                  "text to keep as a string" % (kind,))
+        return "\n".join(parts)
+    raise RecordError("a record's text must be a string, got %s" % type(content).__name__)
+
+
+def record_list(records):
+    """Records as a list. One record alone (a string, a Record, a mapping) is a list of one."""
+    if isinstance(records, (str, Record, Mapping)) or hasattr(records, "keys"):
+        return [records]
+    if isinstance(records, (set, frozenset)):
+        raise RecordError("records must be a list: a %s has no order, and a memory's reading depends on it" % type(records).__name__)
+    try:
+        return list(records)
+    except TypeError as exc:
+        raise RecordError("records must be a list, got %s" % type(records).__name__) from exc
 
 
 def as_record(x: Union[Record, Mapping[str, Any], str]) -> Record:
@@ -59,9 +111,12 @@ def as_record(x: Union[Record, Mapping[str, Any], str]) -> Record:
             raise RecordError("a record mapping needs 'text' or 'content'")
         known = {"text", "content", "id", "time", "timestamp", "speaker", "role", "session", "slot", "order",
                  "status", "ref", "kind", "sort_key", "meta"}
-        meta = dict(x.get("meta") or {})
+        meta = x.get("meta") or {}
+        if not isinstance(meta, Mapping):
+            raise RecordError("a record's meta must be a mapping, got %s" % type(meta).__name__)
+        meta = dict(meta)
         meta.update({k: str(v) for k, v in x.items() if k not in known})
-        return Record(text=str(text), id=x.get("id"), time=x.get("time", x.get("timestamp")),
+        return Record(text=_content_text(text), id=x.get("id"), time=x.get("time", x.get("timestamp")),
                       speaker=x.get("speaker", x.get("role")), session=x.get("session"), slot=x.get("slot"),
                       order=x.get("order"), status=x.get("status", "accepted"), ref=x.get("ref"),
                       kind=x.get("kind", "text"), sort_key=x.get("sort_key"), meta=meta)

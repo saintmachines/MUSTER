@@ -1,7 +1,8 @@
 """The `muster` command.
 
-  muster derive PATH [--json]               the plan of a store (same output as scripts/derive.py, except a log
-                                            numbered under its own spelling, which the paper's script calls records)
+  muster derive PATH [--json]               the plan muster.derive picks (same output as scripts/derive.py, which keeps
+                                            the paper's rule, except a log numbered under its own spelling and a serial
+                                            log that shows no updates, which is read without replacing anything)
   muster query PATH "question"              build a memory from a file once and print what a reader gets
   muster add --store S.muster FILE.jsonl    append records (one JSON object per line: text, speaker, time, ...)
   muster context --store S.muster "query"   what a reader gets for a query
@@ -14,11 +15,12 @@
 """
 import argparse
 import json
+import sqlite3
 import sys
 
 from . import bpe
-from .derive import MIN_PARENTS, MIN_UNIT, NUMBERED_TAU, PROSE_STEP, RECORD_STEP, RECORD_TAU
-from .errors import MusterError
+from .derive import MIN_PARENTS, MIN_UNIT, NUMBERED_TAU, PROSE_STEP, RECORD_STEP, RECORD_TAU, derive
+from .errors import MusterError, RecordError
 from .io import read_store
 from .stats import LEAD_LINE_TOKENS, lead_serial, store_stats
 
@@ -76,8 +78,10 @@ def cmd_derive(a):
     if st.tokens == 0:
         sys.exit("%s is empty: nothing to configure" % a.path)
     share, med = lead_serial(text) if st.serial < NUMBERED_TAU else (0.0, None)
-    lead = med is not None and med <= LEAD_LINE_TOKENS
-    d = _decision(st.serial, st.record_share, st.tokens, lead=lead)
+    form = "dot" if st.serial >= NUMBERED_TAU else ("lead" if med is not None and med <= LEAD_LINE_TOKENS else None)
+    numbered = derive(text).branch == "numbered"   # the library's own decision, so the two cannot disagree
+    lead = numbered and form == "lead"
+    d = _decision(st.serial if numbered else 0.0, st.record_share, st.tokens, lead=lead)
     if lead:
         d = dict(leading_serial_share=round(share, 4), median_line_tokens=med, **d)
     if a.json:
@@ -135,10 +139,24 @@ def _models(a):
     return None
 
 
+def _json_records(lines, name):
+    out = []
+    for n, x in enumerate(lines, 1):
+        if x.strip():
+            try:
+                out.append(json.loads(x))
+            except json.JSONDecodeError as exc:
+                raise RecordError("%s line %d is not JSON; this command reads one JSON record per line" % (name, n)) from exc
+    return out
+
+
 def cmd_add(a):
     from .store import Store
-    recs = [json.loads(x) for x in open(a.file, encoding="utf-8") if x.strip()] if a.file != "-" else \
-        [json.loads(x) for x in sys.stdin if x.strip()]
+    if a.file == "-":
+        recs = _json_records(sys.stdin, "standard input")
+    else:
+        with open(a.file, encoding="utf-8") as source:
+            recs = _json_records(source, a.file)
     with Store.open(a.store, models=_models(a)) as st:
         r = st.add(recs, request_id=a.request_id)
     print(json.dumps({"version": r.version, "duplicate": r.duplicate, "n_records": r.n_records}))
@@ -160,7 +178,8 @@ def cmd_query(a):
             envelope = json.load(source)
         mem = build_declared(envelope, models=_models(a))
     elif a.path.endswith(".jsonl") and not a.column_given:
-        store = [as_record(json.loads(x)) for x in open(a.path, encoding="utf-8") if x.strip()]
+        with open(a.path, encoding="utf-8") as source:
+            store = [as_record(x) for x in _json_records(source, a.path)]
         mem = build(store, models=_models(a))
     else:
         store = read_store(a.path, a.column, a.row)
@@ -241,7 +260,18 @@ def main(argv=None):
     if a.cmd == "query":
         a.column_given = a.column is not None
         a.column = a.column or "context"
-    a.fn(a)
+    try:
+        a.fn(a)
+    except MusterError as e:
+        sys.exit(str(e))
+    except FileNotFoundError as e:
+        sys.exit("no such file: %s" % e.filename)
+    except UnicodeDecodeError:
+        sys.exit("%s is not UTF-8 text; save it as UTF-8 and run again" % (getattr(a, "path", None) or getattr(a, "file", "the input")))
+    except sqlite3.Error as e:
+        sys.exit("%s: %s" % (getattr(a, "store", "the store"), e))
+    except (OSError, ValueError) as e:
+        sys.exit(str(e) or type(e).__name__)
 
 
 if __name__ == "__main__":

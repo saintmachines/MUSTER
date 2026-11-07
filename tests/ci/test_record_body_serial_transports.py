@@ -7,8 +7,10 @@ from muster.serve import Service,http_server
 
 ROOT=str(Path(__file__).resolve().parents[2])
 def items(n=24):
+    # Every eighth record revises the one before it: the update evidence a numbered plan needs.
     return [dict(id=str(500+i),speaker='user',time='2026-03-%02d'%(1+i%28),
-                 text='Step %d: Entity%s owns a blue key.'%(i,chr(65+i))) for i in range(n)]
+                 text='Step %d: Entity%s owns a %s key.'%(i,chr(65+(i-1 if i%8==7 else i)),'Green' if i%8==7 else 'Blue')) for i in range(n)]
+KEPT=[i for i in range(24) if i%8!=6]  # the rows a numbered read shows
 
 def check_head(store,n):
     h=store.head();assert h.plan.branch=='numbered' and h.cut.order==tuple(range(n))
@@ -36,8 +38,8 @@ def test_actual_http_add_context_search_and_restart_share_body_plan(tmp_path):
             out=post('/v1/context',dict(query='blue key',units=24))
             assert 'user: Step 0:' in out['text'] and '2026-03-01' in out['text']
             mapped=[r for b in out['blocks'] for r in b['records']]
-            assert mapped==[dict(id=str(500+i),time='2026-03-%02d'%(i+1),speaker='user') for i in range(24)]
-            assert all(b['ids']==[i] and items()[i]['text'] in b['text'] for i,b in enumerate(out['blocks']))
+            assert mapped==[dict(id=str(500+i),time='2026-03-%02d'%(i+1),speaker='user') for i in KEPT]
+            assert all(b['ids']==[i] and items()[i]['text'] in b['text'] for i,b in zip(KEPT,out['blocks'])) and len(out['blocks'])==len(KEPT)
             assert post('/v1/search',dict(query='blue key',units=24))['ids']
         finally:server.shutdown();server.server_close();thread.join()
     with muster.Store.open(path,models=muster.Models.fake(16)) as store:check_head(store,24)

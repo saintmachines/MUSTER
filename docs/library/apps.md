@@ -108,6 +108,10 @@ app's answer model. It does not generate the final answer. Repeating the same
 `/v1/add` request acknowledges it without adding the record twice. Restarting
 the server with the same file retains the records.
 
+`/v1/context` and `/v1/search` take an optional `units`, the number of passages to
+read: a positive whole number, or 0 or `null` for the memory's own. Any other value
+gets a 400 answer.
+
 A Node.js backend can make the same request without a client SDK:
 
 ```javascript

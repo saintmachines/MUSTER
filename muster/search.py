@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Tuple
 
 from .errors import StoreRefused
-from .index import btok, entities
+from .index import btok, entities, plain_words
 
 K1, H, DECAY, RCAP, RDEG, M_ANCH, SLOT_CE_CUT = 200, 4, 0.5, 100, 5, 2, 400
 
@@ -215,8 +215,36 @@ def _slot_reach(idx, qents, hops, cap):
     return [u for _, u in sorted((h3, idx.newest_row[s3]) for s3, h3 in hopd.items() if s3 in idx.newest_row)]
 
 
-def select(idx, vecs, qv, query, scorer, *, U, policy, exact, floors_rule_below_10=True):
-    """The selection one query receives: (ids, pool, heads, floors, n_reach, n_reach_sess)."""
+def value_walk(idx, query, scorer, U):
+    """Native numbered logs: the lines a question's chain can run through. From the slots whose subject the question
+    names, hop by hop along the subjects each line names, H lines deep; the reranker orders each hop, and the read takes
+    the best line of every hop, then the second best of every hop, and so on. At most SLOT_CE_CUT lines are scored.
+    Returns those lines and the hop of every line the walk reached."""
+    links, row = idx.links, idx.newest_row
+    hops, seen, left, hop_of = [], set(), SLOT_CE_CUT, {}
+    keys = links.subjects_in(plain_words(query))
+    for h in range(H):
+        rows = []
+        for key in keys:
+            if key not in seen:
+                seen.add(key)
+                rows.extend(row[s] for s in links.slots_of[key])
+        if not rows or left <= 0:
+            break
+        rows = sorted(rows)[:left]
+        left -= len(rows)
+        for i in rows:
+            hop_of.setdefault(i, h)
+        hops.append(scorer.rank(rows))
+        keys = [key for i in rows for key in links.named[idx.parent[i]]]
+    deepest = max((len(hop) for hop in hops), default=0)
+    return [hop[r] for r in range(min(U, deepest)) for hop in hops if r < len(hop)], hop_of
+
+
+def select(idx, vecs, qv, query, scorer, *, U, policy, exact, floors_rule_below_10=True, walk=True):
+    """The selection one query receives: (ids, pool, heads, floors, n_reach, n_reach_sess). With `walk` False a numbered
+    log keeps the paper's reading, no value walk and lines in serial order; Memory passes it for a log under its own
+    serial spelling."""
     import numpy as np
     N = idx.N
     sess_id, r_ents, ef, hubs, idf = idx.parent, idx.r_ents, idx.ef, idx.hubs, idx.idf
@@ -304,8 +332,13 @@ def select(idx, vecs, qv, query, scorer, *, U, policy, exact, floors_rule_below_
                     raise StoreRefused("floor violated on %s (lme_pf29.py:3369)" % name)
             if not set(ce_rank[:2]) <= pp:
                 raise StoreRefused("anchors lost on %s (lme_pf29.py:3370)" % name)
+    walked, hop_of = [], {}
     if policy == "attprio_sess":
-        head = list(ce_rank[:M_ANCH]) + list(grank_s) + list(drest_s)
+        if canonical and walk and idx.structural:
+            walked, hop_of = value_walk(idx, query, scorer, U)
+        head = list(ce_rank[:M_ANCH]) + walked + list(grank_s) + list(drest_s)
+        if canonical:
+            heads["walk"] = [int(i) for i in walked]
     else:
         head = heads[policy]
     pool = list(dict.fromkeys(head))[:U]
@@ -323,6 +356,10 @@ def select(idx, vecs, qv, query, scorer, *, U, policy, exact, floors_rule_below_
             if len(walk) >= U:
                 break
         ids = walk
+        if canonical and hop_of:
+            # the reading order: what the walk reached, in the order it reached it; render keeps the rest by serial
+            at = {i: n for n, i in enumerate(walked)}
+            heads["first"] = sorted((int(i) for i in ids if i in hop_of), key=lambda i: (hop_of[i], at.get(i, len(at)), idx.order[i]))
     heads.update(ce100=[int(i) for i in ce_rank[:100]], sparse30=[int(i) for i in sparse[:30]],
                  grank30=[int(i) for i in grank_s[:30]], ce_rank=[int(i) for i in ce_rank])
     return ids, pool, heads, fq, len(gph), len(gph_s)

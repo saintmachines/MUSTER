@@ -16,6 +16,7 @@ harness's refusals become StoreRefused. Native mode departs only where the harne
 import ast
 import os
 import re
+import unicodedata
 from dataclasses import dataclass, field
 from typing import Optional, Tuple
 
@@ -141,7 +142,7 @@ def pack(atom_list, chunk: int, joiner: str, *, exact: bool = False):
 
 # ---------------------------------------------------------------- numbered logs (AUTOSTRUCT, AS_SLOT=5)
 _SERIAL = re.compile(r"^\s*(\d+)\.\s+(.+)$", re.DOTALL)
-_CAPRE = re.compile(r"\b([A-Z][\w.'-]+(?:\s+(?:of|the|and|de|van|von|di)?\s*[A-Z][\w.'-]+)*)\b")
+_CAPRE = re.compile(r"\b([A-Z][\w.'-]+(?:\s+(?:(?:of|the|and|de|van|von|di)\s*)?[A-Z][\w.'-]+)*)\b")
 _CAPSTOP = {"The", "A", "An", "In", "On", "At", "Of", "This", "That", "These", "Those", "It", "Its", "Which",
             "What", "Who", "Where", "When", "There", "He", "She", "They", "His", "Her", "Their"}
 AS_MINREC = 0.8
@@ -160,6 +161,111 @@ def slot_of(body):
     return sub + "|" + sk
 
 
+# ---------------------------------------------------------------- native numbered logs: what a later line replaces
+# slot_of keeps the value in the key when the value is lower case or oddly shaped, so "... the sport of baseball" never retires
+# "... the sport of cricket", and a subject opening with "The" is lost. value_slots keeps the subject and the relation and drops
+# the value. Exact plans keep slot_of, so the paper's cuts do not move; derive's numbered checks also keep slot_of, so no store
+# changes branch because of this.
+_RELWORD = re.compile(r"\b(?:is|are|was|were|of|to|in|at|by|for|from|with|as|on)\b")
+_DANGLING = {"of", "the", "a", "an", "and", "de", "van", "von", "di"}
+_LEADING = re.compile(r"^[\s,;:.]+")
+_DIGITS = re.compile(r"\d[\d,.\-–]*")
+_BARE = {"is", "are", "was", "were", "of", "to", "in", "at", "by", "for", "from", "with", "as", "on", "a", "an", "the", "and", "de",
+         "van", "von", "di", "_"}
+
+
+def _relation_tail(tail):
+    """`tail` without what closes the relation: punctuation, dangling function words, a masked name. Linear in the line."""
+    words = tail.split()
+    while words:
+        last = words[-1].rstrip(",;:.")
+        if last and last not in _DANGLING and last != "_":
+            words[-1] = last
+            break
+        words.pop()
+    return " ".join(words)
+
+
+def line_relation(body):
+    """(subject, relation) of a line, or None when it gives no relation to key on."""
+    b = (body or "").strip().rstrip(".").strip()
+    first = _RELWORD.search(b)
+    if first is None:
+        return None
+    spans = list(_CAPRE.finditer(b))
+    named = [m for m in spans if m.group(1) not in _CAPSTOP]
+    subj = named[0] if named else None
+    if subj is not None and len(named) == 1 and subj.start() >= first.end() and not _RELWORD.search(b, subj.end()):
+        subj = None  # one name, closing the sentence after its relation words: the name is the value
+    if subj is None:
+        opening = b[:first.start()].strip()
+        if not opening or opening[0].isupper():
+            return None
+        subject, head, start = opening, "", first.start()
+    else:
+        subject, head, start = subj.group(1), b[:subj.start()], subj.end()
+    later = [m for m in spans if m.start() >= start]
+    rel = _RELWORD.search(b, start)
+    value = next((m for m in later if rel is not None and m.start() >= rel.end()), None)
+    if value is not None:
+        stop = value.start()
+    elif later:
+        stop = later[0].start()
+    else:
+        marks = list(_RELWORD.finditer(b, start))
+        stop = marks[-1].end() if marks else len(b)
+    tail = _relation_tail(_LEADING.sub("", _CAPRE.sub("_", b[start:stop])))
+    masked = re.sub(r"\s+", " ", _DIGITS.sub("_", _CAPRE.sub("_", head))).strip()
+    if not any(w not in _BARE for w in (masked + " " + tail).lower().split()):
+        return None  # "Alice is a nurse": nothing but "is" is left, keep slot_of
+    subject = " ".join(_DIGITS.findall(head) + [subject])  # "2009 Six Nations" and "2004 Six Nations" are two subjects
+    subject = re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]", " ", subject.lower())).strip()
+    return subject, masked + "|" + tail
+
+
+def value_slots(bodies):
+    """The slot of each line of one dot-serial log. A relation counts only when at least two subjects share it and a
+    subject whose lines changed holds few lines; every other line keeps slot_of."""
+    from .derive import MAX_REVISIONS
+    parts = [line_relation(b) for b in bodies]
+    by_rel = {}
+    for b, p in zip(bodies, parts):
+        if p:
+            by_rel.setdefault(p[1], {}).setdefault(p[0], []).append(b)
+    usable = set()
+    for rel, subjects in by_rel.items():
+        changed = [v for v in subjects.values() if len(set(v)) > 1]
+        if len(subjects) >= 2 and (not changed or sum(map(len, changed)) / float(len(changed)) <= MAX_REVISIONS):
+            usable.add(rel)
+    return ["v:%s|%s" % p if p and p[1] in usable else slot_of(b) for b, p in zip(bodies, parts)]
+
+
+_SERIAL_DIGITS = 600  # under the lowest integer-string limit Python allows (640), so int() and %d always work
+_KEY_FLOOR = 10 ** _SERIAL_DIGITS
+
+
+def serial_value(digits):
+    """A dot serial as an order key. Up to 600 digits (leading zeros aside) the key is the serial's number. A longer serial
+    is keyed by its ASCII digits read as one big-endian integer: the key sorts by the serial's number, above every shorter
+    serial, ties with no other serial, and takes time linear in its length (Python refuses int() on long digit strings
+    because that conversion is quadratic)."""
+    if len(digits) <= _SERIAL_DIGITS:
+        return int(digits)
+    if not digits.isascii():
+        digits = "".join(str(unicodedata.decimal(c)) for c in digits)
+    digits = digits.lstrip("0") or "0"
+    if len(digits) <= _SERIAL_DIGITS:
+        return int(digits)
+    return int.from_bytes(digits.encode("ascii"), "big")
+
+
+def serial_text(key):
+    """How a serial key prints: its number, or for a serial past 600 digits the digits its key holds."""
+    if key < _KEY_FLOOR:
+        return "%d" % key
+    return key.to_bytes((key.bit_length() + 7) // 8, "big").decode("ascii")
+
+
 def _numbered(text, exact, serial="dot"):
     lines = [ln for ln in text.split("\n") if ln.strip()]
     lead = serial == "lead"
@@ -176,7 +282,7 @@ def _numbered(text, exact, serial="dot"):
         if x and lead:
             ser, body, pre = int(x.group(2)), ln[x.end():].strip(), ln[:x.end()]
         elif x:
-            ser, body, pre = int(x.group(1)), x.group(2).strip(), None
+            ser, body, pre = serial_value(x.group(1)), x.group(2).strip(), None
         else:
             ser, body, pre = len(units), ln.strip(), ""
             if lead and not exact:
@@ -186,6 +292,10 @@ def _numbered(text, exact, serial="dot"):
         order.append(ser)
         parent.append("u:rawline%d" % (len(units) - 1) if lead and not exact and x is None else "s:" + slot_of(body))
         prefixes.append(pre)
+    if not exact and not lead:  # N8 reads dot-serial logs; a log under its own spelling keeps the paper's slot (0.1.0)
+        marked = [i for i, p in enumerate(parent) if p.startswith("s:")]
+        for i, k in zip(marked, value_slots([units[i] for i in marked])):
+            parent[i] = "s:" + k
     spans = tuple(sp for _, sp in _with_spans(text, lines))
     enc = bpe.o200k()
     serials = [o for o, x in zip(order, ms) if x]

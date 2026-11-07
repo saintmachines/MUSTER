@@ -29,7 +29,7 @@ def test_collection_derivation_uses_the_same_balanced_policy(mode):
 
 
 def test_numbered_and_empty_branches_keep_their_existing_policies():
-    numbered = muster.derive("1. The Atlas owner is Ann.\n2. The Atlas owner is Ben.")
+    numbered = muster.derive("1. Atlas is owned by Ann.\n2. Atlas is owned by Ben.")
     assert numbered.policy == "attprio_sess" and numbered.supersede == "numbered"
     assert muster.derive("").policy == "flr"
 

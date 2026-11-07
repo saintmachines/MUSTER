@@ -179,8 +179,9 @@ budget. A store where serial fires takes the parent-priority retrieval arm, ever
 that keeps the 4,096-token unit is searched at 1,024 tokens with four times as many units, so the token budget does not
 change.
 
-The library reads a serial written as `Step 12:`, `#12` or `(12)` the same way as `12.`, when a log's short lines count
-up one at a time. [docs/library](docs/library/README.md) gives the exact check.
+The library recognizes serials written as `Step 12:`, `#12` or `(12)` as numbered logs, when a log's short lines count
+up one at a time. [docs/library](docs/library/README.md) gives the exact check and the additional native slot and
+value-walk rules, which apply only to `12.` logs.
 
 </details>
 

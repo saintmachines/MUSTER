@@ -2,6 +2,7 @@
 import json
 import os
 
+from ..errors import PlanError
 from ..plan import Plan
 
 _DATA = None
@@ -30,7 +31,7 @@ def get(name_or_leg: str) -> Plan:
     if name not in d["presets"]:
         leg = d["legs"].get(name_or_leg)
         if leg is None:
-            raise KeyError("no preset or leg named %r; presets: %s" % (name_or_leg, ", ".join(names())))
+            raise PlanError("no preset or leg named %r; presets: %s" % (name_or_leg, ", ".join(names())))
         name = leg["preset"]
     return Plan.from_dict(d["presets"][name])
 

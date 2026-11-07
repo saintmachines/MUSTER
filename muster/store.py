@@ -19,9 +19,9 @@ from pathlib import Path
 from typing import Optional
 
 from .cache import ScoreCache, VectorCache, model_key
-from .errors import StoreLocked
+from .errors import RecordError, StoreLocked
 from .memory import Memory, build
-from .records import Record, as_record
+from .records import Record, as_record, record_list, require_text
 
 
 @dataclass(frozen=True)
@@ -38,7 +38,12 @@ def _rec_json(r: Record):
         default = f.default_factory() if f.default_factory is not MISSING else f.default
         if f.name == "text" or v != default:
             d[f.name] = dict(v) if f.name == "meta" else (list(v) if isinstance(v, tuple) else v)
-    return json.dumps(d, ensure_ascii=False, sort_keys=True)
+    try:
+        out = json.dumps(d, ensure_ascii=False, sort_keys=True)
+        out.encode("utf-8")
+    except (TypeError, ValueError) as exc:
+        raise RecordError("a record's fields must be valid UTF-8 JSON values to be stored: %s" % exc) from exc
+    return out
 
 
 class Store:
@@ -74,9 +79,9 @@ class Store:
         """Append records. A repeated request_id is acknowledged once and appends nothing."""
         if self.readonly:
             raise PermissionError("store opened readonly")
-        if isinstance(records, (str, Record)) or hasattr(records, "keys"):
-            records = [records]
-        recs = [as_record(r) for r in records]
+        if isinstance(request_id, str):
+            require_text(request_id, "request_id")
+        recs = [as_record(r) for r in record_list(records)]
         with self._lock:
             cur = self.db.cursor()
             cur.execute("BEGIN IMMEDIATE")

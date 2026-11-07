@@ -21,7 +21,7 @@ def _stores():
     out = {}
     out["records"] = "\n\n".join("D%d:%d [2023-05-0%d] Ann: %s" % (i // 9, i, 1 + i % 9, sent(12)) for i in range(400))
     out["prose"] = " ".join(sent(rnd.randint(8, 30)) for _ in range(3000))
-    out["numbered"] = "\n".join("%d. %s is %s" % (i, rnd.choice(words).capitalize(), sent(5)) for i in range(1, 900))
+    out["numbered"] = "\n".join("%d. Unit%d is led by %s." % (i, i // 2, rnd.choice(words).capitalize()) for i in range(1, 900))
     out["mixed_crlf"] = out["records"][:20000].replace("\n", "\r\n")
     out["small"] = "one line only."
     out["giant_records"] = "\n\n".join(sent(2000) for _ in range(6))
@@ -70,8 +70,9 @@ def test_plan_matches_scripts_derive(tmp_path, name):
 
 def test_thresholds_are_inclusive():
     # 4 of 5 lines numbered = 0.80 exactly -> numbered; 0.75 -> not
-    assert muster.derive("1. a b\n2. c d\n3. e f\n4. g h\nplain line").branch == "numbered"
-    assert muster.derive("1. a b\n2. c d\n3. e f\nplain\nplain").branch != "numbered"
+    head = "1. Ann lives in Rome.\n2. Ann lives in Oslo.\n3. Bob lives in Rome."
+    assert muster.derive(head + "\n4. Bob lives in Oslo.\nplain line").branch == "numbered"
+    assert muster.derive(head + "\nplain\nplain").branch != "numbered"
 
 
 def test_records_input():

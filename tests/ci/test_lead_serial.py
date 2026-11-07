@@ -3,14 +3,16 @@ import json
 
 import muster
 from muster.cli import main as cli_main
-from muster.cut import cut
+from muster.cut import cut, slot_of, value_slots
 
-NAMES = ["Mary", "John", "Sandra", "Daniel"]
-PLACES = ["kitchen", "hallway", "office", "garden", "bedroom"]
+NAMES = ["Mary", "John", "Sandra", "Daniel", "Ines", "Omar", "Priya", "Tomas", "Yuki", "Zofia", "Lena", "Marco", "Nadia",
+         "Pavel", "Rosa"]
+CITIES = ["Lisbon", "Porto"]
 
 
 def _log(fmt, n=30, start=0):
-    return "\n".join(fmt % (start + i, "%s moved to the %s." % (NAMES[i % 4], PLACES[i % 5])) for i in range(n))
+    # Each person's city is stated, then revised: the update evidence a numbered plan needs.
+    return "\n".join(fmt % (start + i, "%s lives in %s." % (NAMES[i % 15], CITIES[i // 15 % 2])) for i in range(n))
 
 
 def test_step_spelling_is_numbered_and_shown_as_written():
@@ -18,10 +20,10 @@ def test_step_spelling_is_numbered_and_shown_as_written():
     plan = muster.derive(text)
     assert plan.branch == "numbered" and plan.serial == "lead" and plan.policy == "attprio_sess"
     c = cut(text, plan)
-    assert c.order == tuple(range(30)) and c.units[0] == "Mary moved to the kitchen."
+    assert c.order == tuple(range(30)) and c.units[0] == "Mary lives in Lisbon."
     assert c.prefixes[3] == "Step 3: "
     mem = muster.build(text, embed=False)
-    assert mem.render([3, 1]).text == "Step 1: John moved to the hallway.\nStep 3: Daniel moved to the garden."
+    assert mem.render([3, 1]).text == "Step 1: John lives in Lisbon.\nStep 3: Daniel lives in Lisbon."
 
 
 def test_a_short_log_counts_line_pairs():
@@ -29,9 +31,14 @@ def test_a_short_log_counts_line_pairs():
 
 
 def test_same_records_cut_alike_under_both_spellings():
+    # Units and order match. The log's own spelling keeps the paper's slot; a dot-serial log takes the native
+    # subject-relation slot (exact.md N8), which here retires the same lines.
     a, b = _log("#%d %s"), _log("%d. %s")
     ca, cb = cut(a, muster.derive(a)), cut(b, muster.derive(b))
-    assert (ca.units, ca.order, ca.parent) == (cb.units, cb.order, cb.parent)
+    assert (ca.units, ca.order) == (cb.units, cb.order)
+    assert ca.parent == tuple("s:" + slot_of(u) for u in ca.units)
+    assert cb.parent == tuple("s:" + k for k in value_slots(list(cb.units)))
+    assert len(set(ca.parent)) == len(set(cb.parent))
     assert cb.prefixes is None
 
 

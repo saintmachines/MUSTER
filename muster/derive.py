@@ -21,20 +21,22 @@ from dataclasses import replace
 
 from .errors import PlanError
 from .plan import Plan
-from .records import DEFAULT_TEMPLATE, as_record, normalize_newlines, serialize
+from .records import DEFAULT_TEMPLATE, as_record, normalize_newlines, record_list, require_text, serialize
 from .record_serial import body_serial_stats
 from .stats import LEAD_LINE_TOKENS, LEAD_TAU, Stats, collection_stats, lead_serial, store_stats
 
 NUMBERED_TAU, RECORD_TAU, MIN_PARENTS = 0.80, 0.90, 10
 RECORD_STEP, MIN_UNIT, PROSE_STEP = 8, 512, 4
 U_DEFAULT = {"numbered": 10, "record": 10, "prose": 40}
+MAX_REVISIONS = PROSE_STEP  # value_slots in cut.py: a changed subject of a relation holds at most this many lines on average
 
 
 def store_text(store, *, template=DEFAULT_TEMPLATE, normalize=True):
     """(text, record spans or None, records or None) for a string or an iterable of records."""
     if isinstance(store, str):
+        require_text(store, "the store")
         return (normalize_newlines(store) if normalize else store), None, None
-    recs = [as_record(x) for x in store]
+    recs = [as_record(x) for x in record_list(store)]
     text, spans = serialize(recs, template=template, normalize=normalize)
     return text, spans, recs
 
@@ -92,6 +94,10 @@ def derive(store, *, reference_chunk: int = 4096, template: str = DEFAULT_TEMPLA
                          "pairs, median entire record body %g <= %d tokens: numbered records; metadata kept for "
                          "retrieval/display, not slot/order" % (share, LEAD_TAU, med, LEAD_LINE_TOKENS))
         return _plan("numbered", None, 0, st, P, trace, serial="lead")
+    return _unserial_plan(st, P, trace)
+
+
+def _unserial_plan(st, P, trace):
     if st.record_share >= RECORD_TAU:
         chunk = max(P // RECORD_STEP, MIN_UNIT)
         trace.append("record share %.4f >= %.2f: record store; units of %d tokens, records kept whole"

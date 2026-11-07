@@ -2,19 +2,33 @@ import { Tiktoken } from "js-tiktoken/lite";
 import cl100k from "js-tiktoken/ranks/cl100k_base";
 import { decimalRanges } from "./decimal-ranges.js";
 
-const encoder = new Tiktoken(cl100k);
+// cl100k's Rust regex uses Unicode White_Space. JavaScript's \s instead includes BOM and misses NEL.
+const tokenizerPattern = cl100k.pat_str.replaceAll("\\s", "\\p{White_Space}").replaceAll("\\S", "\\P{White_Space}");
+const encoder = new Tiktoken({...cl100k, pat_str: tokenizerPattern});
 // Python str.strip / re \s includes controls and NEL, but excludes the BOM.
 const WS = "[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]";
-const stripPattern = new RegExp("^" + WS + "+|" + WS + "+$", "gu");
+const wsChar = new RegExp("^" + WS + "$", "u");
 const decimalClass = decimalRanges.map(([a, b]) => `\\u{${a.toString(16)}}-\\u{${b.toString(16)}}`).join("");
 const nonspace = "(?!(?:" + WS + "))[\\s\\S]";
 const numberedPattern = new RegExp("^" + WS + "*[" + decimalClass + "]+\\." + WS + "+" + nonspace, "u");
-const leadPattern = new RegExp("^(" + WS + "*[\\[(#]?" + WS + "*(?:[A-Za-z]+" + WS + "*)?)([" + decimalClass + "]{1,8})([\\]).:]?" + WS + "+)(?=" + nonspace + ")", "u");
-const nonempty = text => text.replace(stripPattern, "").length > 0;
+const leadPattern = new RegExp("^(" + WS + "*(?:[\\[(#]" + WS + "*)?(?:[A-Za-z]+" + WS + "*)?)([" + decimalClass + "]{1,8})([\\]).:]?" + WS + "+)(?=" + nonspace + ")", "u");
+// Every character of WS is one UTF-16 unit, so these walk the ends in linear time.
+function pyStrip(text) {
+  let start = 0, end = text.length;
+  while (start < end && wsChar.test(text[start])) start += 1;
+  while (end > start && wsChar.test(text[end - 1])) end -= 1;
+  return text.slice(start, end);
+}
+const nonempty = text => pyStrip(text).length > 0;
+
+function leadMatch(line) {
+  const match = leadPattern.exec(line);
+  return match && Array.from(match[1] + match[2]).length <= 32 ? match : null;
+}
 
 function leadingSerial(line) {
-  const match = leadPattern.exec(line);
-  if (!match || Array.from(match[1] + match[2]).length > 32) return null;
+  const match = leadMatch(line);
+  if (!match) return null;
   let value = 0;
   for (const character of match[2]) {
     const code = character.codePointAt(0);

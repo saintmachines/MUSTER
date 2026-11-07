@@ -6,6 +6,9 @@ the paper's runs are reproduced by it, question by question (see [Verification](
 
 ## Install
 
+See the [0.1.1 changes](https://github.com/saintmachines/MUSTER/blob/main/docs/library/changes.md) for input validation,
+native numbered-log reading and their compatibility limits.
+
 Install `muster-memory` from PyPI. The basic install provides structure inspection.
 The commands below add local retrieval models and the optional MCP server.
 
@@ -48,10 +51,11 @@ print(mem.context("Where does Caroline live now?").text)    # what your LLM read
 the text sits in short blank-line records, like a chat) or prose (books, documents). `print(muster.explain(mem.plan))`
 shows the decision and why. Nothing is tuned per dataset.
 
-The numbered branch reads a serial written in the log's own style (`Step 12: ...`, `#12 ...`, `(12) ...`) the same way as
-the paper's `12. ...`. It applies when 95% of the lines after the first carry a serial one above the previous line's and
+The numbered branch also recognizes serials written in the log's own style (`Step 12: ...`, `#12 ...`, `(12) ...`).
+This form is detected when 95% of the lines after the first carry a serial one above the previous line's and
 the median line is at most 20 tokens, and the reader sees each line as written. The check was added after the paper and
 its two thresholds were set on public benchmark logs; the paper's presets and `derive_collection` do not use it.
+The extra native slot rule and value walk described below apply only to the dot form.
 
 ## A memory that grows: `Store`
 
@@ -102,7 +106,21 @@ never split mid-record. Parents group about eight neighbouring units. A query is
 keywords (BM25) and an entity graph over parents. The read budget (`U` units, 10 by default, 40 for prose) is split
 between the three by reserved floors (4/3/3 per ten), so each signal always contributes; candidates are ordered by a
 cross-encoder. Selected units are shown verbatim, one block per parent, in stored order. On numbered logs the newest
-version of a slot replaces older ones.
+version of a slot replaces older ones. In native mode a slot is the line's subject and relation without its value, once
+two subjects share that relation and a changed subject holds at most 4 lines on average, so `... the sport of cricket`
+retires `... the sport of basketball`. Other lines keep the paper's slot, the sentence with its capitalised names masked.
+This rule was added after the paper, on FactConsolidation, the one public benchmark family that reaches it, and reads
+logs whose lines start with a dot serial (`12. `). A log that states a single subject's facts, says `Alice is a nurse`,
+or numbers its lines in its own spelling (`[step 3]`) keeps the paper's slot.
+
+In native mode a read of a numbered log also follows what the lines name. It starts from the subjects the question names
+and moves to the lines about whatever those lines name, so `Ada plays the sport of cricket` leads to `cricket was created
+in the country of England`, and `The author of Emma is Austen` leads to `Austen's child is ...`. The reranker orders each
+hop, and the read takes the best line of every hop, then the second best, up to four lines deep, before the slot graph.
+A subject held by more than three slots and by more than 5% of them leads nowhere. The lines it reached come first, in
+the order it reached them, and the others follow by serial, so `[348]` can stand above `[179]`. This reads words, not
+meaning, and a log whose lines name no subject reads as before, in serial order. It was also added after the paper, on
+FactConsolidation, and reads dot-serial logs only; exact mode does not walk.
 
 ## Two modes
 
@@ -112,8 +130,8 @@ version of a slot replaces older ones.
   `muster.build(text, "beam.u20")`. Set sets are iterated as the harness iterated them, so it must run under
   `PYTHONHASHSEED=0` with the gate's package versions. Use this to check a paper number.
 
-With the same plan, native mode departs from exact mode only where the harness's choice depended on hash or hardware order: canonical
-iteration over entity sets, and a stable sort for exact dense-score ties.
+With the same plan, native mode departs from exact mode only in the nine places [exact.md][exact] lists, among them canonical
+iteration over entity sets and a stable sort for exact dense-score ties.
 
 Automatically derived non-numbered plans use the balanced method with immediate sibling candidates (`flrs`).
 The frozen paper presets retain each published run's policy, including `flr` where it was recorded; explicit or

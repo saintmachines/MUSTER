@@ -7,18 +7,56 @@
 A preset name builds the paper's exact plan instead: muster.build(text, "beam.u20").
 """
 import hashlib
+import operator
 from dataclasses import dataclass, field, replace
 from typing import Optional
 
 from . import presets
 from .cut import Cut, cut
 from .derive import derive, store_text
-from .errors import EnvironmentRefused, PlanError, StaleSelection
+from .errors import EnvironmentRefused, PlanError, QueryError, StaleSelection
 from .index import Index
 from .plan import Plan
 from .records import DEFAULT_TEMPLATE
 from .render import Block, Context, flat, numbered, r4
 from .search import Scorer, Selection, select
+
+
+def _check_query(query):
+    if not isinstance(query, str):
+        raise QueryError("a query is a string, got %s" % type(query).__name__)
+    if not query.strip():
+        raise QueryError("empty query")
+    try:
+        query.encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise QueryError("the query is not valid UTF-8 text: position %d holds half of a surrogate pair" % exc.start) from exc
+
+
+def _shown(x):
+    """repr for an error message; an int too long for Python to print is named, not printed."""
+    try:
+        s = repr(x)
+    except ValueError:
+        return "an integer too long to print"
+    return s if len(s) <= 60 else s[:57] + "..."
+
+
+def _read_budget(U, default):
+    """The units one read takes: the plan's own for None or 0, else a positive whole number (an int or a numpy integer).
+    True, 1.9, "2" and inf are refused, not read as 1, 1, 2 or an overflow."""
+    n = 0 if U is None else U
+    try:
+        if isinstance(n, bool):
+            raise TypeError("a bool is not a count")
+        n = operator.index(n)
+    except TypeError as exc:
+        raise PlanError("U must be a positive whole number, got %s" % _shown(U)) from exc
+    if n == 0:
+        n = int(default)
+    if n < 1:
+        raise PlanError("U must be a positive whole number, got %s" % _shown(U))
+    return n
 
 
 def _fingerprint(units):
@@ -108,14 +146,13 @@ class Memory:
         """Select the units a reader gets for `query`. `cache` is a published score file's contents for this
         store ({question key: {unit index: score}}); `scores` is a text-keyed ScoreCache."""
         import numpy as np
-        if not query or not query.strip():
-            raise ValueError("empty query")
+        _check_query(query)
         if len(self) == 0:
             return Selection(query, 0, self.plan.policy, (), (), memory_version=self.version, mode=self.plan.mode)
         m = self._models(models)
         if self.vecs is None:
             self.embed(m)
-        U = int(U or self.plan.U)
+        U = _read_budget(U, self.plan.U)
         exact = self.plan.mode == "exact"
         if exact:
             from .compat.env import check_environment
@@ -129,7 +166,7 @@ class Memory:
         sc = Scorer(query, list(self.cut.units), reranker=_LazyReranker(m), preset=pre, store=scores)
         rule = (not exact) or (self.plan.compat or {}).get("floors_lt10") == "rule"
         ids, pool, heads, fq, nr, nrs = select(self.index, self.vecs, qv, query, sc, U=U, policy=self.plan.policy,
-                                               exact=exact, floors_rule_below_10=rule)
+                                               exact=exact, floors_rule_below_10=rule, walk=self.plan.serial != "lead")
         return Selection(query, U, self.plan.policy, tuple(ids), tuple(pool), heads, tuple(fq), nr, nrs,
                          sc.hits, sc.misses, self.version, self.fingerprint, self.plan.mode)
 
@@ -165,7 +202,8 @@ class Memory:
             order = self.cut.order
             if self.cut.diagnostics.get("unmarked_records"):
                 order = self._record_unit_indices or tuple(range(len(self.cut.units)))  # source positions, not clocks
-            c = numbered(ids, self.cut.units, order, self.cut.prefixes)
+            first = selection.heads.get("first", ()) if hasattr(selection, "heads") and self.plan.mode != "exact" else ()
+            c = numbered(ids, self.cut.units, order, self.cut.prefixes, first)
             if self._record_unit_indices is not None:
                 blocks = tuple(Block(n + 1, self.cut.parent[i], (i,),
                                      numbered([i], self.cut.units, order, self.cut.prefixes).text)

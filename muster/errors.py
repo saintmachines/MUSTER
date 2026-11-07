@@ -13,6 +13,10 @@ class RecordError(MusterError, ValueError):
     """A record the library cannot read (missing text, ambiguous time, multi-line numbered text)."""
 
 
+class QueryError(MusterError, ValueError):
+    """A query the library cannot read: empty, not text, or not valid UTF-8."""
+
+
 class StoreRefused(MusterError):
     """Exact mode refuses a store or a step that the paper's harness refuses or would crash on.
 

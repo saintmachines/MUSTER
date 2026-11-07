@@ -9,9 +9,74 @@ import collections
 import math
 import re
 
-_CAP = re.compile(r"\b([A-Z][\w.'-]+(?:\s+(?:of|the|and|de|van|von|di)?\s*[A-Z][\w.'-]+)*)\b")
+_CAP = re.compile(r"\b([A-Z][\w.'-]+(?:\s+(?:(?:of|the|and|de|van|von|di)\s*)?[A-Z][\w.'-]+)*)\b")
 HUB_FRAC = 0.05
 ORDER_DISTINCT = 0.99
+_NOT_WORD = re.compile(r"[^a-z0-9 ]")
+MAX_SUBJECT_WORDS = 16
+_NO_SUBJECT = frozenset(
+    "a an the i we you he she it they me us him her them my our your his its their this that these those there here "
+    "what which who where when how why".split())
+
+
+def plain_words(text):
+    """The words of a line, spelled the way line_relation spells a subject."""
+    return _NOT_WORD.sub(" ", (text or "").lower()).split()
+
+
+class ValueLinks:
+    """Where the lines of a numbered log lead. A line about Italy is reached from any line or question naming Italy,
+    written in any case, with or without a possessive. A subject held by more than three slots and by more than 5% of them
+    leads nowhere, as a hub does on the entity graph. Linear in the store's words; a pure function of the newest line of each slot."""
+
+    def __init__(self, keys, newest_row):
+        from .cut import _BARE, line_relation
+        by_subject, own = {}, {}
+        for slot, i in sorted(newest_row.items(), key=lambda kv: kv[1]):
+            part = line_relation(keys[i])
+            if part is None:
+                continue
+            words = part[0].split()
+            if len(words) > 1 and words[-1] == "s":  # the "s" left of "Aristotle's"
+                words.pop()
+            if (not words or len(words) > MAX_SUBJECT_WORDS or _NO_SUBJECT.issuperset(words)
+                    or _BARE.issuperset(words)):  # "With or Without You" opens with a name that is only a function word
+                continue
+            by_subject.setdefault(tuple(words), []).append(slot)
+            own[slot] = tuple(words)
+        cut = max(3, int(HUB_FRAC * max(len(newest_row), 1)))
+        self.slots_of = {k: v for k, v in by_subject.items() if len(v) <= cut}
+        self._first = {k[0] for k in self.slots_of}
+        self._longest = max((len(k) for k in self.slots_of), default=0)
+        self.named = {slot: self.subjects_in(plain_words(keys[i]), own.get(slot)) for slot, i in newest_row.items()}
+
+    def subjects_in(self, words, skip=None):
+        """The subjects a text names, longest first at each word, in the order they appear; `skip` is the line's own."""
+        found, i, n = [], 0, len(words)
+        while i < n:
+            step = 1
+            if words[i] in self._first:
+                for m in range(min(self._longest, n - i), 0, -1):
+                    key = tuple(words[i:i + m])
+                    if key in self.slots_of:
+                        if key != skip:
+                            found.append(key)
+                        step = m
+                        break
+            i += step
+        return found
+
+
+class _NoTerms:
+    """Sparse scores of a store without one word (only emoji or punctuation): every unit scores zero.
+    BM25Okapi divides by the number of terms, so it cannot be built on such a store."""
+
+    def __init__(self, n):
+        self.n = n
+
+    def get_scores(self, query):
+        import numpy as np
+        return np.zeros(self.n)
 
 
 def entities(text):
@@ -48,6 +113,26 @@ def newest_per_parent(pool, parent_of, order_of):
         if k is not None and (k not in newest or order_of[i] > order_of[newest[k]]):
             newest[k] = i
     return newest
+
+
+class _SlotGraph:
+    """The slots sharing a kept entity with a slot, worked out when asked. Written out as a table this grows with the
+    square of the slots an entity holds, which a long log cannot afford; the reach that reads it sorts what it finds."""
+
+    def __init__(self, ent_slots):
+        self._slots_of = ent_slots
+        self._ents_of = collections.defaultdict(list)
+        for e, slots in ent_slots.items():
+            for s in slots:
+                self._ents_of[s].append(e)
+
+    def get(self, slot, default=()):
+        ents = self._ents_of.get(slot)
+        if ents is None:
+            return default
+        out = set().union(*(self._slots_of[e] for e in ents))
+        out.discard(slot)
+        return out
 
 
 class Index:
@@ -87,16 +172,20 @@ class Index:
                 for e2 in (self.r_ents[i2] - self.hubs):
                     ent_slots[e2].add(s2)
             cut = max(3, int(HUB_FRAC * max(len(self.newest_row), 1)))
-            ent_slots = {e2: v2 for e2, v2 in ent_slots.items() if len(v2) <= cut}
-            self.adj_slot = collections.defaultdict(set)
-            for e2, ss2 in ent_slots.items():
-                for s2 in ss2:
-                    self.adj_slot[s2] |= (ss2 - {s2})
+            self.adj_slot = _SlotGraph({e2: v2 for e2, v2 in ent_slots.items() if len(v2) <= cut})
         self._bm25 = None
+        self._links = None
+
+    @property
+    def links(self):
+        if self._links is None:
+            self._links = ValueLinks(self.keys, self.newest_row)
+        return self._links
 
     @property
     def bm25(self):
         if self._bm25 is None:
             from rank_bm25 import BM25Okapi
-            self._bm25 = BM25Okapi([btok(t) for t in self.units])
+            corpus = [btok(t) for t in self.units]
+            self._bm25 = BM25Okapi(corpus) if any(corpus) else _NoTerms(len(corpus))
         return self._bm25

@@ -4,7 +4,8 @@
             "Memory <n>:" before each block (harness/render_rule.py:18-21). The paper's render.
   flat      units in id order, one per line (harness/lme_pf29.py:764-765).
   numbered  "[<serial>] <unit>" in walk order, stable by serial (lme_pf29.py:3630-3632, without the tag); a log
-            numbered under its own spelling is shown as written, "<prefix><unit>".
+            numbered under its own spelling is shown as written, "<prefix><unit>". A native read puts the lines its
+            walk reached first, in the order it reached them.
 """
 import hashlib
 from dataclasses import dataclass, field
@@ -68,11 +69,13 @@ def flat(ids, units) -> Context:
     return Context("\n".join(units[i] for i in s), "flat", tuple(s))
 
 
-def numbered(walk_ids, units, order, prefixes=None) -> Context:
-    w = sorted(walk_ids, key=lambda i: order[i])          # stable: ties keep walk order
+def numbered(walk_ids, units, order, prefixes=None, first=()) -> Context:
+    lead = {i: n for n, i in enumerate(first)}
+    w = sorted(walk_ids, key=lambda i: (lead.get(i, len(lead)), order[i]))          # stable: ties keep walk order
     if prefixes is not None:
         return Context("\n".join(prefixes[i] + units[i] for i in w), "numbered", tuple(w))
-    return Context("\n".join("[%s] %s" % (order[i], units[i]) for i in w), "numbered", tuple(w))
+    from .cut import serial_text
+    return Context("\n".join("[%s] %s" % (serial_text(order[i]), units[i]) for i in w), "numbered", tuple(w))
 
 
 def compose(*contexts: Context, sep: str = "\n\n") -> Context:

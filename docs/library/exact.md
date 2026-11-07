@@ -11,7 +11,8 @@ A plan supplied directly or restored from JSON is used unchanged. A Store opened
 head from its records; pass an explicit plan to retain a previous policy.
 
 **Native mode** (the default for applications), for the same plan, needs no hash seed and no pinned environment. It
-departs from exact mode only where the harness's choice depended on hash or hardware order or where the harness stops:
+departs from exact mode where the harness's choice depended on hash or hardware order, where the harness stops, and in
+two rules added after the paper (N8, N9):
 
 | # | Native mode | Harness | Can it change a published context? |
 |---|---|---|---|
@@ -22,6 +23,18 @@ departs from exact mode only where the harness's choice depended on hash or hard
 | N5 | an oversize record is cut on character boundaries | cut on token boundaries, a split character becomes U+FFFD | only where a cut split a character |
 | N6 | stores too small for a parent layer are accepted | refused | no: the published runs passed |
 | N7 | R4 renders the selected units | R4 renders units recovered from an intermediate text, which can name another copy of an identical text | yes, on stores with identical-text units (3 of 800 BEAM-100K questions) |
+| N8 | on a dot-serial numbered log (`12. body`) a slot is the subject and relation without the value, once two subjects share the relation and a changed subject holds at most 4 lines on average | the sentence with capitalised names masked, so a lower-case value stays in the slot | yes, on dot-serial numbered logs: FactConsolidation's native contexts differ, and exact mode still gives the published ones |
+| N9 | on a dot-serial numbered log the read follows the subjects each line names, from the subjects the question names, before the slot graph, and shows what it reached first, in that order | the slot graph over capitalised names only, so a lower-case value or a possessive ends the chain; lines in serial order | yes, on dot-serial numbered logs: FactConsolidation's native contexts differ, and exact mode still gives the published ones |
+
+A numbered log under its own serial spelling, such as `[step 3] body`, keeps the paper's slot and serial order under
+both rules, as in 0.1.0. On MINT state, the one public benchmark of that form, the subject-relation slot dropped the
+earlier lines its history questions ask for.
+
+The serial spelling determines this scope. On a dot-serial event log, earlier events that share a native slot can be
+omitted from the selected reader context, including events a history question asks about. The original source text
+and records in a `Store` remain stored. Fact tables written with `[step N]` keep the paper's slots and reading order
+and do not receive N8 or N9. Both serial forms still use newest-per-slot selection, so the older slot rule can also
+omit earlier occurrences when it groups them into one slot.
 
 ## Checks on the paper's data
 

@@ -5,13 +5,25 @@ import pytest
 import muster
 from muster.index import btok,slotkey
 from muster.records import as_record,serialize
-from muster.cut import slot_of
 
 STYLES=['Step %d: %s','#%d %s','(%d) %s','[%d] %s','%d. %s','[step %d] %s']
 
 def body(i):
-    name='Entity'+chr(65+i//26)+chr(65+i%26)
-    return name+' is registered in Lisbon.'
+    # Every eighth record revises the one before it: the update evidence a numbered plan needs.
+    j=i-1 if i%8==7 else i
+    name='Entity'+chr(65+j//26)+chr(65+j%26)
+    return name+(' is registered in Porto.' if i%8==7 else ' is registered in Lisbon.')
+
+def slot(i,fmt):
+    # Spelled here rather than computed by the code under test. A dot serial takes the native subject-relation slot
+    # (exact.md N8), subject and relation without the value; a log's own spelling keeps the paper's slot, names masked.
+    j=i-1 if i%8==7 else i
+    e='entity'+chr(97+j//26)+chr(97+j%26)
+    return 's:v:'+e+'||is registered in' if fmt=='%d. %s' else 's:'+e+'|_ is registered in _'
+
+def kept(n):
+    # The rows a numbered read shows: a revised record gives way to its revision.
+    return [i for i in range(n) if not (i%8==6 and i+1<n)]
 
 def records(fmt='Step %d: %s',n=32):
     return [dict(id=str(1000+i),time='2026-02-%02d'%(1+i%28),speaker='UniqueSpeaker%d'%i,
@@ -22,7 +34,7 @@ def records(fmt='Step %d: %s',n=32):
 def test_metadata_numbered_bodies_select_assemble_and_map_original_records(fmt):
     original=records(fmt);mem=muster.build(original,models=muster.Models.fake(32))
     assert mem.plan.branch=='numbered' and mem.plan.policy=='attprio_sess'
-    assert mem.cut.order==tuple(range(32)) and mem.parent==tuple('s:'+slot_of(body(i)) for i in range(32))
+    assert mem.cut.order==tuple(range(32)) and mem.parent==tuple(slot(i,fmt) for i in range(32))
     assert mem.index.r_slot==[slotkey(body(i)) for i in range(32)]
     normalized=[as_record(r) for r in original];text,spans=serialize(normalized)
     assert mem.text==text and mem.cut.spans==tuple(spans)
@@ -34,7 +46,7 @@ def test_metadata_numbered_bodies_select_assemble_and_map_original_records(fmt):
     assert scores[7]>max(v for i,v in enumerate(scores) if i!=7)
     assert '2026-02-08' in mem.cut.keys[7] and 'UniqueSpeaker7' in mem.cut.keys[7]
     selection=mem.search('What did UniqueSpeaker7 record on 2026-02-08?',U=32);ctx=mem.render(selection)
-    assert set(ctx.ids)==set(range(32)) and 'UniqueSpeaker7' in ctx.text and '2026-02-08' in ctx.text
+    assert set(ctx.ids)==set(kept(32)) and 'UniqueSpeaker7' in ctx.text and '2026-02-08' in ctx.text
     assert ctx.text=='\n'.join(mem.units[i] for i in ctx.ids)
     assert muster.Plan.from_dict(json.loads(mem.plan.to_json())).plan_id==mem.plan.plan_id
 
@@ -80,8 +92,6 @@ def test_metadata_free_numbered_record_spelling_matches_plain_numbered(fmt):
 
 def test_one_unmarked_empty_of_120_never_becomes_a_revision_clock():
     raw=records(n=120);raw[60]['text']=''
-    for i,r in enumerate(raw):
-        if i!=60:r['text']='Step %d: The Atlas project is led by Alice.'%i
     mem=muster.build(raw,models=muster.Models.fake(16))
     assert mem.plan.branch=='numbered' and len(mem)==120
     assert mem.cut.order[60]==-1 and mem.parent[60]=='u:record60'
@@ -98,8 +108,6 @@ def test_one_unmarked_empty_of_120_never_becomes_a_revision_clock():
 @pytest.mark.parametrize('missing',[0,60,119])
 def test_unmarked_literal_record_is_kept_as_written(missing):
     raw=records(n=120);raw[missing]['text']='This unmarked note is a literal original record.'
-    for i,r in enumerate(raw):
-        if i!=missing:r['text']='Step %d: The Atlas project is led by Alice.'%i
     mem=muster.build(raw,models=muster.Models.fake(16))
     assert mem.plan.branch=='numbered' and mem.cut.order[missing]==-1 and not mem.index.structural
     assert raw[missing]['text'] in mem.units[missing] and mem.unit_records(missing)[0].text==raw[missing]['text']
@@ -112,7 +120,7 @@ def test_all_marked_dot_records_keep_existing_numeric_clock_render_order():
     raw=list(reversed(records('%d. %s',n=24)));mem=muster.build(raw,models=muster.Models.fake(16))
     assert mem.cut.order==tuple(reversed(range(24)))
     ctx=mem.context('registered Lisbon',U=24)
-    assert ctx.ids==tuple(reversed(range(24)))
+    assert ctx.ids==tuple(23-i for i in kept(24))
     assert '1000 [2026-02-01] UniqueSpeaker0: 0.' in ctx.blocks[0].text
 
 @pytest.mark.parametrize('marked,branch',[(85,'numbered'),(80,'numbered'),(79,'record')])
