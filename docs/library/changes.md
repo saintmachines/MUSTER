@@ -9,7 +9,7 @@ their existing slot and ordering rules.
 
 Logs numbered in their own style, such as `[step 3] body`, retain the 0.1.0 slot and reading order. All 563 MINT state
 contexts and their reader messages were independently reproduced byte for byte against 0.1.0. This preserves the
-existing MINT result; it is not a new MINT accuracy improvement.
+existing MINT result.
 
 Serial spelling determines the scope. Dot-serial event logs can omit earlier events from the selected reader context
 when those events share a slot, including events needed by history questions. The original source text and records

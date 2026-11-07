@@ -45,7 +45,7 @@
     "docs/try/inspect.js": "694e5d09f21d10857e14ea8bf781f5d82d206340c0a4a23fb64adf059878391d",
     "docs/try/inspect.bundle.js": "9fa1d272854d0d7ceb9d9a49779afaeacdfa7fe7143bd5a211dc25c7a6d86f39",
     "docs/try/decimal-ranges.js": "2cc8d3b063a3a54213aa2a99fc37bb6994357584c7defe70f879858cc8f8992c",
-    "docs/try/README.md": "74344b60a70eaab5173f726a94e4410efd09b4413db087daebe0b76d24175a4d",
+    "docs/try/README.md": "fa527411b4079440ca5ac340d732569edb9631dd6b870d854ca18a5c8374a317",
     "docs/try/package.json": "fb2046b3d6095eb9bd3d2d6937dc05cb3c208aaf11ad0f6a42a5dc1a1d0b143b",
     "docs/try/package-lock.json": "14a4ff93cfc3e99740d53ab8d7851721788e7172365eef17d96aed18ca1aa68f",
     "docs/try/LICENSE": "c95bae1d1ce0235ecccd3560b772ec1efb97f348a79f0fbe0a634f0c2ccefe2c",
@@ -157,5 +157,15 @@
     "Serial spelling can change selected context; dot-serial event histories may omit earlier events.",
     "Original text and stored records remain retained; context selection is not lossless history retrieval.",
     "This inspector previews structure only and does not run the retrieval models or read an answer."
-  ]
+  ],
+  "source_metadata_refreshed_utc": "2026-11-07T16:55:25.891286+00:00",
+  "documentation_refresh": {
+    "changed_files": {
+      "docs/try/README.md": {
+        "previous_sha256": "74344b60a70eaab5173f726a94e4410efd09b4413db087daebe0b76d24175a4d",
+        "sha256": "fa527411b4079440ca5ac340d732569edb9631dd6b870d854ca18a5c8374a317"
+      }
+    },
+    "scope": "Preview limit wording uses UTF-16 code units; runtime source and tested SDK are unchanged."
+  }
 }

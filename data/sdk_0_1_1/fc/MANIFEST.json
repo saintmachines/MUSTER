@@ -1,0 +1,38 @@
+{
+  "schema_version": "muster.fc.offline.manifest.v1",
+  "rows": 4800,
+  "files": {
+    "CITATION.bib": {
+      "sha256": "705ce55fa5f06d36ed0c2392502b2ffd95fe1f865d8a9c41aa27e78038e87e7e",
+      "bytes": 314
+    },
+    "LICENSE-MUSTER.txt": {
+      "sha256": "c95bae1d1ce0235ecccd3560b772ec1efb97f348a79f0fbe0a634f0c2ccefe2c",
+      "bytes": 11358
+    },
+    "LICENSE-MemoryAgentBench.txt": {
+      "sha256": "94d735aad92355b4880c969fa309e824eb12fdeeb271ae51cf6143866cf78cf7",
+      "bytes": 1067
+    },
+    "README.md": {
+      "sha256": "abca576418e99e6e4524ab12fe12002f071bda18c23ff893220cf49173998408",
+      "bytes": 3372
+    },
+    "SOURCE_METADATA.json": {
+      "sha256": "fe231aa770277cf88beadbc6f2110875af4f2f1fcc227a1e397113835ae63c35",
+      "bytes": 1645
+    },
+    "expected_summary.json": {
+      "sha256": "a0b9124cd1f6e5c0cb2760e6a4932ab01087e30679b66fd5ebf164d7ee367162",
+      "bytes": 1331
+    },
+    "fc_answers.jsonl": {
+      "sha256": "ccc5d4f74323764769e282c342faf3080446ce1ccc5791597c1dba70cfe9225c",
+      "bytes": 2408917
+    },
+    "verify_fc.py": {
+      "sha256": "c1cc9c98fcb420417cd4a70c33b7a2c4b2a1e62b6080d857beee361277fc490e",
+      "bytes": 5085
+    }
+  }
+}

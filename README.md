@@ -28,6 +28,8 @@
 pip install "muster-memory[models,mcp]"
 ```
 
+The figures and tables below report the paper's original evaluation. A separate [0.1.1 SDK follow-up](https://saintmachines.github.io/MUSTER/#sdk-followup) compares native dot-serial reading on FactConsolidation with frozen 0.1.0 inputs; [its data and conditions](docs/data/sdk_0_1_1.json) also record MINT input compatibility. Frozen exact-mode paper presets retain their existing behavior.
+
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_01_dark.svg"><img src="docs/assets/readme/h2_01_light.svg" alt="" height="18"></picture>Results
 
 ### The highest mean score across six settings.

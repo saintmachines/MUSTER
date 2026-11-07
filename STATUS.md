@@ -14,9 +14,17 @@ Studio arm64 validation is a separate result; it must not be reported as a hoste
 for the current commit's execution status.
 
 The [browser structure inspector](docs/try/README.md) is included with its source, bundled tokenizer and compatibility
-report: 867 inputs matched the candidate Python SDK's single-store native plans and statistics,
+report: 1,277 inputs matched the tested Python SDK's single-store native plans, statistics and token counts,
 including the post-paper serial-format extension; the report pins the tested SDK source hashes. It previews configuration;
 it does not generate answers or replace the paper's retrieval evaluation.
+
+## SDK 0.1.1 follow-up
+
+The [follow-up data](docs/data/sdk_0_1_1.json) separately record the six FactConsolidation rows, requested reader settings, observed models/providers, scoring view and retry limits. The tested SDK commit identifies the source used for input replay, not a later publication commit. MINT state preserves all 563 contexts and complete reader messages from 0.1.0; this is input identity, not a new quality measurement. The project page keeps the original paper tables separate from these native-SDK results.
+
+## Checks recorded for the original paper release
+
+The historical checks below retain their original source and date. Current commit CI status must be read from its own Actions run.
 
 | Item | State | Evidence |
 |---|---|---|

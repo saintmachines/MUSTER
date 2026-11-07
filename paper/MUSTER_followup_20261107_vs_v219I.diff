@@ -1,0 +1,129 @@
+--- approved/MUSTER_arxiv_v219I.tex
++++ candidate/MUSTER_followup_20261107.tex
+@@ -194,8 +194,7 @@
+ 
+ Assembly shows the selection in stored order. Where an order was derived, \emph{resolve} replaces each selected unit by the newest unit of its slot in the store, keeps one unit per slot and refills freed slots from the reranked dense candidates in rank order, without re-checking floors (Appendix~\ref{app:hyper}), so the context shows distinct current evidence rather than repeated versions of one slot. This is the \emph{prune} view (Appendix~\ref{app:moved}). Without a derived order, resolution is off. A wrong order can cost only units that share a slot (Appendix~\ref{app:slotsrc}).
+ 
+-Resolution happens at read time and is discarded with the context, so the store is never rewritten and a
+-wrong call never deletes evidence from later queries. Write-time consolidation amortises its decision, and
++Resolution happens at read time and is discarded with the context; the source is retained verbatim. Write-time consolidation amortises its decision, and
+ its error, over every later query.
+ 
+ The compensated refinement branch spans the three parts. Detection takes it for a $4096$-token unit, retrieval searches at $1024$ tokens and selects four times as many units, and assembly shows them one container per parent in stored order. The nominal allowance is unchanged at $40{,}960$ tokens, so the branch raises retrieval resolution rather than buying more reader context (Appendix~\ref{app:hyper}).
+@@ -492,14 +491,15 @@
+ reproduce every cell. Appendix~\ref{app:expanded} reports all fourteen cells for all three readers
+ under both MemoryAgentBench's metrics and Infini-style scoring, so that the \sys{} aggregates in Table~\ref{tab:board} can
+ be recomputed by hand. The harness makes no generative call beyond the reader per
+-query. The harness, the per-question BEAM answer and judgment files and the scoring entry point will be released
++query. The harness, the per-question BEAM answer and judgment files and the scoring entry point are released
+ with our code, and our answer prompt for BEAM is reproduced in full in
+-Appendix~\ref{app:beamscale}. \sys{}'s \textsc{derive} and build timings are on machines with one NVIDIA RTX PRO 6000 Blackwell Server Edition GPU. In the build only the embedding pass runs on the GPU, and the statistics, units, parent graph's entity index and BM25 run on the CPU. The embedding pass runs bge-m3 in fp16 for these timings and in fp32 for the reported \sys{} scores. Appendix~\ref{app:beamscale} gives the setups behind other systems' build timings, in Table~\ref{tab:beamcost} for BEAM and Table~\ref{tab:mabcost} for MemoryAgentBench. Appendix~\ref{app:locomo} gives LoCoMo's prompts, judges and commits, and for LoCoMo-Refined Appendix~\ref{app:refined} gives the benchmark's commit, the judge's model, revision and serving version, and every reader's settings.
++Appendix~\ref{app:beamscale}. \sys{}'s \textsc{derive} and build timings are on machines with one NVIDIA RTX PRO 6000 Blackwell Server Edition GPU. In the build only the embedding pass runs on the GPU, and the statistics, units, parent graph's entity index and BM25 run on the CPU. The embedding pass runs bge-m3 in fp16 for these timings and in fp32 for the reported \sys{} scores. Appendix~\ref{app:beamscale} gives the setups behind other systems' build timings, in Table~\ref{tab:beamcost} for BEAM and Table~\ref{tab:mabcost} for MemoryAgentBench. Appendix~\ref{app:locomo} gives LoCoMo's prompts, judges and commits, and for LoCoMo-Refined Appendix~\ref{app:refined} gives the benchmark's commit, the judge's model, revision and serving version, and every reader's settings. The native SDK follow-up in
++Appendix~\ref{app:sdkfollowup} is reported separately from these evaluated configurations.
+ 
+ \subsection*{Ethics statement}
+ 
+-This work evaluates retrieval over three public benchmarks, MemoryAgentBench, BEAM and LoCoMo, built from synthetic and public-domain text. LoCoMo-Refined, LoCoMo's relabelled release, is distributed under CC BY-NC 4.0. We use it for evaluation only and report aggregate results. This work
+-involves no human subjects, no personal data, and no release of new data. The failure mode it reports,
++The main experiments evaluate retrieval over three public benchmarks, MemoryAgentBench, BEAM and LoCoMo, built from synthetic and public-domain text. LoCoMo-Refined, LoCoMo's relabelled release, is distributed under CC BY-NC 4.0. We use it for evaluation only and report aggregate results. The main experiments
++involve no human subjects, no personal data, and no release of new data. The failure mode it reports,
+ that an attribute-keyed extractor drops $2.7\times$ as many records as the byte-read slots, is a reliability concern for
+ deployed memory systems and is reported so that it can be avoided.
+ 
+@@ -557,6 +557,7 @@
+ \bibitem{bgem3} Chen, Xiao, Zhang, Luo, Lian, and Liu. M3-Embedding: Multi-Linguality, Multi-Functionality, Multi-Granularity Text Embeddings Through Self-Knowledge Distillation. Findings of ACL 2024; arXiv:2402.03216.
+ \bibitem{bgererank} BAAI. bge-reranker-v2-m3. \url{https://huggingface.co/BAAI/bge-reranker-v2-m3}, accessed October 2026.
+ \bibitem{mem0bench} Mem0. memory-benchmarks. \url{https://github.com/mem0ai/memory-benchmarks}, commit 4b61c5d, accessed September 2026.
++\bibitem{mintevalfollowup} Lee, Chen, Singh, Khan, Stengel-Eskin, and Bansal. MINTEval: Evaluating Memory under Multi-Target Interference in Long-Horizon Agent Systems. arXiv:2605.18565v2, 2026.
+ \end{thebibliography}
+ 
+ \appendix
+@@ -820,7 +821,7 @@
+ MemoryAgentBench measured it. The BEAM rows and the four MemoryAgentBench rows of release 2.1.0 are results of that release under this configuration. On MemoryAgentBench each $4{,}096$-token chunk of the benchmark is one \texttt{add} call, wrapped in the benchmark's memorize template for extraction or stored bare with \texttt{infer=False} for the raw-chunk row, and the six chunks longer than the embedder's input are split in equal parts. Honcho receives the same chunks, each as one user message followed by a short acknowledgement, is read after its ingestion queue has drained, with its session summary requested, and runs with dreaming off. EverMemOS runs its released code at \texttt{fe436d3} on the same chunks and acknowledgements, one conversation per source text, with GPT-OSS-120B (reasoning effort low) answering every language-model call of construction and retrieval and Qwen3-Embedding-4B and Qwen3-Reranker-4B serving retrieval, all on vLLM on one RTX PRO 6000 (the three retrieval calls, capped at $500$, $150$ and $300$ tokens, get $1{,}024$ more for the reasoning). One GPT-OSS-120B answer needed a parse-only repair, which fixes only the format of the answer's JSON and changes no prompt, model or retry. EverMemOS's $8{,}192$-token segment limit closes almost every MemCell at a chunk boundary ($5{,}733$ MemCells for $5{,}956$ chunks), and the context its answer stage assembles is cut at \sys{}'s per-question budget. Hindsight 0.10.3 retains each chunk as one item, one memory bank per source text in the text's order, with GPT-OSS-120B (reasoning effort low) on vLLM on one RTX PRO 6000 ($227{,}840$ facts from the $5{,}956$ chunks), and its recall is cut at \sys{}'s per-question budget. Mem0 2.1.0 full-ver.\ is read as the benchmark reads Mem0, with its top $100$ memories and no token cut ($1.0$K to $4.9$K tokens per cell with GPT-4o-mini writing and $0.06$K to $15.5$K with GPT-OSS-120B). Filled in its rank order to \sys{}'s per-question budget from its top $1{,}000$ instead, its whole store on the three novel cells, it scores $26.4$. The other competitor contexts are cut at \sys{}'s per-question budget, on average $4.3$K tokens on SH-QA and MH-QA, $4.4$K on Recsys, $5.7$K on LongMemEval, $5.3$K to $5.5$K on the five in-context-learning cells, $40.3$K to $40.5$K on EventQA, InfBench-Sum and DetectiveQA, and never below one whole unit of the system. On the two FactConsolidation cells that budget ($0.15$K) is smaller than one raw chunk, so each system reads its own uncut retrieval, on average $42.4$K tokens for Mem0's top ten raw chunks, $32.3$K for Honcho's context with no token limit, $11.6$K for Hindsight's default recall and $1.7$K for EverMemOS's full context. Raw chunks are the benchmark's $4{,}096$-token units, so a budget of $4.3$K to $5.7$K tokens holds one chunk, shown whole where it exceeds the budget. They are ranked by Mem0's search, which adds BM25 to the dense similarity of its embedder (text-embedding-3-small) and calls no reranker, and read by \sys{}'s reader and prompt. With \texttt{infer=False} no entities are linked, so the search's entity-match score is inactive. Mem0's default similarity threshold leaves some contexts empty, and they are read as such. On TREC-coarse and TREC-fine $10$ and $14$ contexts are empty for raw chunks, $1$ and $1$ with GPT-4o-mini writing, and $49$ and $15$ (and $3$ on FC-SH) with GPT-OSS-120B writing. In the contexts returned for the $500$ in-context-learning questions, GPT-4o-mini keeps a label in $0$ of $36{,}449$ memory lines and GPT-OSS-120B in $945$ of $21{,}383$ ($4.4\%$), and more than $99\%$ of the lines of either writer open with ``User''. None of the $200$ FactConsolidation contexts of either writer keeps a serial.
+ Honcho is the hosted service \cite{honcho}, called through its session-context API with the ingestion
+ runner of its repository, after its ingestion queue had drained. A hosted service is not version-pinned,
+-so every request and response will be released with our code. past.dev (\url{https://past.dev/benchmarks/beam}, accessed September 2026) is the hosted service at
++so every context it returned is released with our code, joined to its question. past.dev (\url{https://past.dev/benchmarks/beam}, accessed September 2026) is the hosted service at
+ its lowest recall level. It scores $72.3$ through its API under our instrument against $92.1$ on its site. Exabase M-1 (\url{https://exabase.io/research/exabase-achieves-state-of-the-art-on-beam-benchmark}, accessed October 2026) scores $42.6$ under our instrument ($67.0$ with its inference off) against $76.9$ on its site. Each system received every message with its BEAM timestamp, and each returned
+ context was passed to the same reader with the same prompt.
+ 
+@@ -1539,4 +1540,79 @@
+ \end{tabular}
+ \end{table}
+ 
++\clearpage
++\section{SDK follow-up on numbered stores}\label{app:sdkfollowup}
++
++The main experiments retain the evaluated read path, prompts and scores reported
++above. This follow-up compares saved public-0.1.0 reads with the native 0.1.1 SDK
++on FactConsolidation, at the same ten-unit retrieval budget. The paper's exact
++presets retain the evaluated read path. The new rules were developed on
++FactConsolidation; this comparison measures their effect on numbered fact stores.
++
++\paragraph{Subject--relation slots and reading order.}
++In the native SDK, dot-numbered records can use a slot consisting of the subject
++and relation with the value removed. A relation qualifies when at least two
++subjects share it. If any subjects have more than one distinct line for that
++relation, their mean line count must be at most four. Other records keep the earlier slot rule.
++A question follows the subjects named by those records and shows the reached
++records before the remaining selection. The walk reranks at most 400 lines
++across up to four rounds, alongside the reranking in Algorithm~\ref{alg:muster}.
++
++\paragraph{Protocol and results.}
++We use the official FactConsolidation answer prompt and score the first ten
++\texttt{o200k\_base} tokens of the visible answer, after removing
++\texttt{<think>} blocks, with the benchmark's preserved \texttt{subem} function.
++There are 100 single-hop and 100 multi-hop questions at each of 6K, 32K and 64K
++tokens, and a separate 100 of each at 262K. Table~\ref{tab:sdk011fc} reports all
++questions, including unanswered ones as incorrect. Mean first-pass prompt usage
++ranges from 339 to 357 tokens for 0.1.0 and from 340 to 360 for 0.1.1
++across the six reader-by-scale cells.
++
++\begin{table}[H]
++\centering\tabfont
++\setlength{\tabcolsep}{6pt}
++\caption{\textbf{The native SDK improves FactConsolidation at ten units.} Accuracy in percent under the paper's scoring, comparing saved 0.1.0 reads with 0.1.1. New/old only: questions answered correctly by just one version. $p$: exact two-sided paired test on those discordant pairs, unadjusted.}
++\label{tab:sdk011fc}
++\begin{tabular}{lrlr>{\columncolor{oursbg}}rrr}
++\toprule
++Scale & $n$ & Reader & 0.1.0 & 0.1.1 & New / old only & $p$ \\
++\midrule
++6K--64K & 600 & 4o-mini & 73.17 & \textbf{88.00} & 104 / 15 & $<0.001$ \\
++6K--64K & 600 & GLM & 80.33 & \textbf{93.67} & 84 / 4 & $<0.001$ \\
++6K--64K & 600 & Luna & 78.83 & \textbf{93.00} & 89 / 4 & $<0.001$ \\
++\midrule
++262K & 200 & 4o-mini & 65.00 & \textbf{77.00} & 27 / 3 & $<0.001$ \\
++262K & 200 & GLM & 72.50 & \textbf{78.00} & 20 / 9 & $0.061$ \\
++262K & 200 & Luna & 68.00 & \textbf{76.00} & 22 / 6 & $0.004$ \\
++\bottomrule
++\end{tabular}
++\end{table}
++
++The saved configurations request the following reader settings.
++GPT-4o-mini is \texttt{gpt-4o-mini-2024-07-18} through OpenAI, at temperature 0.7
++and an output limit of ten tokens. GLM-5.3-Flash is served by Novita at
++temperature 0 and \texttt{max} reasoning effort; GPT-6 Luna is served by Azure
++at \texttt{high} effort with temperature unspecified. Both reasoning readers
++start with a 31,200-token output limit. This GLM setting is separate from the
++\texttt{high} effort used in the main MemoryAgentBench tables. Empty GLM answers
++are retried at seeds 42 and 43: the 600-question baseline uses a 131,072-token
++limit and 0.1.1 uses 65,536; both 262K versions use 65,536. Residual empty answers
++count as incorrect. The initial seed is 42 for all readers.
++
++Contexts generated by 0.1.1 are byte-identical to the contexts in all 600 and 200
++saved reader inputs, separately for each reader. For the saved 0.1.0 baseline, 599 of the 600 contexts
++match a fresh public-0.1.0 replay, and all 200 match at 262K. The single differing
++baseline question is answered correctly by both versions for all three readers;
++excluding it leaves the paired gains and losses unchanged. The reader messages
++outside the context are the same across versions. These are comparisons of the
++recorded runs under the settings above.
++
++\paragraph{Other numbered prefixes.}
++The two additions apply to the dot-numbered native path. A recognized prefix
++such as \texttt{[step 3]} retains the earlier slot rule and serial reading order.
++For the 563 state questions from MINTEval~\cite{mintevalfollowup}, a CPU replay
++reproduces the public 0.1.0 contexts and complete saved reader messages on all
++563 questions, checked separately for the three reader configurations. These
++contexts remain byte for byte as in 0.1.0.
++
+ \end{document}

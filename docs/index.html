@@ -372,7 +372,7 @@ footer .flinks a:hover{color:var(--text)}
 <div class="wrap">
 <a class="brand" href="#paper"><i></i>MUSTER</a>
 <div class="nav-links"><a href="#results">Results</a><a href="#cost">Cost</a><a href="#how">How it works</a><a href="#start">Quick start</a><a href="#more">More</a><a href="#cite">Cite</a></div>
-<span class="draft" title="Python library release">v0.1.0</span>
+<span class="draft" title="Python library source">v0.1.1</span>
 </div>
 </nav>
 <header class="paper" id="paper">
@@ -441,7 +441,25 @@ footer .flinks a:hover{color:var(--text)}
 <p class="note" id="locNote"></p>
 </details>
 </div>
-</section><section class="sec" id="cost">
+</section><section class="sec" id="sdk-followup">
+<div class="wrap">
+<div class="eyebrow">SDK follow-up · 0.1.1</div>
+<h2>Follow named facts within a ten-unit read.</h2>
+<p class="lead">The native 0.1.1 SDK improves all three readers on MemoryAgentBench FactConsolidation, with nearly unchanged reader input lengths. This follow-up compares frozen 0.1.0 reads with the dot-numbered native path.</p>
+<div class="grid2" style="margin-top:24px"><div class="panel"><div class="panel-head"><h3>6K, 32K, 64K</h3><span class="small">600 questions</span></div><table class="t" style="min-width:0"><caption class="small">Answer accuracy (%)</caption><thead><tr><th scope="col">Reader</th><th scope="col">0.1.0</th><th scope="col">0.1.1</th></tr></thead><tbody><tr><th scope="row">GPT-4o-mini</th><td class="n">73.17</td><td class="n" style="font-weight:700">88.00</td></tr><tr><th scope="row">GLM-5.3-Flash</th><td class="n">80.33</td><td class="n" style="font-weight:700">93.67</td></tr><tr><th scope="row">GPT-6 Luna</th><td class="n">78.83</td><td class="n" style="font-weight:700">93.00</td></tr></tbody></table><p class="note">4o-mini mean reader input: 339.7 → 341.6 tokens.</p></div>
+<div class="panel"><div class="panel-head"><h3>262K</h3><span class="small">200 questions</span></div><table class="t" style="min-width:0"><caption class="small">Answer accuracy (%)</caption><thead><tr><th scope="col">Reader</th><th scope="col">0.1.0</th><th scope="col">0.1.1</th></tr></thead><tbody><tr><th scope="row">GPT-4o-mini</th><td class="n">65.00</td><td class="n" style="font-weight:700">77.00</td></tr><tr><th scope="row">GLM-5.3-Flash</th><td class="n">72.50</td><td class="n" style="font-weight:700">78.00</td></tr><tr><th scope="row">GPT-6 Luna</th><td class="n">68.00</td><td class="n" style="font-weight:700">76.00</td></tr></tbody></table><p class="note">4o-mini mean reader input: 347.9 → 351.2 tokens.</p></div></div>
+<p class="note">Single-hop and multi-hop questions are pooled within each scope. The 600-question comparison improves all three readers with paired p &lt; 0.001. <a href="data/sdk_0_1_1.json">All six results and input lengths</a> · <a href="https://github.com/saintmachines/MUSTER/tree/main/data/sdk_0_1_1/fc">Offline answer verification</a></p>
+<p class="note">These native rules apply to dot-numbered fact stores and were developed on FactConsolidation. The original paper's charts and frozen exact-mode presets retain their evaluated configurations.</p>
+<details class="more"><summary><span>Protocol and verified inputs</span></summary><div>
+<p>Scoring removes think blocks, keeps the first ten o200k tokens of each visible answer, and uses the preserved benchmark substring scorer. GPT-4o-mini-2024-07-18 requests temperature 0.7, seed 42 and ten output tokens. GLM-5.3-Flash on Novita requests maximum reasoning and GPT-6 Luna on Azure requests high reasoning, initially with 31,200 output tokens. GLM re-reads use 131,072 tokens for the 6K–64K baseline and 65,536 for the candidate; both 262K versions use 65,536. Exact paired, two-sided p-values are unadjusted and are included in the data.</p>
+<p>Candidate contexts match every saved reader input: 600 of 600 and 200 of 200, for each reader. Frozen baseline contexts match 0.1.0 on 599 of 600 and 200 of 200; excluding the one differing question preserves the paired gain/loss counts. The 262K stores also informed a subject-cap fix before reader evaluation.</p>
+<p>On MINT state, all 563 contexts and complete reader messages remain byte-identical to 0.1.0. Recognized prefixes such as [step 3] retain their earlier selection rules. Source records remain stored verbatim; <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/changes.md">the SDK guide</a> describes selection behavior for each serial form.</p>
+<p><a href="https://github.com/saintmachines/MUSTER/blob/main/paper/README.md">Updated draft and source diff</a> · <a href="data/sdk_0_1_1.json">Models, counts and provenance</a></p>
+</div>
+</details>
+</div>
+</section>
+<section class="sec" id="cost">
 <div class="wrap">
 <div class="eyebrow">02 · Cost</div>
 <h2 id="costH2">Seconds to build. A fraction of the read cost.</h2>

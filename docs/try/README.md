@@ -21,4 +21,4 @@ The browser implementation is checked against the pinned Python SDK; see `COMPAT
 
 Build on a development machine: `npm ci && npm run build`. The same files run under the project's GitHub Pages `/try/` path or a Static Space. Deploy `index.html`, `ui.js`, `inspect.bundle.js`, `README.md`, licenses and compatibility report. Static hosting requires no paid compute plan. There is no runtime CDN or external tokenizer download.
 
-Large inputs can take longer to count locally. The page shows progress and offers **Cancel inspection**, which stops the calculation and keeps your text. Editing the text also cancels a pending inspection; select Inspect structure to calculate the new configuration. No input is shortened. The 200,000-character preview limit is unchanged.
+Large inputs can take longer to count locally. The page shows progress and offers **Cancel inspection**, which stops the calculation and keeps your text. Editing the text also cancels a pending inspection; select Inspect structure to calculate the new configuration. No input is shortened. The preview limit is 200,000 UTF-16 code units.

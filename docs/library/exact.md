@@ -27,8 +27,7 @@ two rules added after the paper (N8, N9):
 | N9 | on a dot-serial numbered log the read follows the subjects each line names, from the subjects the question names, before the slot graph, and shows what it reached first, in that order | the slot graph over capitalised names only, so a lower-case value or a possessive ends the chain; lines in serial order | yes, on dot-serial numbered logs: FactConsolidation's native contexts differ, and exact mode still gives the published ones |
 
 A numbered log under its own serial spelling, such as `[step 3] body`, keeps the paper's slot and serial order under
-both rules, as in 0.1.0. On MINT state, the one public benchmark of that form, the subject-relation slot dropped the
-earlier lines its history questions ask for.
+both rules, as in 0.1.0. On the 563 MINT state questions, all contexts remain byte for byte as in 0.1.0.
 
 The serial spelling determines this scope. On a dot-serial event log, earlier events that share a native slot can be
 omitted from the selected reader context, including events a history question asks about. The original source text

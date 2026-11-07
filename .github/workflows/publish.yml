@@ -68,11 +68,33 @@ jobs:
           assert len(jobs) == 6 and all(job['conclusion'] == 'success' for job in jobs), 'All six package jobs must pass'
           print('Verified', tag, commit, 'with six successful CI jobs')
           PY
+      - name: Load the reviewed build environment
+        run: |
+          python - <<'PY'
+          import ast, json, os, pathlib
+          spec = json.loads(pathlib.Path('RELEASE_BUILD.json').read_text())
+          version = ast.literal_eval(ast.parse(pathlib.Path('muster/_version.py').read_text()).body[0].value)
+          assert spec['package'] == 'muster-memory' and spec['version'] == version
+          assert type(spec['source_date_epoch']) is int and spec['source_date_epoch'] > 0
+          assert len(spec['artifacts']) == 2, 'Release artifact hashes must be reviewed before publishing'
+          with open(os.environ['GITHUB_ENV'], 'a') as env:
+              env.write('SOURCE_DATE_EPOCH=' + str(spec['source_date_epoch']) + '\n')
+          PY
       - name: Build the wheel from the sdist and check both descriptions
         run: |
-          python -m pip install --disable-pip-version-check build hatchling twine
+          python -m pip install --disable-pip-version-check build==1.6.1 hatchling==1.32.4 twine==7.0.0 packaging==26.3
           python -m build --no-isolation
           python -m twine check --strict dist/*
+      - name: Require the exact reviewed distribution files
+        run: |
+          python - <<'PY'
+          import hashlib, importlib.metadata, json, pathlib
+          spec = json.loads(pathlib.Path('RELEASE_BUILD.json').read_text())
+          assert all(importlib.metadata.version(name) == version for name, version in spec['build_tools'].items())
+          actual = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in pathlib.Path('dist').iterdir() if p.is_file()}
+          assert actual == spec['artifacts'], 'Built distributions differ from the reviewed release files'
+          print('Both distribution hashes match the reviewed release')
+          PY
       - name: Verify the installed package
         run: |
           python -m venv /tmp/muster-install
@@ -84,7 +106,9 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: distributions
-          path: dist/
+          path: |
+            dist/
+            RELEASE_BUILD.json
           if-no-files-found: error
 
   publish:
@@ -100,6 +124,16 @@ jobs:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: distributions
-          path: dist/
+          path: .
+      - name: Verify the retained distributions before publication
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib
+          spec = json.loads(pathlib.Path('RELEASE_BUILD.json').read_text())
+          actual = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in pathlib.Path('dist').iterdir() if p.is_file()}
+          assert len(actual) == 2 and actual == spec['artifacts'], 'Downloaded release files differ from the reviewed hashes'
+          PY
       - name: Publish using the registered PyPI Trusted Publisher
         uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
+        with:
+          packages-dir: dist/

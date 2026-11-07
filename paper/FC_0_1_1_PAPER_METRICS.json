@@ -1,0 +1,88 @@
+{
+  "scoring_view": "paper_visible_first10_o200k",
+  "rows": [
+    {
+      "dataset": "fc",
+      "reader": "official",
+      "scale": "6K--64K",
+      "n": 600,
+      "frozen010_correct": 439,
+      "v15_correct": 528,
+      "frozen010_rate": 73.16666666666667,
+      "v15_rate": 88.0,
+      "only_v15": 104,
+      "only_frozen010": 15,
+      "exact_two_sided_p": 1.4502496797351542e-17
+    },
+    {
+      "dataset": "fc",
+      "reader": "glm",
+      "scale": "6K--64K",
+      "n": 600,
+      "frozen010_correct": 482,
+      "v15_correct": 562,
+      "frozen010_rate": 80.33333333333333,
+      "v15_rate": 93.66666666666667,
+      "only_v15": 84,
+      "only_frozen010": 4,
+      "exact_two_sided_p": 1.5803951224724757e-20
+    },
+    {
+      "dataset": "fc",
+      "reader": "luna",
+      "scale": "6K--64K",
+      "n": 600,
+      "frozen010_correct": 473,
+      "v15_correct": 558,
+      "frozen010_rate": 78.83333333333333,
+      "v15_rate": 93.0,
+      "only_v15": 89,
+      "only_frozen010": 4,
+      "exact_two_sided_p": 6.167247409177618e-22
+    },
+    {
+      "dataset": "k262",
+      "reader": "official",
+      "scale": "262K",
+      "n": 200,
+      "frozen010_correct": 130,
+      "v15_correct": 154,
+      "frozen010_rate": 65.0,
+      "v15_rate": 77.0,
+      "only_v15": 27,
+      "only_frozen010": 3,
+      "exact_two_sided_p": 8.430331945419312e-06
+    },
+    {
+      "dataset": "k262",
+      "reader": "glm",
+      "scale": "262K",
+      "n": 200,
+      "frozen010_correct": 145,
+      "v15_correct": 156,
+      "frozen010_rate": 72.5,
+      "v15_rate": 78.0,
+      "only_v15": 20,
+      "only_frozen010": 9,
+      "exact_two_sided_p": 0.06142834573984146
+    },
+    {
+      "dataset": "k262",
+      "reader": "luna",
+      "scale": "262K",
+      "n": 200,
+      "frozen010_correct": 136,
+      "v15_correct": 152,
+      "frozen010_rate": 68.0,
+      "v15_rate": 76.0,
+      "only_v15": 22,
+      "only_frozen010": 6,
+      "exact_two_sided_p": 0.0037191659212112427
+    }
+  ],
+  "source_commit": "12c7e6fb6d9b1c14ce0bade08cc32ee535ee00da",
+  "fc_report_sha256": "ecb40dfb16da22106e50f8f5369cd9d24573d331d960de2159a25966ea2ba3ff",
+  "reader_source_binding": "Exact-release contexts match saved inputs 600/600 and 200/200 per reader",
+  "baseline_binding": "Frozen public010; live replay agrees599/600 and200/200; the single excluded question is correct on both versions for every reader",
+  "general_no_harm_or_all_dataset_improvement_claim": false
+}

@@ -1,0 +1,602 @@
+{
+  "schema_version": "muster.sdk0.1.1.followup.v1",
+  "status": "review_candidate_not_published",
+  "dataset": "MemoryAgentBench FactConsolidation",
+  "evaluation_scope": "Followup designed on FC6K/32K/64K;262K was used for a subject-cap fix before reader evaluation.",
+  "quality_rows": [
+    {
+      "dataset": "MemoryAgentBench FactConsolidation",
+      "scope": "6K/32K/64K",
+      "reader": "official",
+      "denominator": 600,
+      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "baseline_label": "Frozen 0.1.0",
+      "candidate_label": "0.1.1",
+      "baseline_correct": 439,
+      "candidate_correct": 528,
+      "baseline_percent": 73.16666666666667,
+      "candidate_percent": 88.0,
+      "only_candidate": 104,
+      "only_baseline": 15,
+      "paired_exact_p": 1.4502496797351542e-17,
+      "baseline_input_identity": {
+        "equal": 599,
+        "denominator": 600,
+        "percent": 99.83333333333333
+      },
+      "release_input_identity": {
+        "equal": 600,
+        "denominator": 600,
+        "percent": 100.0
+      },
+      "baseline_mean_input_tokens": 339.73333333333335,
+      "candidate_mean_input_tokens": 341.63166666666666,
+      "baseline_requested": {
+        "model": "gpt-4o-mini-2024-07-18",
+        "backend": "openai_chat",
+        "temperature": 0.7,
+        "reasoning": null,
+        "seed": 42,
+        "max_tokens": 10
+      },
+      "candidate_requested": {
+        "model": "gpt-4o-mini-2024-07-18",
+        "backend": "openai_chat",
+        "temperature": 0.7,
+        "reasoning": null,
+        "seed": 42,
+        "max_tokens": 10
+      },
+      "observed_baseline_models": {
+        "gpt-4o-mini-2024-07-18": 600
+      },
+      "observed_candidate_models": {
+        "gpt-4o-mini-2024-07-18": 600
+      },
+      "observed_baseline_providers": {
+        "OpenAI": 600
+      },
+      "observed_candidate_providers": {
+        "OpenAI": 600
+      },
+      "baseline_retries": [],
+      "candidate_retries": [],
+      "paired_test": "two-sided exact binomial test on discordant paired outcomes",
+      "paired_p_adjustment": "none",
+      "caution": [
+        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p."
+      ],
+      "source_receipt": {
+        "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
+        "sha256": "ccc5d4f74323764769e282c342faf3080446ce1ccc5791597c1dba70cfe9225c",
+        "bytes": 2408917
+      },
+      "verifier": {
+        "file": "data/sdk_0_1_1/fc/verify_fc.py",
+        "sha256": "c1cc9c98fcb420417cd4a70c33b7a2c4b2a1e62b6080d857beee361277fc490e",
+        "bytes": 5085
+      },
+      "manifest": {
+        "file": "data/sdk_0_1_1/fc/MANIFEST.json",
+        "sha256": "a816297bf33507eda71ca8af06735184040cfcbfd69d90ae96930001a46a3ec3",
+        "bytes": 1196
+      },
+      "download": {
+        "file": "data/sdk_0_1_1/fc/MUSTER_0_1_1_FC_offline_receipts.zip",
+        "sha256": "4332f06267162104939900b5be75818a84be8f8fadae2b21559ec9705c5531cc",
+        "bytes": 663096
+      }
+    },
+    {
+      "dataset": "MemoryAgentBench FactConsolidation",
+      "scope": "6K/32K/64K",
+      "reader": "glm",
+      "denominator": 600,
+      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "baseline_label": "Frozen 0.1.0",
+      "candidate_label": "0.1.1",
+      "baseline_correct": 482,
+      "candidate_correct": 562,
+      "baseline_percent": 80.33333333333333,
+      "candidate_percent": 93.66666666666667,
+      "only_candidate": 84,
+      "only_baseline": 4,
+      "paired_exact_p": 1.5803951224724757e-20,
+      "baseline_input_identity": {
+        "equal": 599,
+        "denominator": 600,
+        "percent": 99.83333333333333
+      },
+      "release_input_identity": {
+        "equal": 600,
+        "denominator": 600,
+        "percent": 100.0
+      },
+      "baseline_mean_input_tokens": 350.56166666666667,
+      "candidate_mean_input_tokens": 352.725,
+      "baseline_requested": {
+        "model": "z-ai/glm-5.3-flash@novita",
+        "backend": "or",
+        "temperature": 0,
+        "reasoning": {
+          "effort": "max"
+        },
+        "seed": 42,
+        "max_tokens": 31200
+      },
+      "candidate_requested": {
+        "model": "z-ai/glm-5.3-flash@novita",
+        "backend": "or",
+        "temperature": 0,
+        "reasoning": {
+          "effort": "max"
+        },
+        "seed": 42,
+        "max_tokens": 31200
+      },
+      "observed_baseline_models": {
+        "z-ai/glm-5.3-flash@novita": 600
+      },
+      "observed_candidate_models": {
+        "z-ai/glm-5.3-flash@novita": 600
+      },
+      "observed_baseline_providers": {
+        "Novita": 600
+      },
+      "observed_candidate_providers": {
+        "Novita": 600
+      },
+      "baseline_retries": [
+        {
+          "campaign": "reask_now_s42",
+          "max_tokens": 131072,
+          "seed": 42,
+          "rows": 15
+        },
+        {
+          "campaign": "reask_now_s43",
+          "max_tokens": 131072,
+          "seed": 43,
+          "rows": 4
+        }
+      ],
+      "candidate_retries": [
+        {
+          "campaign": "fc_walk2_r42",
+          "max_tokens": 65536,
+          "seed": 42,
+          "rows": 3
+        },
+        {
+          "campaign": "fc_walk2_r43",
+          "max_tokens": 65536,
+          "seed": 43,
+          "rows": 2
+        }
+      ],
+      "paired_test": "two-sided exact binomial test on discordant paired outcomes",
+      "paired_p_adjustment": "none",
+      "caution": [
+        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p.",
+        "GLM followup effort max, original paper MAB effort high. FC oldGLM retries131072 versus new65536; config-requested settings separated from raw observed provider/model/usage."
+      ],
+      "source_receipt": {
+        "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
+        "sha256": "ccc5d4f74323764769e282c342faf3080446ce1ccc5791597c1dba70cfe9225c",
+        "bytes": 2408917
+      },
+      "verifier": {
+        "file": "data/sdk_0_1_1/fc/verify_fc.py",
+        "sha256": "c1cc9c98fcb420417cd4a70c33b7a2c4b2a1e62b6080d857beee361277fc490e",
+        "bytes": 5085
+      },
+      "manifest": {
+        "file": "data/sdk_0_1_1/fc/MANIFEST.json",
+        "sha256": "a816297bf33507eda71ca8af06735184040cfcbfd69d90ae96930001a46a3ec3",
+        "bytes": 1196
+      },
+      "download": {
+        "file": "data/sdk_0_1_1/fc/MUSTER_0_1_1_FC_offline_receipts.zip",
+        "sha256": "4332f06267162104939900b5be75818a84be8f8fadae2b21559ec9705c5531cc",
+        "bytes": 663096
+      }
+    },
+    {
+      "dataset": "MemoryAgentBench FactConsolidation",
+      "scope": "6K/32K/64K",
+      "reader": "luna",
+      "denominator": 600,
+      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "baseline_label": "Frozen 0.1.0",
+      "candidate_label": "0.1.1",
+      "baseline_correct": 473,
+      "candidate_correct": 558,
+      "baseline_percent": 78.83333333333333,
+      "candidate_percent": 93.0,
+      "only_candidate": 89,
+      "only_baseline": 4,
+      "paired_exact_p": 6.167247409177618e-22,
+      "baseline_input_identity": {
+        "equal": 599,
+        "denominator": 600,
+        "percent": 99.83333333333333
+      },
+      "release_input_identity": {
+        "equal": 600,
+        "denominator": 600,
+        "percent": 100.0
+      },
+      "baseline_mean_input_tokens": 338.73333333333335,
+      "candidate_mean_input_tokens": 340.085,
+      "baseline_requested": {
+        "model": "openai/gpt-6-luna@azure",
+        "backend": "or",
+        "temperature": null,
+        "reasoning": {
+          "effort": "high"
+        },
+        "seed": 42,
+        "max_tokens": 31200
+      },
+      "candidate_requested": {
+        "model": "openai/gpt-6-luna@azure",
+        "backend": "or",
+        "temperature": null,
+        "reasoning": {
+          "effort": "high"
+        },
+        "seed": 42,
+        "max_tokens": 31200
+      },
+      "observed_baseline_models": {
+        "openai/gpt-6-luna@azure": 600
+      },
+      "observed_candidate_models": {
+        "openai/gpt-6-luna@azure": 600
+      },
+      "observed_baseline_providers": {
+        "Azure": 600
+      },
+      "observed_candidate_providers": {
+        "Azure": 600
+      },
+      "baseline_retries": [],
+      "candidate_retries": [],
+      "paired_test": "two-sided exact binomial test on discordant paired outcomes",
+      "paired_p_adjustment": "none",
+      "caution": [
+        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p."
+      ],
+      "source_receipt": {
+        "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
+        "sha256": "ccc5d4f74323764769e282c342faf3080446ce1ccc5791597c1dba70cfe9225c",
+        "bytes": 2408917
+      },
+      "verifier": {
+        "file": "data/sdk_0_1_1/fc/verify_fc.py",
+        "sha256": "c1cc9c98fcb420417cd4a70c33b7a2c4b2a1e62b6080d857beee361277fc490e",
+        "bytes": 5085
+      },
+      "manifest": {
+        "file": "data/sdk_0_1_1/fc/MANIFEST.json",
+        "sha256": "a816297bf33507eda71ca8af06735184040cfcbfd69d90ae96930001a46a3ec3",
+        "bytes": 1196
+      },
+      "download": {
+        "file": "data/sdk_0_1_1/fc/MUSTER_0_1_1_FC_offline_receipts.zip",
+        "sha256": "4332f06267162104939900b5be75818a84be8f8fadae2b21559ec9705c5531cc",
+        "bytes": 663096
+      }
+    },
+    {
+      "dataset": "MemoryAgentBench FactConsolidation",
+      "scope": "262K",
+      "reader": "official",
+      "denominator": 200,
+      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "baseline_label": "Frozen 0.1.0",
+      "candidate_label": "0.1.1",
+      "baseline_correct": 130,
+      "candidate_correct": 154,
+      "baseline_percent": 65.0,
+      "candidate_percent": 77.0,
+      "only_candidate": 27,
+      "only_baseline": 3,
+      "paired_exact_p": 8.430331945419312e-06,
+      "baseline_input_identity": {
+        "equal": 200,
+        "denominator": 200,
+        "percent": 100.0
+      },
+      "release_input_identity": {
+        "equal": 200,
+        "denominator": 200,
+        "percent": 100.0
+      },
+      "baseline_mean_input_tokens": 347.865,
+      "candidate_mean_input_tokens": 351.24,
+      "baseline_requested": {
+        "model": "gpt-4o-mini-2024-07-18",
+        "backend": "openai_chat",
+        "temperature": 0.7,
+        "reasoning": null,
+        "seed": 42,
+        "max_tokens": 10
+      },
+      "candidate_requested": {
+        "model": "gpt-4o-mini-2024-07-18",
+        "backend": "openai_chat",
+        "temperature": 0.7,
+        "reasoning": null,
+        "seed": 42,
+        "max_tokens": 10
+      },
+      "observed_baseline_models": {
+        "gpt-4o-mini-2024-07-18": 200
+      },
+      "observed_candidate_models": {
+        "gpt-4o-mini-2024-07-18": 200
+      },
+      "observed_baseline_providers": {
+        "OpenAI": 200
+      },
+      "observed_candidate_providers": {
+        "OpenAI": 200
+      },
+      "baseline_retries": [],
+      "candidate_retries": [],
+      "paired_test": "two-sided exact binomial test on discordant paired outcomes",
+      "paired_p_adjustment": "none",
+      "caution": [
+        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p."
+      ],
+      "source_receipt": {
+        "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
+        "sha256": "ccc5d4f74323764769e282c342faf3080446ce1ccc5791597c1dba70cfe9225c",
+        "bytes": 2408917
+      },
+      "verifier": {
+        "file": "data/sdk_0_1_1/fc/verify_fc.py",
+        "sha256": "c1cc9c98fcb420417cd4a70c33b7a2c4b2a1e62b6080d857beee361277fc490e",
+        "bytes": 5085
+      },
+      "manifest": {
+        "file": "data/sdk_0_1_1/fc/MANIFEST.json",
+        "sha256": "a816297bf33507eda71ca8af06735184040cfcbfd69d90ae96930001a46a3ec3",
+        "bytes": 1196
+      },
+      "download": {
+        "file": "data/sdk_0_1_1/fc/MUSTER_0_1_1_FC_offline_receipts.zip",
+        "sha256": "4332f06267162104939900b5be75818a84be8f8fadae2b21559ec9705c5531cc",
+        "bytes": 663096
+      }
+    },
+    {
+      "dataset": "MemoryAgentBench FactConsolidation",
+      "scope": "262K",
+      "reader": "glm",
+      "denominator": 200,
+      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "baseline_label": "Frozen 0.1.0",
+      "candidate_label": "0.1.1",
+      "baseline_correct": 145,
+      "candidate_correct": 156,
+      "baseline_percent": 72.5,
+      "candidate_percent": 78.0,
+      "only_candidate": 20,
+      "only_baseline": 9,
+      "paired_exact_p": 0.06142834573984146,
+      "baseline_input_identity": {
+        "equal": 200,
+        "denominator": 200,
+        "percent": 100.0
+      },
+      "release_input_identity": {
+        "equal": 200,
+        "denominator": 200,
+        "percent": 100.0
+      },
+      "baseline_mean_input_tokens": 356.855,
+      "candidate_mean_input_tokens": 359.65,
+      "baseline_requested": {
+        "model": "z-ai/glm-5.3-flash@novita",
+        "backend": "or",
+        "temperature": 0,
+        "reasoning": {
+          "effort": "max"
+        },
+        "seed": 42,
+        "max_tokens": 31200
+      },
+      "candidate_requested": {
+        "model": "z-ai/glm-5.3-flash@novita",
+        "backend": "or",
+        "temperature": 0,
+        "reasoning": {
+          "effort": "max"
+        },
+        "seed": 42,
+        "max_tokens": 31200
+      },
+      "observed_baseline_models": {
+        "z-ai/glm-5.3-flash@novita": 200
+      },
+      "observed_candidate_models": {
+        "z-ai/glm-5.3-flash@novita": 200
+      },
+      "observed_baseline_providers": {
+        "Novita": 200
+      },
+      "observed_candidate_providers": {
+        "Novita": 200
+      },
+      "baseline_retries": [
+        {
+          "campaign": "k262_r42",
+          "max_tokens": 65536,
+          "seed": 42,
+          "rows": 13
+        },
+        {
+          "campaign": "k262_r43",
+          "max_tokens": 65536,
+          "seed": 43,
+          "rows": 6
+        }
+      ],
+      "candidate_retries": [
+        {
+          "campaign": "k262o_r42",
+          "max_tokens": 65536,
+          "seed": 42,
+          "rows": 8
+        },
+        {
+          "campaign": "k262o_r43",
+          "max_tokens": 65536,
+          "seed": 43,
+          "rows": 2
+        }
+      ],
+      "paired_test": "two-sided exact binomial test on discordant paired outcomes",
+      "paired_p_adjustment": "none",
+      "caution": [
+        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p.",
+        "GLM followup effort max, original paper MAB effort high. FC oldGLM retries131072 versus new65536; config-requested settings separated from raw observed provider/model/usage."
+      ],
+      "source_receipt": {
+        "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
+        "sha256": "ccc5d4f74323764769e282c342faf3080446ce1ccc5791597c1dba70cfe9225c",
+        "bytes": 2408917
+      },
+      "verifier": {
+        "file": "data/sdk_0_1_1/fc/verify_fc.py",
+        "sha256": "c1cc9c98fcb420417cd4a70c33b7a2c4b2a1e62b6080d857beee361277fc490e",
+        "bytes": 5085
+      },
+      "manifest": {
+        "file": "data/sdk_0_1_1/fc/MANIFEST.json",
+        "sha256": "a816297bf33507eda71ca8af06735184040cfcbfd69d90ae96930001a46a3ec3",
+        "bytes": 1196
+      },
+      "download": {
+        "file": "data/sdk_0_1_1/fc/MUSTER_0_1_1_FC_offline_receipts.zip",
+        "sha256": "4332f06267162104939900b5be75818a84be8f8fadae2b21559ec9705c5531cc",
+        "bytes": 663096
+      }
+    },
+    {
+      "dataset": "MemoryAgentBench FactConsolidation",
+      "scope": "262K",
+      "reader": "luna",
+      "denominator": 200,
+      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "baseline_label": "Frozen 0.1.0",
+      "candidate_label": "0.1.1",
+      "baseline_correct": 136,
+      "candidate_correct": 152,
+      "baseline_percent": 68.0,
+      "candidate_percent": 76.0,
+      "only_candidate": 22,
+      "only_baseline": 6,
+      "paired_exact_p": 0.0037191659212112427,
+      "baseline_input_identity": {
+        "equal": 200,
+        "denominator": 200,
+        "percent": 100.0
+      },
+      "release_input_identity": {
+        "equal": 200,
+        "denominator": 200,
+        "percent": 100.0
+      },
+      "baseline_mean_input_tokens": 346.865,
+      "candidate_mean_input_tokens": 350.24,
+      "baseline_requested": {
+        "model": "openai/gpt-6-luna@azure",
+        "backend": "or",
+        "temperature": null,
+        "reasoning": {
+          "effort": "high"
+        },
+        "seed": 42,
+        "max_tokens": 31200
+      },
+      "candidate_requested": {
+        "model": "openai/gpt-6-luna@azure",
+        "backend": "or",
+        "temperature": null,
+        "reasoning": {
+          "effort": "high"
+        },
+        "seed": 42,
+        "max_tokens": 31200
+      },
+      "observed_baseline_models": {
+        "openai/gpt-6-luna@azure": 200
+      },
+      "observed_candidate_models": {
+        "openai/gpt-6-luna@azure": 200
+      },
+      "observed_baseline_providers": {
+        "Azure": 200
+      },
+      "observed_candidate_providers": {
+        "Azure": 200
+      },
+      "baseline_retries": [],
+      "candidate_retries": [],
+      "paired_test": "two-sided exact binomial test on discordant paired outcomes",
+      "paired_p_adjustment": "none",
+      "caution": [
+        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p."
+      ],
+      "source_receipt": {
+        "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
+        "sha256": "ccc5d4f74323764769e282c342faf3080446ce1ccc5791597c1dba70cfe9225c",
+        "bytes": 2408917
+      },
+      "verifier": {
+        "file": "data/sdk_0_1_1/fc/verify_fc.py",
+        "sha256": "c1cc9c98fcb420417cd4a70c33b7a2c4b2a1e62b6080d857beee361277fc490e",
+        "bytes": 5085
+      },
+      "manifest": {
+        "file": "data/sdk_0_1_1/fc/MANIFEST.json",
+        "sha256": "a816297bf33507eda71ca8af06735184040cfcbfd69d90ae96930001a46a3ec3",
+        "bytes": 1196
+      },
+      "download": {
+        "file": "data/sdk_0_1_1/fc/MUSTER_0_1_1_FC_offline_receipts.zip",
+        "sha256": "4332f06267162104939900b5be75818a84be8f8fadae2b21559ec9705c5531cc",
+        "bytes": 663096
+      }
+    }
+  ],
+  "mint": {
+    "measurement_type": "input_identity_only",
+    "denominator": 563,
+    "context_equal": 563,
+    "full_messages_equal_per_reader": {
+      "official": 563,
+      "glm": 563,
+      "luna": 563
+    },
+    "input_identity_percent": 100.0,
+    "new_quality_run": false,
+    "claim": "All563 MINT state reader inputs remain byte-identical to0.1.0."
+  },
+  "notes": [
+    "FC table uses saved baseline600; live010 rebuild matches599/600, and599 sensitivity leaves gains/losses andp unchanged.",
+    "262K GLM pairedp=.061428, so improvement is not significant at.05; registeredD/D2 are noninferiority gates.",
+    "GLM followup effortmax differs from original-paperMAB high; oldFC GLM retries use131072,new65536.",
+    "Inputidentity percentages are not answeraccuracy and are not new reader runs."
+  ],
+  "source_ledger": {
+    "file": "PERFORMANCE_EVIDENCE_LEDGER.json",
+    "sha256": "cc14f8c02523726ec6fdae017e374cfe1c4f8c7c8ca1bc7a16dab4c6bfc688cd"
+  },
+  "new_api_calls": 0,
+  "tested_sdk_commit": "12c7e6fb6d9b1c14ce0bade08cc32ee535ee00da",
+  "source_public_subset_file": "SDK_0_1_1_PUBLIC_SUBSET.json"
+}

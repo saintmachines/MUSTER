@@ -109,8 +109,8 @@ cross-encoder. Selected units are shown verbatim, one block per parent, in store
 version of a slot replaces older ones. In native mode a slot is the line's subject and relation without its value, once
 two subjects share that relation and a changed subject holds at most 4 lines on average, so `... the sport of cricket`
 retires `... the sport of basketball`. Other lines keep the paper's slot, the sentence with its capitalised names masked.
-This rule was added after the paper, on FactConsolidation, the one public benchmark family that reaches it, and reads
-logs whose lines start with a dot serial (`12. `). A log that states a single subject's facts, says `Alice is a nurse`,
+This rule was added after the paper and measured on FactConsolidation. It reads logs whose lines start with a dot serial
+(`12. `). A log that states a single subject's facts, says `Alice is a nurse`,
 or numbers its lines in its own spelling (`[step 3]`) keeps the paper's slot.
 
 In native mode a read of a numbered log also follows what the lines name. It starts from the subjects the question names

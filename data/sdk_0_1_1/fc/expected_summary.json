@@ -1,0 +1,62 @@
+[
+  {
+    "dataset": "fc",
+    "reader": "official",
+    "n": 600,
+    "baseline_correct": 439,
+    "candidate_correct": 528,
+    "only_candidate": 104,
+    "only_baseline": 15,
+    "paired_exact_p": 1.4502496797351542e-17
+  },
+  {
+    "dataset": "fc",
+    "reader": "glm",
+    "n": 600,
+    "baseline_correct": 482,
+    "candidate_correct": 562,
+    "only_candidate": 84,
+    "only_baseline": 4,
+    "paired_exact_p": 1.5803951224724757e-20
+  },
+  {
+    "dataset": "fc",
+    "reader": "luna",
+    "n": 600,
+    "baseline_correct": 473,
+    "candidate_correct": 558,
+    "only_candidate": 89,
+    "only_baseline": 4,
+    "paired_exact_p": 6.167247409177618e-22
+  },
+  {
+    "dataset": "k262",
+    "reader": "official",
+    "n": 200,
+    "baseline_correct": 130,
+    "candidate_correct": 154,
+    "only_candidate": 27,
+    "only_baseline": 3,
+    "paired_exact_p": 8.430331945419312e-06
+  },
+  {
+    "dataset": "k262",
+    "reader": "glm",
+    "n": 200,
+    "baseline_correct": 145,
+    "candidate_correct": 156,
+    "only_candidate": 20,
+    "only_baseline": 9,
+    "paired_exact_p": 0.06142834573984146
+  },
+  {
+    "dataset": "k262",
+    "reader": "luna",
+    "n": 200,
+    "baseline_correct": 136,
+    "candidate_correct": 152,
+    "only_candidate": 22,
+    "only_baseline": 6,
+    "paired_exact_p": 0.0037191659212112427
+  }
+]
