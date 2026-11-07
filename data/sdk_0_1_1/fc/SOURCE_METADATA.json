@@ -13,7 +13,7 @@
   },
   "scoring": {
     "visible": "preserved <think> block removal then strip",
-    "cut": "first10 o200k_base tokens then strip",
+    "cut": "first 10 o200k_base tokens then strip",
     "metric": "preserved fixed norm/subem",
     "fixed_source_file": "lme_pf29.py",
     "fixed_source_sha256": "c09d0b3c1f35ae3f0f5dd767836e2e5c8af52b6b9810c7a11a4d4c1652fa3f7b",
@@ -23,7 +23,7 @@
     "full_visible": 4800
   },
   "visible_answer_character_cap": 2000,
-  "baseline_input_scope": "FC saved600 baseline; live0.1.0 reproduces599 contexts. Excluding the one QID leaves paired counts/p unchanged;262K200 matches.",
+  "baseline_input_scope": "FC uses the saved 600-question baseline; a live 0.1.0 rebuild reproduces 599/600 contexts. Excluding the one differing question leaves the paired counts and p unchanged; the 262K 200-question baseline matches.",
   "mab": {
     "repo": "https://github.com/HUST-AI-HYZ/MemoryAgentBench",
     "source_revision": "455306dcabc3842526eb83cd4e225e5d486c5c5d",
