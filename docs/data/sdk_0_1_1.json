@@ -9,7 +9,7 @@
       "scope": "6K/32K/64K",
       "reader": "official",
       "denominator": 600,
-      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "scoring": "remove think blocks; first 10 o200k tokens; preserved official subem",
       "baseline_label": "Frozen 0.1.0",
       "candidate_label": "0.1.1",
       "baseline_correct": 439,
@@ -64,7 +64,7 @@
       "paired_test": "two-sided exact binomial test on discordant paired outcomes",
       "paired_p_adjustment": "none",
       "caution": [
-        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p."
+        "Frozen FC baseline matches live 0.1.0 on 599/600; excluding the one differing question preserves the paired counts and p."
       ],
       "source_receipt": {
         "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
@@ -92,7 +92,7 @@
       "scope": "6K/32K/64K",
       "reader": "glm",
       "denominator": 600,
-      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "scoring": "remove think blocks; first 10 o200k tokens; preserved official subem",
       "baseline_label": "Frozen 0.1.0",
       "candidate_label": "0.1.1",
       "baseline_correct": 482,
@@ -177,8 +177,8 @@
       "paired_test": "two-sided exact binomial test on discordant paired outcomes",
       "paired_p_adjustment": "none",
       "caution": [
-        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p.",
-        "GLM followup effort max, original paper MAB effort high. FC oldGLM retries131072 versus new65536; config-requested settings separated from raw observed provider/model/usage."
+        "Frozen FC baseline matches live 0.1.0 on 599/600; excluding the one differing question preserves the paired counts and p.",
+        "GLM follow-up effort max, original paper MAB effort high. FC old GLM retries 131,072 versus new 65,536; config-requested settings separated from raw observed provider/model/usage."
       ],
       "source_receipt": {
         "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
@@ -206,7 +206,7 @@
       "scope": "6K/32K/64K",
       "reader": "luna",
       "denominator": 600,
-      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "scoring": "remove think blocks; first 10 o200k tokens; preserved official subem",
       "baseline_label": "Frozen 0.1.0",
       "candidate_label": "0.1.1",
       "baseline_correct": 473,
@@ -265,7 +265,7 @@
       "paired_test": "two-sided exact binomial test on discordant paired outcomes",
       "paired_p_adjustment": "none",
       "caution": [
-        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p."
+        "Frozen FC baseline matches live 0.1.0 on 599/600; excluding the one differing question preserves the paired counts and p."
       ],
       "source_receipt": {
         "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
@@ -293,7 +293,7 @@
       "scope": "262K",
       "reader": "official",
       "denominator": 200,
-      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "scoring": "remove think blocks; first 10 o200k tokens; preserved official subem",
       "baseline_label": "Frozen 0.1.0",
       "candidate_label": "0.1.1",
       "baseline_correct": 130,
@@ -348,7 +348,7 @@
       "paired_test": "two-sided exact binomial test on discordant paired outcomes",
       "paired_p_adjustment": "none",
       "caution": [
-        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p."
+        "Frozen FC baseline matches live 0.1.0 on 599/600; excluding the one differing question preserves the paired counts and p."
       ],
       "source_receipt": {
         "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
@@ -376,7 +376,7 @@
       "scope": "262K",
       "reader": "glm",
       "denominator": 200,
-      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "scoring": "remove think blocks; first 10 o200k tokens; preserved official subem",
       "baseline_label": "Frozen 0.1.0",
       "candidate_label": "0.1.1",
       "baseline_correct": 145,
@@ -461,8 +461,8 @@
       "paired_test": "two-sided exact binomial test on discordant paired outcomes",
       "paired_p_adjustment": "none",
       "caution": [
-        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p.",
-        "GLM followup effort max, original paper MAB effort high. FC oldGLM retries131072 versus new65536; config-requested settings separated from raw observed provider/model/usage."
+        "Frozen FC baseline matches live 0.1.0 on 599/600; excluding the one differing question preserves the paired counts and p.",
+        "GLM follow-up effort max, original paper MAB effort high. FC old GLM retries 131,072 versus new 65,536; config-requested settings separated from raw observed provider/model/usage."
       ],
       "source_receipt": {
         "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
@@ -490,7 +490,7 @@
       "scope": "262K",
       "reader": "luna",
       "denominator": 200,
-      "scoring": "remove think blocks; first10 o200k tokens; preserved official subem",
+      "scoring": "remove think blocks; first 10 o200k tokens; preserved official subem",
       "baseline_label": "Frozen 0.1.0",
       "candidate_label": "0.1.1",
       "baseline_correct": 136,
@@ -549,7 +549,7 @@
       "paired_test": "two-sided exact binomial test on discordant paired outcomes",
       "paired_p_adjustment": "none",
       "caution": [
-        "Frozen FC baseline matches live010 on599/600; excluded-QID599 sensitivity preserves pairs/p."
+        "Frozen FC baseline matches live 0.1.0 on 599/600; excluding the one differing question preserves the paired counts and p."
       ],
       "source_receipt": {
         "file": "data/sdk_0_1_1/fc/fc_answers.jsonl",
@@ -587,10 +587,10 @@
     "claim": "All 563 MINTEval state reader inputs remain byte-identical to 0.1.0."
   },
   "notes": [
-    "FC table uses saved baseline600; live010 rebuild matches599/600, and599 sensitivity leaves gains/losses andp unchanged.",
-    "262K GLM pairedp=.061428, so improvement is not significant at.05; registeredD/D2 are noninferiority gates.",
-    "GLM followup effortmax differs from original-paperMAB high; oldFC GLM retries use131072,new65536.",
-    "Inputidentity percentages are not answeraccuracy and are not new reader runs."
+    "FC table uses the saved 600-question baseline; a live 0.1.0 rebuild matches 599/600, and the 599-question sensitivity check leaves gains/losses and p unchanged.",
+    "262K GLM paired p = 0.061428; registered D/D2 are non-inferiority gates.",
+    "GLM follow-up effort max differs from the original paper's MAB effort high; old FC GLM retries use 131,072, new 65,536.",
+    "Input identity percentages are not answer accuracy and are not new reader runs."
   ],
   "source_ledger": {
     "origin_name": "PERFORMANCE_EVIDENCE_LEDGER.json",
