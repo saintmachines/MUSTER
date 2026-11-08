@@ -14,7 +14,7 @@
  Honcho is the hosted service \cite{honcho}, called through its session-context API with the ingestion
  runner of its repository, after its ingestion queue had drained. A hosted service is not version-pinned,
 -so every request and response will be released with our code. past.dev (\url{https://past.dev/benchmarks/beam}, accessed September 2026) is the hosted service at
-+so every context it returned is released with our code, joined to its question. past.dev (\url{https://past.dev/benchmarks/beam}, accessed September 2026) is the hosted service at
++so the BEAM contexts it returned are released with our code, joined to their questions. past.dev (\url{https://past.dev/benchmarks/beam}, accessed September 2026) is the hosted service at
  its lowest recall level. It scores $72.3$ through its API under our instrument against $92.1$ on its site. Exabase M-1 (\url{https://exabase.io/research/exabase-achieves-state-of-the-art-on-beam-benchmark}, accessed October 2026) scores $42.6$ under our instrument ($67.0$ with its inference off) against $76.9$ on its site. Each system received every message with its BEAM timestamp, and each returned
  context was passed to the same reader with the same prompt.
  
