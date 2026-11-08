@@ -4,7 +4,7 @@
   "reference_candidate_patch_sha256": "806b64d2046a4128b3f80abf8e823390f7a3fb123f28eff7a611baed679b0dec",
   "reference_sdk_source_sha256": {
     "muster/__init__.py": "dd47c4e9655f1f5c88b351c0ddedd3a729e5023108b88174dd6cd3f8966f1133",
-    "muster/_version.py": "ae739b3e3b817044ada923b44ba82c752fe8b7c2133908d58fff8fd4b5146298",
+    "muster/_version.py": "62fb98cd69cab6a05bf88a86f0702efa7848600b208fd56673f6fda3bbcefa3b",
     "muster/adapters.py": "6a2e7b9fed37e15ae9629601ccf07159c454992eb79357408a72647a870bdace",
     "muster/bpe.py": "6ae2072e3be2dcd4195d1d57a3758c6b8d5bb67452fe9546874823e8c0736ab5",
     "muster/cache.py": "bb02b611e872af1ce8878081b09d0e0e6f89e4dca2134b6a4d82668e4337ad9a",
@@ -149,7 +149,7 @@
   "downloads": 0,
   "hosted_space_deployment": "not performed",
   "final_integrated_commit_validation": "Recorded separately with the final release commit and artifacts.",
-  "package_version": "0.1.1",
+  "package_version": "0.1.2",
   "reference_base_commit": "ee29b6267ca3206c97fb44b93dca3687b4a53462",
   "selection_limits": [
     "Native subject-relation slots and value walking apply to dot-serial plans only.",

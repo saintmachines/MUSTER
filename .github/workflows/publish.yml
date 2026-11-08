@@ -82,9 +82,10 @@ jobs:
           PY
       - name: Build the wheel from the sdist and check both descriptions
         run: |
-          python -m pip install --disable-pip-version-check build==1.6.1 hatchling==1.32.4 twine==7.0.0 packaging==26.3
+          python -m pip install --disable-pip-version-check build==1.6.1 hatchling==1.32.4 twine==7.0.0 packaging==26.3 "readme_renderer[md]==46.0" comrak==0.0.16
           python -m build --no-isolation
           python -m twine check --strict dist/*
+          python tools/check_package_description.py --source docs/library/README.md --dist dist --expected-version "${RELEASE_TAG#v}" --out /tmp/muster-description-check
       - name: Require the exact reviewed distribution files
         run: |
           python - <<'PY'

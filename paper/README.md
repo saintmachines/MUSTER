@@ -11,17 +11,13 @@ PDF SHA-256: `c959e71d7a0e40f335dfa1d86451e7c454e67c4a0b6f80fbfb4c81853cb42c7d`.
 
 For citation metadata, see [CITATION.cff](../CITATION.cff).
 
-## SDK 0.1.1 follow-up draft
+## Working draft and source diff
 
-The [updated working draft](MUSTER_followup_20261107.pdf) adds a one-page appendix on native numbered-store reading.
-It preserves the submitted manuscript's abstract, experimental tables and figures. The new six-row FactConsolidation
-table uses the paper's scoring and identifies the saved reader configurations. MINTEval state inputs retain the
-0.1.0 contexts and complete reader messages byte for byte.
+The [working draft](MUSTER_followup_20261107.pdf) updates two statements about the released reproduction materials.
+Its experimental tables and figures are the submitted manuscript's originals.
 
 - [Changes marked in blue](MUSTER_followup_20261107_DIFF.pdf)
 - [Source diff against v219I](MUSTER_followup_20261107_vs_v219I.diff)
 - [Clean TeX source bundle](MUSTER_followup_20261107_source.zip) · [Marked source bundle](MUSTER_followup_20261107_DIFF_source.zip)
-- [Table metrics](FC_0_1_1_PAPER_METRICS.json) · [Offline FC answer verification](../data/sdk_0_1_1/fc/README.md)
-
-Both draft PDFs have 34 pages. The submitted PDF above remains the original 33-page manuscript; these working
+Both working PDFs have 33 pages. The submitted PDF above remains the original manuscript; the working
 drafts are distributed separately. The source bundles contain the five files used in the verified build.

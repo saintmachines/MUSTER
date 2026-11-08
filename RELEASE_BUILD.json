@@ -1,15 +1,17 @@
 {
   "package": "muster-memory",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "source_date_epoch": 1794052800,
   "build_tools": {
     "build": "1.6.1",
     "hatchling": "1.32.4",
     "twine": "7.0.0",
-    "packaging": "26.3"
+    "packaging": "26.3",
+    "readme_renderer": "46.0",
+    "comrak": "0.0.16"
   },
   "artifacts": {
-    "muster_memory-0.1.1-py3-none-any.whl": "978fef59213aeefd77a7ea45058043558e03f668e5c003fdffbe332610e9251a",
-    "muster_memory-0.1.1.tar.gz": "7a8df4b61570d15f3160035cce511922ee82c520bf7602778ca4da5b83c68634"
+    "muster_memory-0.1.2-py3-none-any.whl": "781353244249e417c3b0d1e73e15f44138e1c684285fc51aa5ec07f041204fee",
+    "muster_memory-0.1.2.tar.gz": "b3dc69f2a9affdaf3c60f8abde2997d7d4a31f272274ed995a7dff8b2cb7ed5f"
   }
 }

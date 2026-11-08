@@ -18,6 +18,10 @@ report: 1,277 inputs matched the tested Python SDK's single-store native plans, 
 including the post-paper serial-format extension; the report pins the tested SDK source hashes. It previews configuration;
 it does not generate answers or replace the paper's retrieval evaluation.
 
+## Package 0.1.2 correction
+
+Version 0.1.2 fixes the PyPI description's app connection link and adds rendered-description and destination checks before publication. Its retrieval implementation and browser runtime are unchanged from 0.1.1. The working paper contains the original thirty experimental tables; its source diff only updates two statements about released reproduction materials.
+
 ## SDK 0.1.1 follow-up
 
 The [follow-up data](docs/data/sdk_0_1_1.json) separately record the six FactConsolidation rows, requested reader settings, observed models/providers, scoring view and retry limits. The tested SDK commit identifies the source used for input replay, not a later publication commit. MINT state preserves all 563 contexts and complete reader messages from 0.1.0; this is input identity, not a new quality measurement. The project page keeps the original paper tables separate from these native-SDK results.

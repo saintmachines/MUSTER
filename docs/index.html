@@ -372,7 +372,7 @@ footer .flinks a:hover{color:var(--text)}
 <div class="wrap">
 <a class="brand" href="#paper"><i></i>MUSTER</a>
 <div class="nav-links"><a href="#results">Results</a><a href="#cost">Cost</a><a href="#how">How it works</a><a href="#start">Quick start</a><a href="#more">More</a><a href="#cite">Cite</a></div>
-<span class="draft" title="Python library source">v0.1.1</span>
+<span class="draft" title="Python library source">v0.1.2</span>
 </div>
 </nav>
 <header class="paper" id="paper">
@@ -454,7 +454,7 @@ footer .flinks a:hover{color:var(--text)}
 <p>Scoring removes think blocks, keeps the first ten o200k tokens of each visible answer, and uses the preserved benchmark substring scorer. GPT-4o-mini-2024-07-18 requests temperature 0.7, seed 42 and ten output tokens. GLM-5.3-Flash on Novita requests maximum reasoning and GPT-6 Luna on Azure requests high reasoning, initially with 31,200 output tokens. GLM re-reads use 131,072 tokens for the 6K–64K baseline and 65,536 for the candidate; both 262K versions use 65,536. Exact paired, two-sided p-values are unadjusted and are included in the data.</p>
 <p>Candidate contexts match the context portion of all 600 and 200 saved reader inputs, separately for each reader. Frozen baseline contexts match 0.1.0 on 599 of 600 and 200 of 200; excluding the one differing question preserves the paired gain/loss counts. Before reader evaluation, the 262K stores also informed the slot key and a subject-length cap.</p>
 <p>On MINTEval state, all 563 contexts and complete reader messages remain byte-identical to 0.1.0. Recognized prefixes such as [step 3] retain their earlier selection rules. Source records remain stored verbatim; <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/changes.md">the SDK guide</a> describes selection behavior for each serial form.</p>
-<p><a href="https://github.com/saintmachines/MUSTER/blob/main/paper/README.md">Updated draft and source diff</a> · <a href="data/sdk_0_1_1.json">Models, counts and provenance</a></p>
+<p><a href="data/sdk_0_1_1.json">Models, counts and provenance</a></p>
 </div>
 </details>
 </div>
