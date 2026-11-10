@@ -11,6 +11,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from native_mab_contract import SDK_MARKER
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = json.loads((ROOT / "docs" / "data" / "headline.json").read_text(encoding="utf-8"))
@@ -43,6 +44,20 @@ def table(tex, label):
 
 def rows(block):
     return [[clean(c) for c in line.split("&")] for line in block.splitlines() if line.count("&") >= 2]
+
+
+def original_board_scope(block):
+    """Return only the explicitly historical rows, never a duplicate SDK label."""
+    current = [i for i, line in enumerate(block.splitlines()) if SDK_MARKER in line]
+    legacy = [i for i, line in enumerate(block.splitlines())
+              if "Public library 0.1.2, native mode: paper configuration" in line]
+    if len(current) > 1 or len(legacy) > 1 or (current and legacy):
+        raise ValueError("Repeated or conflicting implementation-scope marker")
+    lines = block.splitlines()
+    marker = current or legacy
+    if marker and r"\multicolumn{16}{l}" not in lines[marker[0]]:
+        raise ValueError("Implementation marker does not scope the MAB table")
+    return "\n".join(lines[:marker[0]] if marker else lines), bool(current)
 
 
 def main():
@@ -133,7 +148,8 @@ def main():
     print(f"build: {len(DATA['build_10m']['rows'])} systems compared")
 
     # bars of the "How it works" figure
-    board = {r[0]: r[-1] for r in rows(table(tex, "tab:board"))}
+    historical_board, explicit_original_labels = original_board_scope(table(tex, "tab:board"))
+    board = {r[0]: r[-1] for r in rows(historical_board)}
     gate = {r[0]: r[-1] for r in rows(table(tex, "tab:gate"))}
     want = {"BM25": board["BM25"], "Full context (128K window)": board["GPT-4o-mini 128K"],
             "True Memory": board["True Memory"],
@@ -185,17 +201,24 @@ def main():
     print(f"detection: {len(ds['stores'])} stores, 2 thresholds, 2 gaps compared")
 
     # MemoryAgentBench competency means (tab:board, last five columns)
-    names = {"MUSTER": ("MUSTER (ours)", "MUSTER, GPT-4o-mini"), "True Memory": "True Memory",
+    muster_names = (("Original, GPT-4o-mini",) if explicit_original_labels else
+                    ("MUSTER (ours)", "MUSTER, GPT-4o-mini"))
+    names = {"MUSTER": muster_names, "True Memory": "True Memory",
              "GPT-4o-mini 128K": "GPT-4o-mini 128K", "HippoRAG-v2": "HippoRAG-v2", "BM25": "BM25", "Honcho": "Honcho",
              "Hindsight": "Hindsight 0.10.3", "Mem0 2.1.0": "Mem0 2.1.0, full-ver.\\", "EverMemOS": "EverMemOS^\\dagger"}
-    board_rows = {re.sub(r"\s+,", ",", r[0]): r[-5:] for r in rows(table(tex, "tab:board"))}
+    # The overview figures retain the original harness row. Later library rows
+    # are checked separately by check_native_mab_tex.py rather than overwriting it.
+    board_rows = {}
+    for row in rows(historical_board):
+        key = re.sub(r"\s+,", ",", row[0])
+        board_rows.setdefault(key, []).append(row[-5:])
     for r in DATA["mab_board"]["rows"]:
         key = names[r["system"]]
-        if isinstance(key, tuple):   # the paper renamed MUSTER's GPT-4o-mini row when Tables 1 and 2 merged
-            key = next((k for k in key if k in board_rows), key[0])
-        if key not in board_rows:
-            sys.exit(f"tab:board has no row {key!r}; its rows: {sorted(board_rows)}")
-        same(f"board {r['system']}", [f"{x:.1f}" for x in r["values"]], board_rows[key])
+        candidates = key if isinstance(key, tuple) else (key,)
+        matches = [(name, value) for name in candidates for value in board_rows.get(name, [])]
+        if len(matches) != 1:
+            sys.exit(f"tab:board original implementation needs exactly one row for {r['system']!r}; found {len(matches)}")
+        same(f"board {r['system']}", [f"{x:.1f}" for x in r["values"]], matches[0][1])
     print(f"board: {len(DATA['mab_board']['rows'])} rows compared")
 
     # LoCoMo and LoCoMo-Refined (tab:locomo)

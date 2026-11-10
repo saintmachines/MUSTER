@@ -1,5 +1,5 @@
-"""The README's headline numbers come from one file, docs/data/headline.json: tools/make_readme.py generates the README's
-tables and figures from it, and neither the README nor that data carries a private pattern."""
+"""The original headline and native-library blocks each follow their named data.
+Generated figures and text retain their sources and carry no private pattern."""
 import hashlib
 import json
 import os
@@ -107,5 +107,6 @@ def test_headline_cells_equal_the_paper():
 @pytest.mark.skipif(not os.environ.get("MUSTER_PAPER_TEX"), reason="MUSTER_PAPER_TEX names the paper's tex source")
 def test_every_readme_number_is_in_the_paper_or_a_named_source():
     result = _run(ROOT / "scripts" / "check_readme_numbers.py", ROOT / "README.md", os.environ["MUSTER_PAPER_TEX"],
-                  ROOT / "docs" / "data" / "headline.json", ROOT / "gate" / "stage0d_render.md")
+                  ROOT / "docs" / "data" / "headline.json", ROOT / "gate" / "stage0d_render.md",
+                  ROOT / "docs" / "data" / "native_mab_0_1_2.json")
     assert result.returncode == 0, result.stdout + result.stderr

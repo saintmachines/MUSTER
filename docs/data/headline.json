@@ -52,7 +52,7 @@
       {"label": "True Memory", "kind": "other", "overall": 43.6, "note": "the strongest other retrieval or memory system; it also builds with no LLM call"},
       {"label": "Retrieval + assembly, no detection", "kind": "step", "overall": 50.3, "note": "detection off: the benchmark's own chunks, balanced floors and one rerank, assembled in stored order"},
       {"label": "+ detection: units, parents, order", "kind": "step", "overall": 56.0, "note": "detection on: unit, parent and order from each store's structure; floors still balanced"},
-      {"label": "+ retrieval mix matched (MUSTER)", "kind": "us", "overall": 57.5, "note": "the shipped system: the floors also follow the structure, parent graph first on numbered logs, balanced elsewhere"}
+      {"label": "+ retrieval mix matched (MUSTER)", "kind": "us", "overall": 57.5, "note": "original paper implementation: the floors also follow the structure, parent graph first on numbered logs, balanced elsewhere"}
     ]
   },
   "mechanism": {

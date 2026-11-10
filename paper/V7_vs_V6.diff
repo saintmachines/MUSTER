@@ -1,0 +1,218 @@
+--- candidate_v6.tex
++++ candidate_v7.tex
+@@ -70,7 +70,7 @@
+ \vspace{-3pt}
+ 
+ \begin{abstract}
+-An AI agent's memory stores differ in the structure they already record. Logs number their lines, example banks separate their records, and prose does neither. RAG keeps every word and can score well after heavy tuning to a dataset, but the tuning does not generalize. Model-built memory scales to long histories but is costly to build and can drop evidence. Agents need an autonomous strategy that is cheap to build and leaves little to tune. \sys{} detects each store's structure and builds memory from it. Two byte statistics, the shares of numbered lines and of text in records short enough to keep whole, set how a store is cut, grouped and ordered, with no model, labels, queries or candidate runs. \sys{} matches retrieval to that structure, which sets how dense, lexical and parent-graph channels split the slots. It assembles the context in stored order, keeping the newest version of each fact where an order is recorded. One rule, set on MemoryAgentBench, configures LoCoMo and BEAM unchanged. On MemoryAgentBench it is the strongest retrieval and memory system at the benchmark's reader ($57.5$ against $43.6$). On LoCoMo it is the strongest row under both answer prompts ($86.04$ and $93.46$) with no generative call before the answer, where the strongest other system makes $9{,}398$. On LoCoMo-Refined it matches that system under the official evaluation ($77.57$ against $75.33$) and leads it by $8.5$ points with a reasoning reader. On BEAM, from 100K to 10M tokens, it matches the strongest system we compare at equal context and has the highest mean with an open-weight reader at 9.7K tokens. It builds a 10M-token memory in $77$ seconds, where model-built memories take hours. Read beside a model-built memory, it averages $73.1$ on BEAM at $19.5$K tokens, above either store alone and every system at that budget. \sys{} keeps each store as written and re-derives its configuration in seconds as the store grows.
++An AI agent's memory stores differ in the structure they already record. Logs number their lines, example banks separate their records, and prose does neither. RAG keeps every word and can score well after heavy tuning to a dataset, but the tuning does not generalize. Model-built memory scales to long histories but is costly to build and can drop evidence. Agents need an autonomous strategy that is cheap to build and leaves little to tune. \sys{} detects each store's structure and builds memory from it. Two byte statistics, the shares of numbered lines and of text in records short enough to keep whole, set how a store is cut, grouped and ordered, with no model, labels, queries or candidate runs. \sys{} matches retrieval to that structure, which sets how dense, lexical and parent-graph channels split the slots. It assembles the context in stored order, keeping the newest version of each fact where an order is recorded. One rule, set on MemoryAgentBench, configures LoCoMo and BEAM unchanged. On MemoryAgentBench the released implementation with the paper settings scores $60.5$ against $43.6$ at the benchmark's reader. Its per-store automatic configuration scores $58.5$. The original implementation is the strongest row on LoCoMo under both answer prompts ($86.04$ and $93.46$) with no generative call before the answer, where the strongest other system makes $9{,}398$. On LoCoMo-Refined it matches that system under the official evaluation ($77.57$ against $75.33$) and leads it by $8.5$ points with a reasoning reader. On BEAM, from 100K to 10M tokens, it matches the strongest system we compare at equal context and has the highest mean with an open-weight reader at 9.7K tokens. It builds a 10M-token memory in $77$ seconds, where model-built memories take hours. Read beside a model-built memory, it averages $73.1$ on BEAM at $19.5$K tokens, above either store alone and every system at that budget. \sys{} keeps each store as written and re-derives its configuration in seconds as the store grows.
+ \end{abstract}
+ 
+ 
+@@ -96,10 +96,10 @@
+ \item \textbf{Detection before construction, for different kinds of agent memory.}
+ \sys{} configures a store's read path from two closed-form statistics of its bytes, with no model, labels, per-store queries or candidate runs. It re-derives that configuration in seconds as the store grows. The share of numbered lines tells whether the store records an order and only then turns on keep-newest resolution and parent-priority retrieval. The share of text in short records tells whether a finer cut keeps every record whole. The detected structure then sets how hybrid retrieval splits the slots among its channels, and assembly keeps stored order.
+ \item \textbf{First place on MemoryAgentBench.}
+-\sys{} ranks first overall among the retrieval and memory systems at the benchmark's reader, $57.5$ against $43.6$, with its hybrid retrieval and assembly alone at $50.3$ (Table~\ref{tab:gate}), and first on every competency among the retrieval and memory systems the benchmark reports, rising to $60.9$ and $64.7$ with GPT-4.1-mini and GPT-5-mini.\looseness=-1
+-\item \textbf{One rule, set on MemoryAgentBench, across three benchmarks.}
++The released implementation with the paper settings scores $60.5$ against $43.6$ at the benchmark's GPT-4o-mini reader and leads the reported retrieval and memory systems on every competency. It scores $62.1$ and $67.0$ with GPT-4.1-mini and GPT-5-mini, and $69.7$ and $67.0$ with GLM-5.3-Flash and GPT-6 Luna. Per-store automatic configuration scores $58.5$ at GPT-4o-mini. Table~\ref{tab:board} retains the original implementation for comparison.\looseness=-1
++\item \textbf{The original implementation across three benchmarks.}
+ On LoCoMo, \sys{} is the strongest row under both answer prompts ($93.46$ against $93.05$ under the strongest system's own) with no generative build or search call, whereas that system makes $9{,}398$. On LoCoMo-Refined it matches that system under the official evaluation ($77.57$ against $75.33$) and leads it by $8.5$ points with GLM-5.3-Flash. On BEAM, it matches the strongest system we compare at equal context from 100K to 10M tokens ($71.3$ against $70.8$ for the strongest model-built memory). It has the highest mean with the open-weight Qwen3.5-9B at 9.7K tokens. It builds a 10M-token memory in $77$ seconds instead of $13$ hours and $10{,}429$ calls.
+-\item \textbf{\sys{} works with or without a model-built memory.}
++\item \textbf{The original implementation works with or without a model-built memory.}
+ Model-built memories and raw text keep different evidence (Section~\ref{sec:beamscale}). We number Mem0's memories one per line in write order, so detection reads them as a numbered log, and a team that runs Mem0 can keep its store. \sys{} reads them beside the conversation under one budget and averages $73.1$ on BEAM, above either store alone ($70.8$ to $72.0$) and every system at that budget.
+ \end{enumerate}
+ 
+@@ -200,6 +200,8 @@
+ 
+ The compensated refinement branch spans the three parts. Detection takes it for a $4096$-token unit, retrieval searches at $1024$ tokens and selects four times as many units, and assembly shows them one container per parent in stored order. The nominal allowance is unchanged at $40{,}960$ tokens, so the branch raises retrieval resolution rather than buying more reader context (Appendix~\ref{app:hyper}).
+ 
++\paragraph{The released implementation.} On dot-numbered stores, the SDK groups qualifying records by subject and relation, leaving values out of the slot key. A relation must occur for at least two subjects, with changing subjects averaging at most four records. Other records keep the original slot rule. The question seeds subjects whose current values name further subjects. The read path follows these links for at most four rounds, ranks each round and presents the selected chain in hop order. Across these rounds it reranks at most $400$ walk candidates, in addition to the dense and parent-graph candidates already scored. Other numbering formats keep the original read path. Appendix~\ref{app:hyper} states the evaluation and development conditions.
++
+ \section{Setup}\label{sec:setup}
+ 
+ We evaluate all fourteen cells of MemoryAgentBench, an aggregate of separate public datasets whose stores span $25$ units for a detective novel to $18{,}333$ for an assertion log, a range of $733\times$ that one threshold pair has to cross without per-dataset tuning (Table~\ref{tab:stores}). We keep the benchmark's four competencies, accurate retrieval (AR), test-time learning (TTL), long-range understanding (LRU) and selective forgetting (SF), the last being the conflict-resolution family this paper turns on. Each cell keeps its own metric, substring match except GPT-4o judgment for LongMemEval and InfBench-Sum and recall@5 for Recsys. GPT-4o-mini \cite{gpt4omini}, GPT-4.1-mini \cite{gpt41} and GPT-5-mini \cite{gpt5} each answer $1{,}671$ questions (Table~\ref{tab:stores}), and Overall averages the four competency scores as \cite{mab} defines them. Mem0 2.1.0 \emph{full-ver.}\ reads its top $100$ extracted memories as the benchmark reads Mem0. Its raw-chunk row (the benchmark's chunks stored without extraction) and Honcho, Hindsight, EverMemOS and True Memory are cut at \sys{}'s per-question budget, never below one whole unit, and on FactConsolidation each reads its own uncut retrieval (Appendix~\ref{app:beamscale}).
+@@ -210,14 +212,14 @@
+ 
+ \section{Results}\label{sec:results}
+ 
+-In the results below, \sys{} is the strongest memory system or matches it at equal context on each benchmark. The rule is set on MemoryAgentBench, whose stores range from numbered logs to novels (Section~\ref{sec:mabres}). It runs unchanged on LoCoMo, LoCoMo-Refined, BEAM and a model-built memory (Sections~\ref{sec:locomo} and~\ref{sec:beamscale}).
++In the results below, \sys{} is the strongest memory system or matches it at equal context on each benchmark. The SDK rows report the current implementation on MemoryAgentBench. The other benchmark results retain the original implementation. The rule is set on MemoryAgentBench, whose stores range from numbered logs to novels (Section~\ref{sec:mabres}). It runs unchanged on LoCoMo, LoCoMo-Refined, BEAM and a model-built memory (Sections~\ref{sec:locomo} and~\ref{sec:beamscale}).
+ 
+ \subsection{MemoryAgentBench}\label{sec:mabres}
+ 
+ 
+ \begin{table}[t]
+ \centering\tabfont\setlength{\mw}{0.205\textwidth}\setlength{\cw}{\dimexpr(\textwidth-\mw)/15\relax}
+-\caption{\textbf{\sys{} leads MemoryAgentBench at every reader.} MemoryAgentBench \cite{mab}. Bold: \sys{}. $^{\dagger}$Built with GPT-OSS-120B \cite{gptoss} in place of the model of the system's paper. MCC: mean of the five in-context-learning cells. TTL: mean of MCC and Rec. All: mean of the four competencies. The final block uses public library 0.1.2 in native mode, first with the paper's cell configuration and then with per-store automatic configuration. The latter derives each store's plan and retains LongMemEval's rounds adapter. Other \sys{} rows use the original harness.}
++\caption{\textbf{MemoryAgentBench with the current SDK and the original implementation.} MemoryAgentBench \cite{mab}. Bold: \sys{}. $^{\dagger}$Built with GPT-OSS-120B \cite{gptoss} in place of the model of the system's paper. MCC: mean of the five in-context-learning cells. TTL: mean of MCC and Rec. All: mean of the four competencies. SDK (paper settings) uses released library 0.1.2 in native mode with the paper's cell configuration. The automatic row derives each store's plan and retains LongMemEval's rounds adapter. Original rows retain the original implementation.}
+ \label{tab:board}
+ \setlength{\tabcolsep}{0pt}
+ \begin{tabular}{@{}>{\raggedright\arraybackslash}p{\mw}*{15}{>{\centering\arraybackslash}p{\cw}}@{}}
+@@ -259,7 +261,7 @@
+ GPT-4o-mini 128K & 64.0 & 43.0 & 30.7 & 59.0 & 82.0 & 15.1 & 28.9 & 63.4 & 45.0 & \phantom{0}5.0 & 49.2 & 48.6 & 46.2 & 25.0 & 42.2 \\
+ \midrule
+ \multicolumn{16}{l}{\emph{\textbf{read-time memory only}: structure read from the bytes, ours}}\\
+-\ours \textbf{\sys{}, GPT-4o-mini} & \textbf{92.0} & \textbf{65.0} & \textbf{56.3} & \textbf{82.0} & \textbf{81.8} & \textbf{13.3} & \textbf{22.2} & \textbf{66.2} & \textbf{92.0} & \textbf{37.0} & \textbf{73.8} & \textbf{47.5} & \textbf{44.2} & \textbf{64.5} & \textbf{57.5} \\
++\ours \textbf{Original, GPT-4o-mini} & \textbf{92.0} & \textbf{65.0} & \textbf{56.3} & \textbf{82.0} & \textbf{81.8} & \textbf{13.3} & \textbf{22.2} & \textbf{66.2} & \textbf{92.0} & \textbf{37.0} & \textbf{73.8} & \textbf{47.5} & \textbf{44.2} & \textbf{64.5} & \textbf{57.5} \\
+ \midrule[\heavyrulewidth]
+ \multicolumn{16}{l}{\textbf{Stronger readers}, named in each row, all but \sys{} reported in \cite{mab}}\\
+ MIRIX 4.1-mini \cite{mirix} & 73.0 & 75.0 & 51.0 & 53.0 & 61.0 & 10.3 & 18.9 & 62.0 & 20.0 & \phantom{0}3.0 & 63.0 & 35.7 & 40.5 & 11.5 & 37.7 \\
+@@ -270,20 +272,24 @@
+ GPT-4.1-mini 1M & 83.0 & 66.0 & 55.7 & 82.6 & 75.6 & 16.7 & 41.9 & 56.3 & 36.0 & \phantom{0}5.0 & 71.8 & 46.2 & 49.1 & 20.5 & 46.9 \\
+ GPT-5-mini 400K & 85.0 & 71.0 & 63.3 & 78.2 & 84.0 & 13.2 & 56.3 & 76.1 & 78.0 & 28.0 & 74.4 & 48.6 & 66.2 & 53.0 & 60.6 \\
+ \midrule
+-\ours \textbf{\sys{}, GPT-4.1-mini} & \textbf{90.0} & \textbf{76.0} & \textbf{61.7} & \textbf{82.0} & \textbf{78.6} & \textbf{15.7} & \textbf{32.3} & \textbf{70.9} & \textbf{93.0} & \textbf{42.0} & \textbf{77.4} & \textbf{47.1} & \textbf{51.6} & \textbf{67.5} & \textbf{60.9} \\
+-\ours \textbf{\sys{}, GPT-5-mini} & \textbf{93.0} & \textbf{78.0} & \textbf{71.0} & \textbf{82.0} & \textbf{84.2} & \textbf{11.7} & \textbf{44.5} & \textbf{79.3} & \textbf{94.0} & \textbf{42.0} & \textbf{81.0} & \textbf{47.9} & \textbf{61.9} & \textbf{68.0} & \textbf{64.7} \\
++\ours \textbf{Original, GPT-4.1-mini} & \textbf{90.0} & \textbf{76.0} & \textbf{61.7} & \textbf{82.0} & \textbf{78.6} & \textbf{15.7} & \textbf{32.3} & \textbf{70.9} & \textbf{93.0} & \textbf{42.0} & \textbf{77.4} & \textbf{47.1} & \textbf{51.6} & \textbf{67.5} & \textbf{60.9} \\
++\ours \textbf{Original, GPT-5-mini} & \textbf{93.0} & \textbf{78.0} & \textbf{71.0} & \textbf{82.0} & \textbf{84.2} & \textbf{11.7} & \textbf{44.5} & \textbf{79.3} & \textbf{94.0} & \textbf{42.0} & \textbf{81.0} & \textbf{47.9} & \textbf{61.9} & \textbf{68.0} & \textbf{64.7} \\
+ \midrule[\heavyrulewidth]
+-\multicolumn{16}{l}{\textbf{Public library 0.1.2, native mode: paper configuration}}\\
++\multicolumn{16}{l}{\textbf{Current implementation: SDK (paper settings), library 0.1.2}}\\
+ \ours \textbf{\sys{}, GPT-4o-mini} & \textbf{92.0} & \textbf{65.0} & \textbf{56.3} & \textbf{83.0} & \textbf{81.8} & \textbf{13.3} & \textbf{21.9} & \textbf{66.2} & \textbf{93.0} & \textbf{60.0} & \textbf{74.1} & \textbf{47.5} & \textbf{44.0} & \textbf{76.5} & \textbf{60.5} \\
+ \ours \textbf{\sys{}, GPT-4.1-mini} & \textbf{90.0} & \textbf{76.0} & \textbf{61.7} & \textbf{81.0} & \textbf{78.6} & \textbf{15.7} & \textbf{32.6} & \textbf{70.9} & \textbf{94.0} & \textbf{51.0} & \textbf{77.2} & \textbf{47.1} & \textbf{51.8} & \textbf{72.5} & \textbf{62.1} \\
+ \ours \textbf{\sys{}, GPT-5-mini} & \textbf{93.0} & \textbf{78.0} & \textbf{71.0} & \textbf{82.0} & \textbf{84.2} & \textbf{12.2} & \textbf{44.5} & \textbf{79.3} & \textbf{95.0} & \textbf{59.0} & \textbf{81.0} & \textbf{48.2} & \textbf{61.9} & \textbf{77.0} & \textbf{67.0} \\
+-\multicolumn{16}{l}{\textbf{Public library 0.1.2, native mode: per-store automatic configuration}}\\
++\ours \textbf{\sys{}, GLM-5.3-Flash} & \textbf{97.0} & \textbf{77.0} & \textbf{72.0} & \textbf{92.0} & \textbf{91.0} & \textbf{15.7} & \textbf{42.6} & \textbf{84.0} & \textbf{94.0} & \textbf{61.0} & \textbf{84.5} & \textbf{53.3} & \textbf{63.3} & \textbf{77.5} & \textbf{69.7} \\
++\ours \textbf{\sys{}, GPT-6 Luna} & \textbf{94.0} & \textbf{77.0} & \textbf{74.7} & \textbf{81.0} & \textbf{88.8} & \textbf{15.5} & \textbf{38.2} & \textbf{78.4} & \textbf{94.0} & \textbf{58.0} & \textbf{81.7} & \textbf{52.2} & \textbf{58.3} & \textbf{76.0} & \textbf{67.0} \\
++\multicolumn{16}{l}{\textbf{SDK: per-store automatic configuration}}\\
+ \ours \textbf{\sys{}, GPT-4o-mini} & \textbf{89.0} & \textbf{66.0} & \textbf{56.3} & \textbf{77.0} & \textbf{79.2} & \textbf{12.1} & \textbf{13.6} & \textbf{66.2} & \textbf{93.0} & \textbf{60.0} & \textbf{72.1} & \textbf{45.6} & \textbf{39.9} & \textbf{76.5} & \textbf{58.5} \\
+ \bottomrule
+ \end{tabular}
+ \end{table}
+ 
+-The comparisons in the following paragraphs use the original harness rows of Table~\ref{tab:board}; the library rows are reported separately below.
++The current implementation, released as library 0.1.2, scores $60.53$, $62.14$ and $67.02$ Overall with GPT-4o-mini, GPT-4.1-mini and GPT-5-mini, and $69.67$ and $67.03$ with GLM-5.3-Flash and GPT-6 Luna (Table~\ref{tab:board}). These SDK (paper settings) rows retain the paper's cell configuration. With per-store automatic configuration, GPT-4o-mini scores $58.53$. Appendix~\ref{app:hyper} gives the reader and answer-reuse conditions.
++
++The following comparisons use the original implementation.
+ 
+ \textbf{First among retrieval and memory systems.} At the benchmark's reader, GPT-4o-mini, \sys{} leads every retrieval and memory system in
+ Table~\ref{tab:board} on the total, $57.5$ against $43.6$ for the strongest, True Memory, $41.6$ for HippoRAG-v2, which builds its graph with a language model, and $41.5$ for BM25, which uses none. \sys{} also leads on three of the four competencies, and against True Memory on all four, widest on selective forgetting, where detection acts ($64.5$ against $26.0$). At the
+@@ -302,13 +308,11 @@
+ 
+ Under Infini-style evaluation \cite{infini}, \sys{} reaches $67.4$ with GPT-5-mini against Infini Memory's reported $64.7$ at the same reader, with gains in accurate retrieval ($89.2$ against $81.2$) and selective forgetting ($67.5$ against $58.0$), the two competencies the gate and resolution act on (Appendix~\ref{app:expanded}).
+ 
+-The released library 0.1.2 also appears in Table~\ref{tab:board}. With the paper configuration held fixed, the native path scores $60.53$, $62.14$ and $67.02$ Overall for GPT-4o-mini, GPT-4.1-mini and GPT-5-mini. With per-store automatic configuration, GPT-4o-mini scores $58.53$. Appendix~\ref{app:hyper} details the configuration and answer-reuse conditions. Ablations and build timings use the original harness.
+-
+ \subsection{Ablations}\label{sec:ablations}
+ 
+ \begin{table}[t]
+ \centering\tabfont
+-\caption{\textbf{Detection adds 7.2 points.} MemoryAgentBench \cite{mab}, GPT-4o-mini \cite{gpt4omini} reader. Bold: \sys{}.}
++\caption{\textbf{Detection and policy controls.} MemoryAgentBench \cite{mab}, GPT-4o-mini \cite{gpt4omini} reader. The original-implementation rows give the $7.2$-point detection comparison. The separate SDK block compares parent-priority everywhere with the structure-matched gate on all fourteen cells under the paper settings. Bold: \sys{}.}
+ \label{tab:gate}
+ \setlength{\tabcolsep}{3pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
+ \begin{tabular}{l*{5}{c}}
+@@ -321,11 +325,17 @@
+ + detection, \parprio{} everywhere & 70.3 & 47.7 & 39.5 & 64.5 & 55.5 \\
+ \midrule
+ \ours \textbf{+ detection with its gate (\sys{})} & \textbf{73.8} & \textbf{47.5} & \textbf{44.2} & \textbf{64.5} & \textbf{57.5} \\
+-\bottomrule
+-\end{tabular}
+-\end{table}
+-
+-Each part has its own ablation. \emph{Detection} adds $7.2$ Overall to hybrid retrieval and context assembly over the benchmark's chunks under balanced floors, cut at \sys{}'s per-question budget, from $50.3$ to $57.5$, and raises all four competencies (Table~\ref{tab:gate}). With the balanced policy fixed, the units, parents and order it sets give $5.7$ of the $7.2$, and its policy gate the other $1.5$. Byte-read slots match an entity-aware extractor with no model call (Appendix~\ref{app:slotsrc}). The gate adds $2.0$ Overall over the parent-priority policy (Table~\ref{tab:gate}). \emph{Structure-matched hybrid retrieval} scores $6.0$ higher on SF with its parent-priority arm than with its balanced arm (Table~\ref{tab:gate}), and with assembly it adds $4.4$ points per cell over the same detected units ranked by the cross-encoder alone, with no floors, parents or order (Table~\ref{tab:reach}). \emph{Context assembly} raises judged summarisation on all three readers with one container per parent at a fixed allowance, pooled $+0.036$ ($p=0.017$, Appendix~\ref{app:more}). The unit count carries over to LoCoMo, where ten units, the budget MemoryAgentBench prescribes, score above five, twenty and forty under Mem0's answer prompt (Table~\ref{tab:locomoall}).
++\midrule[\heavyrulewidth]
++\multicolumn{6}{l}{\textbf{Current SDK, paper settings}}\\
++\ours \textbf{SDK, parent-priority everywhere} & \textbf{70.50} & \textbf{47.67} & \textbf{39.37} & \textbf{76.50} & \textbf{58.51} \\
++\ours \textbf{SDK, structure-matched gate} & \textbf{74.08} & \textbf{47.53} & \textbf{44.03} & \textbf{76.50} & \textbf{60.53} \\
++\bottomrule
++\end{tabular}
++\end{table}
++
++With the current SDK and paper settings, parent-priority retrieval on every cell scores $58.51$ Overall, while the structure-matched gate scores $60.53$ (Table~\ref{tab:gate}). Both retain the same cut, parents, read budget, rendering and retrieval models.
++
++In the original implementation, each part has its own ablation. \emph{Detection} adds $7.2$ Overall to hybrid retrieval and context assembly over the benchmark's chunks under balanced floors, cut at \sys{}'s per-question budget, from $50.3$ to $57.5$, and raises all four competencies (Table~\ref{tab:gate}). With the balanced policy fixed, the units, parents and order it sets give $5.7$ of the $7.2$, and its policy gate the other $1.5$. Byte-read slots match an entity-aware extractor with no model call (Appendix~\ref{app:slotsrc}). The gate adds $2.0$ Overall over the parent-priority policy (Table~\ref{tab:gate}). \emph{Structure-matched hybrid retrieval} scores $6.0$ higher on SF with its parent-priority arm than with its balanced arm (Table~\ref{tab:gate}), and with assembly it adds $4.4$ points per cell over the same detected units ranked by the cross-encoder alone, with no floors, parents or order (Table~\ref{tab:reach}). \emph{Context assembly} raises judged summarisation on all three readers with one container per parent at a fixed allowance, pooled $+0.036$ ($p=0.017$, Appendix~\ref{app:more}). The unit count carries over to LoCoMo, where ten units, the budget MemoryAgentBench prescribes, score above five, twenty and forty under Mem0's answer prompt (Table~\ref{tab:locomoall}).
+ 
+ \subsection{Transfer to LoCoMo}\label{sec:locomo}
+ 
+@@ -476,7 +486,7 @@
+ 
+ \subsection{Across the three benchmarks}\label{sec:across}
+ 
+-\sys{} ranks first overall and first or second in all six settings of Table~\ref{tab:overview}. \sys{}'s mean rank is $1.33$ against $3.83$ for the full store and its mean score $71.45$ against $64.70$ for True Memory (Figure~\ref{fig:scorebuild}). The full store falls to last on BEAM-10M, where the reader's window holds only the newest $850$K tokens of each $11$M-token conversation, while \sys{} reads $20$K tokens per question and scores $28.4$ to $30.0$ points higher (Table~\ref{tab:t7paired}). On MemoryAgentBench and LoCoMo-Refined, \sys{} is above every other memory system at both readers, including those that read as much or more ($p<0.001$, Table~\ref{tab:t7paired}), and on BEAM-10M it is level with Mem0, EverMemOS and True Memory, each reading $19$K to $20$K (Table~\ref{tab:t7paired}). Each system reads the contexts of Section~\ref{sec:mabres} and Tables~\ref{tab:locomo} and~\ref{tab:beamscale}, at \sys{}'s per-question budget where it takes one and at its own default otherwise (Appendix~\ref{app:overviewstd}). \sys{} reads $5$K to $20$K tokens per question, at $1/34$ of the full store's reader cost.
++Table~\ref{tab:overview} and Figure~\ref{fig:scorebuild} summarize the original implementation across the six settings. \sys{} ranks first overall and first or second in all six settings of Table~\ref{tab:overview}. \sys{}'s mean rank is $1.33$ against $3.83$ for the full store and its mean score $71.45$ against $64.70$ for True Memory (Figure~\ref{fig:scorebuild}). The full store falls to last on BEAM-10M, where the reader's window holds only the newest $850$K tokens of each $11$M-token conversation, while \sys{} reads $20$K tokens per question and scores $28.4$ to $30.0$ points higher (Table~\ref{tab:t7paired}). On MemoryAgentBench and LoCoMo-Refined, \sys{} is above every other memory system at both readers, including those that read as much or more ($p<0.001$, Table~\ref{tab:t7paired}), and on BEAM-10M it is level with Mem0, EverMemOS and True Memory, each reading $19$K to $20$K (Table~\ref{tab:t7paired}). Each system reads the contexts of Section~\ref{sec:mabres} and Tables~\ref{tab:locomo} and~\ref{tab:beamscale}, at \sys{}'s per-question budget where it takes one and at its own default otherwise (Appendix~\ref{app:overviewstd}). \sys{} reads $5$K to $20$K tokens per question, at $1/34$ of the full store's reader cost.
+ 
+ With the paper settings, library 0.1.2 scores $69.67$ and $67.03$ on MemoryAgentBench with GLM-5.3-Flash and GPT-6 Luna (Table~\ref{tab:expandedfrontier}).
+ 
+@@ -704,7 +714,7 @@
+ filename, and scoring runs through one entry point that owns the metric map, so a cell can neither be
+ scored by the wrong metric nor filled from a run it did not come from.
+ 
+-\paragraph{Rules transcribed from the harness.} The serial pattern is
++\paragraph{Rules of the original implementation.} The serial pattern is
+ \verb|^\s*(\d+)\.\s+(.+)$|. On a serial store the slot key is the record's first capitalised entity
+ span, lower-cased, joined to the record body in which every capitalised span is masked to \texttt{\_}.
+ Appendix~\ref{app:more} reports three coarser keys. Entities everywhere are capitalised spans found by a
+@@ -722,20 +732,20 @@
+ 
+ \paragraph{The released library's native path.} On dot-numbered stores, version 0.1.2 forms recognised subject and relation slots separately from their values. From question matches it follows value-to-subject links and orders the selected records by hop. For these FC rows it selects ten units. At most four walk rounds and $400$ walk candidates are a separate search budget in addition to the initial retrieval. Other numbering formats retain the original read path. Slots are matched by text pattern. These rules were developed using the $600$ FactConsolidation questions at the smaller scales and the reported $262$K stores.
+ 
+-\paragraph{Library evaluation conditions.} Native in Tables~\ref{tab:board}, \ref{tab:expanded4o-mini}, \ref{tab:expanded4.1-mini} and~\ref{tab:expanded5-mini} holds the paper's cell configuration fixed. Auto is the library's default: it derives a plan for each store and retains LongMemEval's rounds adapter. Against the paper configuration, it groups the retrieved units of SH-QA, MH-QA, the five in-context-learning cells and Recsys by parent, under one \texttt{Memory n:} header per parent, and enables the neighbour channel of the balanced arm on EventQA, InfBench-Sum and DetectiveQA. The paper configuration pools the first three texts when choosing a cell's branch. Auto chooses InfBench-Sum's branch per novel, changing it on $74$ of the $100$ novels. Both paths use the original questions, reference answers, reader settings and MemoryAgentBench rubrics, with the encoder and reranker capped at $2048$ input tokens. Changed complete reader inputs are read anew. Archived answers are reused only after matching the full messages and request settings, and judgments only after matching the full judge payload. DetectiveQA retains three reads per question. The Infini-style columns keep original harness values. The SDK (paper settings) columns of Table~\ref{tab:expandedfrontier} use this native path with each reader's original high-effort and empty-answer fallback contract. Ancillary per-cell CSVs accompany the source.
++\paragraph{Library evaluation conditions.} SDK (paper settings) in Tables~\ref{tab:board}, \ref{tab:expanded4o-mini}, \ref{tab:expanded4.1-mini}, \ref{tab:expanded5-mini} and~\ref{tab:expandedfrontier} is the released implementation in native mode with the paper's cell configuration held fixed. Auto is the library's default: it derives a plan for each store and retains LongMemEval's rounds adapter. Against the paper configuration, it groups the retrieved units of SH-QA, MH-QA, the five in-context-learning cells and Recsys by parent, under one \texttt{Memory n:} header per parent, and enables the neighbour channel of the balanced arm on EventQA, InfBench-Sum and DetectiveQA. The paper configuration pools the first three texts when choosing a cell's branch. Auto chooses InfBench-Sum's branch per novel, changing it on $74$ of the $100$ novels. Both paths use the original questions, reference answers, reader settings and MemoryAgentBench rubrics, with the encoder and reranker capped at $2048$ input tokens. Changed complete reader inputs are read anew. Archived answers are reused only after matching the full messages and request settings, and judgments only after matching the full judge payload. DetectiveQA retains three reads per question. The Infini-style columns keep original harness values. The SDK (paper settings) columns of Table~\ref{tab:expandedfrontier} use this native path with each reader's original high-effort and empty-answer fallback contract. Ancillary per-cell CSVs accompany the source.
+ 
+ \section{Complete cell results}\label{app:expanded}
+ 
+-Tables~\ref{tab:expanded4o-mini}, \ref{tab:expanded4.1-mini} and~\ref{tab:expanded5-mini} give every cell of \sys{} at the three readers, GPT-4o-mini, GPT-4.1-mini and GPT-5-mini. In these three tables, the last column is \sys{} under Infini-style scoring, where Rec and Summ keep their MemoryAgentBench metrics. DetectiveQA is the mean of three reads. Native uses library 0.1.2 with the paper configuration. Auto uses per-store automatic configuration and is reported only for GPT-4o-mini. Table~\ref{tab:expandedfrontier} adds GLM-5.3-Flash and GPT-6 Luna under their original MemoryAgentBench reader and scoring contracts. For each reader, $224$ changed-input response slots are read anew and $1{,}589$ identical-input slots reuse archived answers, including the three DetectiveQA reads.
++Tables~\ref{tab:expanded4o-mini}, \ref{tab:expanded4.1-mini} and~\ref{tab:expanded5-mini} give every cell of \sys{} at the three readers, GPT-4o-mini, GPT-4.1-mini and GPT-5-mini. In these three tables, the last column is \sys{} under Infini-style scoring, where Rec and Summ keep their MemoryAgentBench metrics. DetectiveQA is the mean of three reads. SDK (paper settings) uses the current released implementation with the paper configuration. Auto uses per-store automatic configuration and is reported only for GPT-4o-mini. Table~\ref{tab:expandedfrontier} adds GLM-5.3-Flash and GPT-6 Luna under their original MemoryAgentBench reader and scoring contracts. For each reader, $224$ changed-input response slots are read anew and $1{,}589$ identical-input slots reuse archived answers, including the three DetectiveQA reads.
+ 
+ \begin{table}[!htbp]
+ \centering\tabfont
+-\caption{\textbf{Every cell with GPT-4o-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Bold: \sys{}. Infini-style: Infini Memory's GPT-5 binary judge, except on Recsys and InfBench-Sum. Overall: mean of the four competencies (Table~\ref{tab:board}). \sys{}: original harness. Native: public library 0.1.2 with the paper's cell configuration. Auto: the library's default per-store derivation, retaining LongMemEval's rounds adapter (Appendix~\ref{app:hyper}).}
++\caption{\textbf{Every cell with GPT-4o-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Original implementation: the original reported results. SDK (paper settings): released library 0.1.2 in native mode with the paper's cell configuration. Auto: per-store derivation with LongMemEval's rounds adapter. Infini-style retains the original implementation's judgments. Overall: mean of the four competencies (Table~\ref{tab:board}). Bold: \sys{}.}
+ \label{tab:expanded4o-mini}
+ \setlength{\tabcolsep}{4pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
+ \begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
+ \toprule
+-Cell & $n$ & \textbf{\sys{}} & \textbf{Native} & \textbf{Auto} & \textbf{\sys{}, Infini-style} \\
++Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \textbf{Auto} & \textbf{\sys{}, Infini-style} \\
+ \midrule
+ SH-QA & 100 & \textbf{92.00} & \textbf{92.00} & \textbf{89.00} & \textbf{98.00} \\
+ MH-QA & 100 & \textbf{65.00} & \textbf{65.00} & \textbf{66.00} & \textbf{80.00} \\
+@@ -765,12 +775,12 @@
+ 
+ \begin{table}[!htbp]
+ \centering\tabfont
+-\caption{\textbf{Every cell with GPT-4.1-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Bold: \sys{}. Columns, Infini-style and Overall: as in Table~\ref{tab:expanded4o-mini}.}
++\caption{\textbf{Every cell with GPT-4.1-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Columns, Infini-style and Overall: as in Table~\ref{tab:expanded4o-mini}. Bold: \sys{}.}
+ \label{tab:expanded4.1-mini}
+ \setlength{\tabcolsep}{4pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
+ \begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
+ \toprule
+-Cell & $n$ & \textbf{\sys{}} & \textbf{Native} & \textbf{\sys{}, Infini-style} \\
++Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \textbf{\sys{}, Infini-style} \\
+ \midrule
+ SH-QA & 100 & \textbf{90.00} & \textbf{90.00} & \textbf{96.00} \\
+ MH-QA & 100 & \textbf{76.00} & \textbf{76.00} & \textbf{86.00} \\
+@@ -794,12 +804,12 @@
+ 
+ \begin{table}[!htbp]
+ \centering\tabfont
+-\caption{\textbf{Every cell with GPT-5-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Bold: \sys{}. Columns, Infini-style and Overall: as in Table~\ref{tab:expanded4o-mini}.}
++\caption{\textbf{Every cell with GPT-5-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Columns, Infini-style and Overall: as in Table~\ref{tab:expanded4o-mini}. Bold: \sys{}.}
+ \label{tab:expanded5-mini}
+ \setlength{\tabcolsep}{4pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
+ \begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
+ \toprule
+-Cell & $n$ & \textbf{\sys{}} & \textbf{Native} & \textbf{\sys{}, Infini-style} \\
++Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \textbf{\sys{}, Infini-style} \\
+ \midrule
+ SH-QA & 100 & \textbf{93.00} & \textbf{93.00} & \textbf{97.00} \\
+ MH-QA & 100 & \textbf{78.00} & \textbf{78.00} & \textbf{93.00} \\
+@@ -823,14 +833,14 @@
+ 
+ \begin{table}[!htbp]
+ \centering\tabfont
+-\caption{\textbf{Library results with GLM-5.3-Flash and GPT-6 Luna.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Original harness: the MemoryAgentBench rows of Table~\ref{tab:overview}. SDK (paper settings): public library 0.1.2 in native mode with the paper's cell configuration. Both use the original reader and scoring contracts, including their empty-answer fallback (Appendix~\ref{app:hyper}). DetectiveQA averages three reads. Overall averages the four competencies.}
++\caption{\textbf{Every cell with GLM-5.3-Flash and GPT-6 Luna.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Original implementation: the MAB rows of Table~\ref{tab:overview}. SDK (paper settings): released library 0.1.2 in native mode with the paper's cell configuration. The original reader, scoring and empty-answer fallback contracts are retained. DetectiveQA averages three reads. Overall averages the four competencies.}
+ \label{tab:expandedfrontier}
+ \setlength{\tabcolsep}{4pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
+ \begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
+ \toprule
+  & & \multicolumn{2}{>{\columncolor{oursbg}}c}{GLM-5.3-Flash} & \multicolumn{2}{>{\columncolor{oursbg}}c}{GPT-6 Luna} \\
+ \cmidrule(lr){3-4}\cmidrule(lr){5-6}
+-Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{harness}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \shortstack{\textbf{Original}\\\textbf{harness}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} \\
++Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} \\
+ \midrule
+ SH-QA & 100 & \textbf{97.00} & \textbf{97.00} & \textbf{94.00} & \textbf{94.00} \\
+ MH-QA & 100 & \textbf{77.00} & \textbf{77.00} & \textbf{77.00} & \textbf{77.00} \\

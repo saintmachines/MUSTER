@@ -2,8 +2,8 @@
 
 What was checked for this release, and the evidence for each line.
 
-The paper PDF matches the author's submitted arXiv package, local revision v219I. [paper/README.md](paper/README.md)
-identifies the included manuscript. The [project page](https://saintmachines.github.io/MUSTER/)
+The paper directory preserves the author's submitted arXiv package, local revision v219I, and provides a separate November 10 working draft with current SDK measurements. [paper/README.md](paper/README.md)
+identifies both. The [project page](https://saintmachines.github.io/MUSTER/)
 and [repository](https://github.com/saintmachines/MUSTER) are its release addresses.
 The Python distribution is `muster-memory`. Install it with `pip install muster-memory` for structure inspection.
 Add `[models]` for local retrieval, `[models,mcp]` for MCP, or the framework extras documented in the library guide.
@@ -20,7 +20,15 @@ it does not generate answers or replace the paper's retrieval evaluation.
 
 ## Package 0.1.2 correction
 
-Version 0.1.2 fixes the PyPI description's app connection link and adds rendered-description and destination checks before publication. Its retrieval implementation and browser runtime are unchanged from 0.1.1. The working paper contains the original thirty experimental tables; its source diff only updates two statements about released reproduction materials.
+Version 0.1.2 fixes the PyPI description's app connection link and adds rendered-description and destination checks before publication. Its retrieval implementation and browser runtime are unchanged from 0.1.1. At that November 8 correction, the working paper contained the original thirty experimental tables and its source diff only updated two statements about released reproduction materials.
+
+## November 10 current SDK evaluation
+
+The completed [cell data](docs/data/native_mab_0_1_2.json) evaluate the released 0.1.2 wheel with 2048-token encoder and reranker limits. With the paper settings, MAB Overall is 60.5339, 62.1394, 67.0231, 69.6659 and 67.0278 for GPT-4o-mini, GPT-4.1-mini, GPT-5-mini, GLM-5.3-Flash and GPT-6 Luna. These are the current implementation's representative MAB results. There are 14 cells and 1,671 questions per reader; DetectiveQA's three reads make 1,813 raw response slots. The GPT reader group combines 678 fresh answers with 4,335 reused question-reader score units. The GLM/Luna group has 448 fresh and 3,178 reused raw response slots. Reuse requires complete-message/request equality; the two accounting groups retain their different units.
+
+The separately measured per-store automatic 4o-mini result is 58.5282 Overall. It improves SF while AR, TTL and LRU decrease relative to the original paper harness. These rows are not a new aggregate over the other benchmarks, and no new Infini-style judgment is implied. A same-numerical-cache replay through actual 0.1.0 and 0.1.2 gives identical non-FC contexts and reconstructed full reader messages on all 1,471 questions under the fixed paper configuration.
+
+The [35-page working draft](paper/MUSTER_native_20261109.pdf), two source diffs and cell CSVs record these conditions. Table 2 also compares parent-priority selection, 58.5092, with the final policy, 60.5339, on the same SDK axis. Independent source checks preserve the original numeric rows, 25 full table blocks, figures and algorithm. Clean and marked PDFs have identical page-level word sequences, no undefined references or overflowing boxes, and the eleven-file upload ZIP rebuilds to the same clean PDF. The other benchmarks and six-setting overview retain their original implementation scope. Individual cells include losses. Current commit CI must still be read from its own Actions run; arXiv publication is a separate account/server state.
 
 ## SDK 0.1.1 follow-up
 

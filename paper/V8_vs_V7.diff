@@ -1,0 +1,11 @@
+--- candidate_v7.tex
++++ candidate_v8.tex
+@@ -125,7 +125,7 @@
+ \begin{figure}[t]
+ \centering
+ \includegraphics[width=\textwidth]{fig_read3_v122.pdf}
+-\caption{\textbf{\sys{} detects once, then reads} (Algorithm~\ref{alg:muster}). \textbf{(A)} Detection derives unit, parent and order from two byte statistics, and its policy gate picks the arm, once per store and with no model. \textbf{(B)} Retrieval (reach, rerank) and assembly (resolve, render) answer each query with one query embedding, one rerank and one reader call over units embedded once per store. Nothing is written back. Containers apply on the refined branch (Section~\ref{sec:resolve}).}
++\caption{\textbf{\sys{} detects once, then reads} (Algorithm~\ref{alg:muster}). \textbf{(A)} Detection derives unit, parent and order from two byte statistics, and its policy gate picks the arm, once per store and with no model. \textbf{(B)} Retrieval (reach, rerank) and assembly (resolve, render) answer each query with one query embedding, an initial rerank and one reader call over units embedded once per store. The SDK's numbered-fact walk can add rerank rounds. Nothing is written back. Containers apply on the refined branch (Section~\ref{sec:resolve}).}
+ \label{fig:read}
+ \end{figure}
+ 

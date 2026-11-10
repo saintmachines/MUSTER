@@ -2,7 +2,28 @@
 """Check that every number in README.md appears in the paper tex or in a named source file (the headline data, a gate
 report). Usage: check_readme_numbers.py README.md paper.tex [source ...]"""
 import sys, re
+from pathlib import Path
+import subprocess
 readme = open(sys.argv[1], encoding='utf-8').read()
+# The generated native table is checked by its exact cells and display rounding,
+# rather than by finding a rounded substring somewhere in a full-precision JSON.
+native = re.compile(r'<!-- BEGIN native-mab -->.*?<!-- END native-mab -->', re.S)
+if native.search(readme):
+    if len(native.findall(readme)) != 1:
+        sys.exit('Expected exactly one scoped SDK result block')
+    root = Path(sys.argv[1]).resolve().parent
+    source = root / 'docs/data/native_mab_0_1_2.json'
+    if source.resolve() not in {Path(p).resolve() for p in sys.argv[3:]}:
+        sys.exit('The native result block requires its named canonical JSON source')
+    for tool in ('make_native_mab.py', 'check_native_mab_tex.py'):
+        command = [sys.executable, str(root / 'tools' / tool)]
+        if tool == 'make_native_mab.py':
+            command.append('--check')
+        result = subprocess.run(command, capture_output=True, text=True)
+        if result.returncode:
+            print(result.stdout + result.stderr)
+            sys.exit(result.returncode)
+    readme = native.sub('', readme)
 tex = open(sys.argv[2], encoding='utf-8').read()
 tex_n = tex.replace('{,}', ',').replace('$', '').replace('\\,', '')
 tex_n += "".join(open(f, encoding='utf-8').read() for f in sys.argv[3:])

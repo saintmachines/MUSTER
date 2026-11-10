@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://saintmachines.github.io/MUSTER/"><b>Project page</b></a> ·
-  <a href="paper/MUSTER.pdf"><b>Paper (PDF)</b></a> ·
+  <a href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_native_20261109.pdf"><b>Paper (PDF)</b></a> ·
   <a href="https://pypi.org/project/muster-memory/"><b>PyPI</b></a> ·
   <a href="https://saintmachines.github.io/MUSTER/try/"><b>Inspect a store in your browser</b></a> ·
   <a href="https://huggingface.co/datasets/saintmachines/MUSTER-eval"><b>Evaluation data</b></a> ·
@@ -28,7 +28,7 @@
 pip install "muster-memory[models,mcp]"
 ```
 
-The figures and tables below report the paper's original evaluation. A separate [0.1.1 SDK follow-up](https://saintmachines.github.io/MUSTER/#sdk-followup) compares native dot-serial reading on FactConsolidation with frozen 0.1.0 inputs; [its data and conditions](docs/data/sdk_0_1_1.json) also record MINT input compatibility. Frozen exact-mode paper presets retain their existing behavior.
+The figures report the paper's original evaluation. The [0.1.2 evaluation on all fourteen MAB tasks](#native-mab) and the [0.1.1 FC follow-up](https://saintmachines.github.io/MUSTER/#sdk-followup) are shown separately with their conditions. Frozen exact-mode paper presets retain their existing behavior.
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_01_dark.svg"><img src="docs/assets/readme/h2_01_light.svg" alt="" height="18"></picture>Results
 
@@ -247,6 +247,40 @@ MUSTER  beam_conv0.txt  115,630 tokens
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_05_dark.svg"><img src="docs/assets/readme/h2_05_light.svg" alt="" height="18"></picture>Detailed results
 
+<!-- BEGIN native-mab -->
+<a id="native-mab"></a>
+<details>
+<summary><b>Library 0.1.2 on all fourteen MemoryAgentBench tasks</b></summary>
+
+SDK (paper settings) holds the paper cell settings fixed. SDK (automatic settings) is measured separately for GPT-4o-mini. Both are compared with the Original implementation using the same source stores and questions; selected reader contexts can differ.
+
+| Reader | Configuration | AR | TTL | LRU | SF | Overall |
+|---|---|---:|---:|---:|---:|---:|
+| GPT-4o-mini | Original implementation | 73.83 | 47.53 | 44.22 | 64.50 | 57.52 |
+| GPT-4.1-mini | Original implementation | 77.42 | 47.13 | 51.61 | 67.50 | 60.92 |
+| GPT-5-mini | Original implementation | 81.00 | 47.93 | 61.91 | 68.00 | 64.71 |
+| GLM-5.3-Flash | Original implementation | 84.75 | 53.58 | 63.48 | 69.00 | 67.70 |
+| GPT-6 Luna | Original implementation | 81.42 | 52.15 | 57.93 | 66.50 | 64.50 |
+| GPT-4o-mini | SDK (paper settings) | 74.08 | 47.53 | 44.03 | 76.50 | 60.53 |
+| GPT-4.1-mini | SDK (paper settings) | 77.17 | 47.13 | 51.76 | 72.50 | 62.14 |
+| GPT-5-mini | SDK (paper settings) | 81.00 | 48.18 | 61.91 | 77.00 | 67.02 |
+| GLM-5.3-Flash | SDK (paper settings) | 84.50 | 53.33 | 63.33 | 77.50 | 69.67 |
+| GPT-6 Luna | SDK (paper settings) | 81.67 | 52.15 | 58.29 | 76.00 | 67.03 |
+| GPT-4o-mini | SDK (automatic settings) | 72.08 | 45.64 | 39.89 | 76.50 | 58.53 |
+
+Overall is higher for all five readers with SDK paper settings; individual cells do not all improve. With automatic settings, GPT-4o-mini improves SF and Overall while AR, TTL and LRU decrease versus the original implementation.
+
+Each reader covers 1,671 questions and 1,813 response slots in 14 cells; DetectiveQA retains three reads. SDK encoder and reranker input limits are 2,048 tokens. Automatic settings derive a plan per store at the benchmark reference chunk P and retain the original LongMemEval rounds adapter.
+
+The three GPT readers use 678 fresh reader answers and 4,335 reused question-reader score units. The two frontier readers use 448 fresh response slots and 3,178 reused raw slots. These accounting units are kept separate; neither is an API POST count. Reuse requires identical complete messages and request settings.
+
+[All task cells and conditions](https://github.com/saintmachines/MUSTER/blob/main/docs/data/native_mab_0_1_2.json) · [Updated paper](https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_native_20261109.pdf) · [Marked changes](https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_native_20261109_marked.pdf)
+
+The numbered-fact rules were developed on the reported FC data. The 71.45 six-setting overview, original build timings and original Infini-style results retain their original-implementation scope.
+
+</details>
+<!-- END native-mab -->
+
 <details>
 <summary><b>MemoryAgentBench</b> (GPT-4o-mini reader, the benchmark's own protocol)</summary>
 
@@ -406,7 +440,7 @@ GitHub's *Cite this repository* button reads [CITATION.cff](CITATION.cff).
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_09_dark.svg"><img src="docs/assets/readme/h2_09_light.svg" alt="" height="18"></picture>Paper, status, license
 
 The paper is *MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure*; the PDF is in
-[`paper/MUSTER.pdf`](paper/MUSTER.pdf). This is a research release. What was checked, and the evidence for each line,
+[`paper/MUSTER_native_20261109.pdf`](https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_native_20261109.pdf). The [paper archive](https://github.com/saintmachines/MUSTER/blob/main/paper/README.md) retains the submitted manuscript and earlier drafts. This is a research release. What was checked, and the evidence for each line,
 is in [STATUS.md](STATUS.md).
 
 The library is Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Benchmark content keeps its own license.

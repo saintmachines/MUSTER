@@ -1,0 +1,15 @@
+sdk_version,configuration,reader,cell,n,repeats,old_percent,new_percent,delta_pp,metric_source_sha256
+0.1.2,per_store_auto_native,4o-mini,shqa,100,1,92.0,89.0,-3.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,mhqa,100,1,65.0,66.0,1.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,lme,300,1,56.333333333333336,56.333333333333336,0.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,evq,100,1,82.0,77.0,-5.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,b77,100,1,96.0,94.0,-2.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,trcC,100,1,70.0,66.0,-4.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,clin,100,1,90.0,89.0,-1.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,nlu,100,1,88.0,87.0,-1.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,trcF,100,1,65.0,60.0,-5.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,rec,200,1,13.25,12.083333333333336,-1.1666666666666643,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,summ,100,1,22.237952357760168,13.578176715428778,-8.65977564233139,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,det,71,3,66.19718309859155,66.19718309859155,0.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,fcsh,100,1,92.0,93.0,1.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
+0.1.2,per_store_auto_native,4o-mini,fcmh,100,1,37.0,60.0,23.0,77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6
