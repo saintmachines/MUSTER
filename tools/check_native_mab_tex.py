@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Check five-reader SDK MAB data, exact paper rows, and baseline preservation.
+"""Check five-reader SDK and three-reader Auto MAB data and paper scopes.
 
 Usage: python tools/check_native_mab_tex.py [--data docs/data/native_mab_0_1_2.json]
        [--tex paper/MUSTER_native_20261109.tex]
        [--baseline paper/MUSTER_followup_20261107.tex]
 
---source-only requires explicit --tex, --baseline, --direct-baseline and
---source-receipt. It verifies source before PDF packaging, emits an explicit
-non-publication status and never substitutes for the default full artifact gate.
+--source-only requires explicit --tex, --baseline, --direct-baseline,
+--previous-baseline and --source-receipt. This mode verifies source before PDF
+packaging and emits an explicit non-publication status.
 This verifier does not run a benchmark or import a model. A fresh --report may
 be written on request. Display uses Decimal ROUND_HALF_UP; duplicate reader
 labels are parsed within their explicit implementation scopes.
@@ -15,6 +15,7 @@ labels are parsed within their explicit implementation scopes.
 from __future__ import annotations
 
 import argparse
+import csv
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP, getcontext
 import hashlib
 import json
@@ -22,10 +23,12 @@ from pathlib import Path
 import re
 import sys
 import zipfile
-from native_mab_contract import (AUTO_MARKER, DIRECT_V6_SHA, PP_MARKER,
+from native_mab_contract import (AUTO_4OMINI_CSV_PATH, AUTO_ADDITIONAL_CSV_FIELDS, AUTO_ADDITIONAL_CSV_PATH,
+    AUTO_CAPTION_AFTER, AUTO_CAPTION_BEFORE, AUTO_MARKER, AUTO_READERS,
+    DIRECT_V6_SHA, DIRECT_V9_SHA, PAPER_REVISION, PP_MARKER,
     PUBLIC_B_SHA, READ_CAPTION_AFTER, READ_CAPTION_BEFORE, READERS as READER_SPECS,
-    SDK_MARKER, SOURCE_RECEIPT_SCHEMA, TABLE_SOURCES,
-    ContractError, validate_data)
+    SDK_MARKER, SOURCE_RECEIPT_SCHEMA, TABLE_SOURCES, V10_CAPTION_ONLY_TABLES, V10_CHANGED_TABLES,
+    ContractError, automatic_records, validate_data)
 
 ROOT = Path(__file__).resolve().parents[1]
 getcontext().prec = 50
@@ -174,10 +177,10 @@ def table_map(text):
     return result
 
 
-def read_caption_span(block):
-    """Locate the one actual caption body; a matching phrase elsewhere is invalid."""
+def caption_span(block, context):
+    """Locate one actual caption body; a matching phrase elsewhere is invalid."""
     prefix = r"\caption{"
-    require(block.count(prefix) == 1, "fig:read must contain one ordinary caption")
+    require(block.count(prefix) == 1, context + " must contain one ordinary caption")
     start = block.index(prefix) + len(prefix)
     end, depth = start, 1
     while end < len(block) and depth:
@@ -186,8 +189,12 @@ def read_caption_span(block):
             continue
         depth += (block[end] == "{") - (block[end] == "}")
         end += 1
-    require(depth == 0, "Unclosed fig:read caption")
+    require(depth == 0, "Unclosed " + context + " caption")
     return start, end - 1
+
+
+def read_caption_span(block):
+    return caption_span(block, 'fig:read')
 
 
 def normalize_read_caption(block):
@@ -306,19 +313,121 @@ def expanded_rows(block):
     return result
 
 
+def expanded_gpt_header(block, label):
+    """Bind the expanded column order to the named reader's actual table."""
+    start, end = caption_span(block, label)
+    require(block[start:end].startswith(r'\textbf{Every cell with ' + label + '.}'),
+            'Wrong expanded GPT reader caption: ' + label)
+    tabulars = environments(block, {'tabular', 'tabular*'})
+    require(len(tabulars) == 1, 'Expected one expanded GPT tabular: ' + label)
+    headers = [line for line in tabulars[0].splitlines() if line.startswith('Cell &')]
+    require(len(headers) == 1, 'Expected one expanded GPT header: ' + label)
+    return headers[0]
+
+
+def compare_previous_revision(previous, current):
+    """Three numeric tables plus one exact caption clause may differ from v9."""
+    old_tables, new_tables = table_map(previous), table_map(current)
+    require(len(old_tables) == 31 and set(old_tables) == set(new_tables), 'Previous v9 table inventory differs')
+    allowed = set(V10_CHANGED_TABLES) | set(V10_CAPTION_ONLY_TABLES)
+    require(allowed <= set(old_tables), 'Missing v9-to-v10 scoped tables')
+    unchanged = sorted(set(old_tables) - allowed)
+    for label in unchanged:
+        require(old_tables[label] == new_tables[label], 'Changed non-exempt v9 table ' + label)
+    for label in V10_CAPTION_ONLY_TABLES:
+        compare_auto_caption_table(old_tables[label], new_tables[label], label)
+    require(section_headings(previous) == section_headings(current), 'Changed v9 section structure')
+    require(environments(previous, {'figure', 'figure*'}) == environments(current, {'figure', 'figure*'}),
+            'Changed v9 figure block')
+    require(environments(previous, {'algorithm', 'algorithm*'}) == environments(current, {'algorithm', 'algorithm*'}),
+            'Changed v9 algorithm')
+    return unchanged
+
+
+def compare_auto_caption_table(old, new, label):
+    """The Auto4o tabular and all bytes outside one caption clause stay fixed."""
+    require(re.findall(r"\\label\{([^}]+)\}", old) == [label]
+            and re.findall(r"\\label\{([^}]+)\}", new) == [label], 'Auto caption table label differs')
+    old_tabular = environments(old, {'tabular', 'tabular*'})
+    require(len(old_tabular) == 1 and old_tabular == environments(new, {'tabular', 'tabular*'}),
+            'Auto caption-only tabular changed')
+    old_start, old_end = caption_span(old, label)
+    new_start, new_end = caption_span(new, label)
+    require(old[old_start:old_end].count(AUTO_CAPTION_BEFORE) == old.count(AUTO_CAPTION_BEFORE) == 1,
+            'Expected exact v9 Auto caption clause')
+    new_caption = new[new_start:new_end]
+    require(new_caption.count(AUTO_CAPTION_AFTER) == new.count(AUTO_CAPTION_AFTER) == 1,
+            'Expected exact v10 Auto caption clause inside caption')
+    require(AUTO_CAPTION_BEFORE not in new, 'Old Auto caption clause remains')
+    restored = new[:new_start] + new_caption.replace(AUTO_CAPTION_AFTER, AUTO_CAPTION_BEFORE, 1) + new[new_end:]
+    require(restored == old, 'Auto caption table changed beyond the authorized clause')
+
+
+def check_auto_csv(path, data, records, include_overall):
+    """Check named reader/cell rows against the locked canonical source values."""
+    with path.open(encoding='utf-8', newline='') as stream:
+        reader = csv.DictReader(stream)
+        require(reader.fieldnames == list(AUTO_ADDITIONAL_CSV_FIELDS), 'Auto extension CSV columns differ')
+        rows = list(reader)
+    expected_rows = []
+    cell_order = data['benchmark']['cell_order'] + (['Overall'] if include_overall else [])
+    for record in records:
+        for cell in cell_order:
+            expected_rows.append((record, cell))
+    require(len(rows) == len(expected_rows), 'Auto CSV row count differs')
+    for row, (record, cell) in zip(rows, expected_rows):
+        require(set(row) == set(AUTO_ADDITIONAL_CSV_FIELDS), 'Malformed Auto extension CSV row')
+        require(row['sdk_version'] == '0.1.2' and row['configuration'] == 'per_store_auto_native', 'Wrong Auto CSV scope')
+        require(row['reader'] == record['id'] and row['cell'] == cell, 'Auto CSV reader/cell order differs')
+        if cell == 'Overall':
+            require(row['n'] == row['repeats'] == '', 'Auto Overall CSV must not invent an n or repeat count')
+            old, new = record['original']['Overall'], record['native']['Overall']
+        else:
+            entry = record['cells'][cell]
+            require(row['n'] == str(entry['n']) and row['repeats'] == str(entry['repeats']), 'Auto CSV denominator differs')
+            old, new = entry['original_percent'], entry['native_percent']
+        old, new = number(old, 'Auto CSV original'), number(new, 'Auto CSV native')
+        require(number(row['old_percent'], 'Auto CSV old_percent') == old, 'Auto CSV original value differs')
+        require(number(row['new_percent'], 'Auto CSV new_percent') == new, 'Auto CSV native value differs')
+        delta = Decimal(row['delta_pp'])
+        require(delta.is_finite(), 'Auto CSV delta must be finite')
+        # The historical CSV used binary-float subtraction. The additional CSV
+        # uses exact Decimal differences of the canonical old and new values.
+        require(delta == new - old if include_overall else abs(delta - (new - old)) <= TOLERANCE,
+                'Auto CSV delta differs')
+        expected_sha = (data['provenance']['auto_metric_sha256'] if record['id'] == '4o-mini'
+                        else data['provenance']['auto_extension_metric_sha256'][record['id']])
+        require(row['metric_source_sha256'] == expected_sha,
+                'Auto CSV source pin differs')
+    return len(rows)
+
+
+def check_auto_additional_csv(path, data):
+    """Two measured extensions: 28 task rows plus two aggregate Overall rows."""
+    return check_auto_csv(path, data, automatic_records(data)[1:], include_overall=True)
+
+
+def check_auto4omini_csv(path, data):
+    """Preserve the existing fourteen-row Auto4o source and its original pin."""
+    return check_auto_csv(path, data, automatic_records(data)[:1], include_overall=False)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", default="docs/data/native_mab_0_1_2.json")
     parser.add_argument("--tex")
     parser.add_argument("--baseline")
     parser.add_argument("--direct-baseline")
+    parser.add_argument("--previous-baseline", help="Locked v9 source; defaults to paper.previous_tex")
+    parser.add_argument("--auto4omini-csv", default=AUTO_4OMINI_CSV_PATH)
+    parser.add_argument("--auto-additional-csv", default=AUTO_ADDITIONAL_CSV_PATH)
     parser.add_argument("--source-receipt")
     parser.add_argument("--source-only", action="store_true")
     parser.add_argument("--report", type=Path, help="Write a new receipt; existing receipts are never overwritten")
     args = parser.parse_args()
     if args.source_only:
-        require(all((args.tex, args.baseline, args.direct_baseline, args.source_receipt)),
-                "Source-only needs explicit TeX, public B, direct v6 and source receipt")
+        require(all((args.tex, args.baseline, args.direct_baseline, args.previous_baseline, args.source_receipt)),
+                "Source-only needs explicit TeX, public B, direct v6, previous v9 and source receipt")
     require(args.report is None or not args.report.exists(), "Report already exists; preserve completed checks")
     data_path = repo_path(args.data, "JSON", args.source_only)
     data = json.loads(data_path.read_text(encoding="utf-8"), parse_float=Decimal)
@@ -328,23 +437,46 @@ def main():
     require(file_sha(baseline_path) == PUBLIC_B_SHA, "Public B is not the locked baseline")
     artifact_checks = {}
     if not args.source_only:
-        require(tex_path == repo_path(data["paper"]["tex"], "Bound TeX"), "Full check must use the bound v9 TeX")
+        require(tex_path == repo_path(data["paper"]["tex"], "Bound TeX"), "Full check must use the bound v10 TeX")
         for field, digest_field in (("tex", "tex_sha256"), ("pdf", "clean_pdf_sha256"),
                                    ("marked_pdf", "marked_pdf_sha256"), ("source_zip", "source_zip_sha256")):
             artifact = repo_path(data["paper"][field], field)
-            require(file_sha(artifact) == data["paper"][digest_field], field + ": v9 artifact digest differs")
+            require(file_sha(artifact) == data["paper"][digest_field], field + ": v10 artifact digest differs")
             artifact_checks[field] = data["paper"][digest_field]
         with zipfile.ZipFile(repo_path(data["paper"]["source_zip"], "Source ZIP")) as archive:
-            tex_members = [name for name in archive.namelist() if name.endswith(".tex")]
+            members = archive.namelist()
+            tex_members = [name for name in members if name.endswith(".tex")]
             require(tex_members == [tex_path.name], "Source ZIP must contain the single bound TeX member")
-            require(archive.read(tex_members[0]) == tex_path.read_bytes(), "Source ZIP TeX differs from checked v9 source")
+            require(archive.read(tex_members[0]) == tex_path.read_bytes(), "Source ZIP TeX differs from checked v10 source")
+            for relative in (AUTO_4OMINI_CSV_PATH, AUTO_ADDITIONAL_CSV_PATH):
+                csv_path = repo_path(relative, 'Bound Auto CSV')
+                member = 'anc/' + csv_path.name
+                require(members.count(member) == 1, 'Source ZIP must contain one ' + member)
+                require(archive.read(member) == csv_path.read_bytes(), 'Source ZIP Auto CSV bytes differ: ' + member)
     require(tex_path != baseline_path, "SDK and baseline TeX must be different files")
     records = data["paper_configuration_readers"]
     primary = {r["id"]: validated_record(r, r["id"], "primary/" + r["id"]) for r in records}
-    auto = validated_record(data["protocol_auto_4omini"], "4o-mini", "auto/4o-mini")
-    require(auto["cells"]["original"] == primary["4o-mini"]["cells"]["original"], "Auto and primary original4o-mini cells differ")
+    auto_records = automatic_records(data)
+    autos = {r['id']: validated_record(r, r['id'], 'auto/' + r['id']) for r in auto_records}
+    for reader in AUTO_READERS:
+        require(autos[reader]['cells']['original'] == primary[reader]['cells']['original'],
+                'Auto and primary original cells differ: ' + reader)
     current = tex_path.read_text(encoding="utf-8")
     baseline = baseline_path.read_text(encoding="utf-8")
+    previous_value = args.previous_baseline or data['paper']['previous_tex']
+    previous_path = repo_path(previous_value, 'Previous v9 TeX', args.source_only)
+    require(file_sha(previous_path) == DIRECT_V9_SHA, 'Previous v9 is not the locked baseline')
+    if not args.source_only:
+        require(previous_path == repo_path(data['paper']['previous_tex'], 'Bound previous v9 TeX'), 'Previous baseline path differs')
+    previous_unchanged = compare_previous_revision(previous_path.read_text(encoding='utf-8'), current)
+    auto_csv_path = repo_path(args.auto_additional_csv, 'Auto extension CSV', args.source_only)
+    if not args.source_only:
+        require(auto_csv_path == repo_path(AUTO_ADDITIONAL_CSV_PATH, 'Bound Auto extension CSV'), 'Auto extension CSV path differs')
+    auto_csv_rows = check_auto_additional_csv(auto_csv_path, data)
+    auto4omini_csv_path = repo_path(args.auto4omini_csv, 'Existing Auto4o CSV', args.source_only)
+    if not args.source_only:
+        require(auto4omini_csv_path == repo_path(AUTO_4OMINI_CSV_PATH, 'Bound Auto4o CSV'), 'Existing Auto4o CSV path differs')
+    auto4omini_csv_rows = check_auto4omini_csv(auto4omini_csv_path, data)
     require("leads the reported retrieval and memory systems on every competency" not in canonical(current),
             "The SDK's highest Overall must not be presented as leading every competency")
     now, before = table_map(current), table_map(baseline)
@@ -365,10 +497,16 @@ def main():
     preservation["algorithms"] = len(old_algorithms)
     source_receipt_path = None
     if args.source_receipt:
-        source_receipt_path = repo_path(args.source_receipt, "v9 source receipt", args.source_only)
+        source_receipt_path = repo_path(args.source_receipt, "v10 source receipt", args.source_only)
+        if not args.source_only:
+            require(file_sha(source_receipt_path) == data['paper']['source_receipt_sha256'], 'Final v10 source receipt digest differs')
         source_receipt = json.loads(source_receipt_path.read_text(encoding="utf-8"))
-        require(source_receipt["schema"] == SOURCE_RECEIPT_SCHEMA, "Not a v9 representative source receipt")
-        require(source_receipt["revision"] == "v9", "Source receipt revision is not v9")
+        require(source_receipt["schema"] == SOURCE_RECEIPT_SCHEMA, "Not a v10 representative source receipt")
+        require(source_receipt["revision"] == PAPER_REVISION, "Source receipt revision is not v10")
+        require(source_receipt['comparison_baselines']['direct_v9']['sha256'] == DIRECT_V9_SHA, 'Source v9 pin differs')
+        require(source_receipt['comparison_baselines']['direct_v9']['path'] == 'MUSTER_native_20261109_v9.tex', 'Source v9 path differs')
+        require(source_receipt['allowed_modified_tables_from_v9'] == list(V10_CHANGED_TABLES), 'Source v9-to-v10 allowlist differs')
+        require(source_receipt['caption_only_tables_from_v9'] == list(V10_CAPTION_ONLY_TABLES), 'Source v9 caption-only allowlist differs')
         require(source_receipt["allowed_modified_tables"] == list(TABLE_SOURCES), "Source table mapping differs")
         require(source_receipt["added_vs_public_B_tables"] == ["tab:expandedfrontier"], "Source added-table mapping differs")
         require(sorted(source_receipt["unchanged_table_labels"]) == unchanged, "Source unchanged-table receipt differs")
@@ -377,6 +515,10 @@ def main():
             require(meta["sha256"] == sha and meta["tables"] == count, "Source baseline metadata differs: " + key)
         require(source_receipt["primary_metric_source_sha256"] == data["provenance"]["primary_metric_sha256"], "Source primary pin differs")
         require(source_receipt["PP_metric_source_sha256"] == data["sdk_parent_priority"]["source_sha256"], "Source PP pin differs")
+        require(source_receipt['auto_extension_metric_sha256'] == data['provenance']['auto_extension_metric_sha256'],
+                'Source Auto extension pins differ')
+        require(source_receipt['candidate_tex_sha256'] == file_sha(tex_path), 'Source receipt TeX pin differs')
+        require(source_receipt['auto_additional_csv_sha256'] == file_sha(auto_csv_path), 'Source receipt Auto CSV pin differs')
     direct_path = None
     if args.direct_baseline:
         direct_path = repo_path(args.direct_baseline, "Direct v6 TeX", args.source_only)
@@ -406,7 +548,7 @@ def main():
     require([canonical(line) for line in old_rows] == [original_label_only(line) for line, _ in sections["original"]],
             "Original board rows changed beyond the three explicit Original reader labels")
     native_rows = sections["native"]
-    require(len(native_rows) == 5 and len(sections["auto"]) == 1, "Expected exactly5 SDK paper and1 automatic rows")
+    require(len(native_rows) == 5 and len(sections["auto"]) == 3, "Expected exactly5 SDK paper and3 automatic rows")
     for reader, spec in READERS.items():
         matches = [cells for _, cells in native_rows if cells[0] == spec[0]]
         require(len(matches) == 1, "Missing/duplicate SDK paper reader " + reader)
@@ -415,32 +557,34 @@ def main():
         original = [cells for _, cells in sections["original"] if cells[0] == "Original, " + READER_SPECS[reader][0]]
         require(len(original) == 1, "Missing/duplicate original board reader " + reader)
         compare_board_row(original[0], board_values(primary[reader], "original"), "original board/" + reader)
-    auto_row = sections["auto"][0][1]
-    require(auto_row[0] == "Auto, " + READER_SPECS["4o-mini"][0], "Wrong auto board reader")
-    compare_board_row(auto_row, board_values(auto, "native"), "auto board/4o-mini")
+    for (_, auto_row), reader in zip(sections['auto'], AUTO_READERS):
+        require(auto_row[0] == 'Auto, ' + READER_SPECS[reader][0], 'Wrong/duplicate/reordered auto board reader')
+        compare_board_row(auto_row, board_values(autos[reader], 'native'), 'auto board/' + reader)
+    auto_header = expanded_gpt_header(now['tab:expanded4o-mini'], READER_SPECS['4o-mini'][0])
     for reader in ORIGINAL_BOARD_READERS:
         spec = READERS[reader]
         original_rows = expanded_rows(before[spec[2]])
+        require(expanded_gpt_header(now[spec[2]], READER_SPECS[reader][0]) == auto_header,
+                'Expanded Original / SDK / Auto / Infini-style columns differ: ' + reader)
         native_detail = expanded_rows(now[spec[2]])
         require([r[0] for r in original_rows] == [r[0] for r in native_detail], "Expanded rows reordered for " + reader)
         for old_row, row in zip(original_rows, native_detail):
-            require(len(old_row) == 4 and len(row) == (6 if reader == "4o-mini" else 5), "Expanded column count differs for " + reader)
+            require(len(old_row) == 4 and len(row) == 6, "Expanded column count differs for " + reader)
             require([row[0], row[1], row[2], row[-1]] == old_row, "Original/Infini-style expanded values changed for " + reader + "/" + row[0])
             if row[0] == "Overall":
                 old_value = primary[reader]["aggregates"]["original"]["Overall"]
                 native_value = primary[reader]["aggregates"]["native"]["Overall"]
-                auto_value = auto["aggregates"]["native"]["Overall"]
+                auto_value = autos[reader]["aggregates"]["native"]["Overall"]
                 require(row[1] == "", "Expanded Overall must not invent an n")
             else:
                 cell = CELL_LABELS[row[0]]
                 require(row[1] == str(COUNTS[cell]), "Expanded n differs for " + cell)
                 old_value = primary[reader]["cells"]["original"][cell]
                 native_value = primary[reader]["cells"]["native"][cell]
-                auto_value = auto["cells"]["native"][cell]
+                auto_value = autos[reader]["cells"]["native"][cell]
             require(row[2] == shown(old_value, 2), "Original expanded JSON/TeX differs for " + reader + "/" + row[0])
             require(row[3] == shown(native_value, 2), "Native expanded JSON/TeX differs for " + reader + "/" + row[0])
-            if reader == "4o-mini":
-                require(row[4] == shown(auto_value, 2), "Auto expanded JSON/TeX differs for " + row[0])
+            require(row[4] == shown(auto_value, 2), "Auto expanded JSON/TeX differs for " + reader + '/' + row[0])
     # GLM/Luna are one new six-column table, not two interchangeable readers.
     frontier = expanded_rows(now["tab:expandedfrontier"])
     for row in frontier:
@@ -467,6 +611,8 @@ def main():
                                    (data["sdk_parent_priority"]["competencies"], primary["4o-mini"]["aggregates"]["native"]), (False, True)):
         compare_policy_row(line, label, values, emphasized)
     checked_sources = [("data", data_path), ("SDK_tex", tex_path), ("public_B_tex", baseline_path)]
+    checked_sources.extend((('previous_v9_tex', previous_path), ('auto_additional_csv', auto_csv_path),
+                            ('auto4omini_csv', auto4omini_csv_path)))
     if direct_path:
         checked_sources.append(("direct_v6_tex", direct_path))
     if source_receipt_path:
@@ -475,13 +621,27 @@ def main():
         "status": "passed_independent_six_table_source_audit" if args.source_only else "passed_five_reader_mab_full_artifact_gate",
         "mode": "source_only_not_publication_ready" if args.source_only else "full_public_artifact_check",
         "publication_ready": False,
-        "aggregate_sets_recomputed": len(records) * 2 + 3,
-        "aggregate_values_checked": (len(records) * 2 + 3) * len(AGGREGATES),
+        "paper_revision": PAPER_REVISION,
+        "auto_readers_checked": list(AUTO_READERS),
+        "aggregate_sets_recomputed": len(records) * 2 + len(auto_records) * 2 + 1,
+        "aggregate_values_checked": (len(records) * 2 + len(auto_records) * 2 + 1) * len(AGGREGATES),
         "table1_new_rows": len(native_rows) + len(sections["auto"]),
         "table1_new_one_decimal_values": (len(native_rows) + len(sections["auto"])) * 15,
         "expanded_GPT_SDK_two_decimal_values": len(ORIGINAL_BOARD_READERS) * 15,
         "expanded_frontier_two_decimal_values": len(frontier) * 4,
-        "expanded_auto_two_decimal_values": 15,
+        "expanded_auto_two_decimal_values": len(auto_records) * 15,
+        "auto_extension_csv_rows": auto_csv_rows,
+        "auto_extension_csv_definition": '28 task rows plus2 Overall rows; Overall n/repeats empty',
+        "existing_auto4omini_csv_rows": auto4omini_csv_rows,
+        "source_zip_auto_csv_bytes_checked": not args.source_only,
+        "previous_v9_unchanged_full_table_blocks": len(previous_unchanged),
+        "previous_v9_unchanged_table_labels": previous_unchanged,
+        "allowed_modified_tables_from_v9": list(V10_CHANGED_TABLES),
+        "caption_only_tables_from_v9": list(V10_CAPTION_ONLY_TABLES),
+        "previous_v9_numeric_table_blocks": len(V10_CHANGED_TABLES),
+        "previous_v9_caption_only_table_blocks": len(V10_CAPTION_ONLY_TABLES),
+        "previous_v9_caption_only_tabular_bytes_preserved": True,
+        "previous_v9_caption_exception": {'before': AUTO_CAPTION_BEFORE, 'after': AUTO_CAPTION_AFTER},
         "SDK_policy_rows": len(gate_sdk), "SDK_policy_one_decimal_values": len(gate_sdk) * 5,
         "SDK_policy_normal_PP_and_highlighted_gate": True,
         "allowed_modified_tables": list(TABLE_SOURCES), "added_vs_public_B_tables": ["tab:expandedfrontier"],
@@ -499,7 +659,7 @@ def main():
                                      "scope": "one exact substring inside the actual caption; all other block bytes equal"},
         "figure_assets_and_labels_preserved": True, "algorithms_preserved": preservation["algorithms"],
         "display_rounding": "Decimal ROUND_HALF_UP", "new_quality_or_publication_claim": False,
-        "v9_final_artifact_hashes_checked": artifact_checks,
+        "v10_final_artifact_hashes_checked": artifact_checks,
         "artifacts": {role: {"file": path.name if args.source_only else path.relative_to(ROOT).as_posix(), "sha256": file_sha(path)}
                       for role, path in checked_sources},
     }

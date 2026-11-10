@@ -1,14 +1,18 @@
-"""Exact, source-pinned five-reader MAB document contract. No benchmark imports."""
+"""Source-pinned five-reader SDK / three-reader Auto MAB document contract."""
 from decimal import Decimal, ROUND_HALF_UP
 from pathlib import PurePosixPath
 import re
 
 SCHEMA = 'muster.native_mab.v2'
-PAPER_REVISION = 'v9'
-PAPER_REVISION = 'v9'
-SOURCE_RECEIPT_SCHEMA = 'muster.paper.representative_mab.v9'
+PAPER_REVISION = 'v10'
+SOURCE_RECEIPT_SCHEMA = 'muster.paper.representative_mab.v10'
 PUBLIC_B_SHA = '37e5eaf1346c222ce4807a705d9e14527058368d8cc2f2ca240298b99f488003'
 DIRECT_V6_SHA = '926e14bc0af1353ca4b121a00b5ef377a6e886c9425feaec216939aef417227c'
+DIRECT_V9_SHA = '7ead1fcbc357864524931599bf22268f350be9d522f81958dbe8bde08c0af0a9'
+V10_CHANGED_TABLES = ('tab:board', 'tab:expanded4.1-mini', 'tab:expanded5-mini')
+V10_CAPTION_ONLY_TABLES = ('tab:expanded4o-mini',)
+AUTO_CAPTION_BEFORE = "Auto: per-store derivation with LongMemEval's rounds adapter."
+AUTO_CAPTION_AFTER = "Auto: per-store derivation at the cell's protocol chunk size $P$, with LongMemEval's rounds adapter."
 SDK_MARKER = 'Current implementation: SDK (paper settings), library 0.1.2'
 AUTO_MARKER = 'SDK: per-store automatic configuration'
 PP_MARKER = 'Current SDK, paper settings'
@@ -24,6 +28,11 @@ READERS = {
     'luna': ('GPT-6 Luna', 'openai/gpt-6-luna', 'tab:expandedfrontier'),
 }
 AGGREGATES = ('AR','MCC','TTL','LRU','SF','Overall')
+AUTO_READERS = ('4o-mini', '4.1-mini', '5-mini')
+AUTO_4OMINI_CSV_PATH = 'paper/auto4omini_mab_cells.csv'
+AUTO_ADDITIONAL_CSV_PATH = 'paper/auto_additional_mab_cells.csv'
+AUTO_ADDITIONAL_CSV_FIELDS = ('sdk_version', 'configuration', 'reader', 'cell', 'n', 'repeats',
+                              'old_percent', 'new_percent', 'delta_pp', 'metric_source_sha256')
 SOURCE_SHA = {
     'primary': 'b59a231b51a115449da1cbc6c144ffdffa5b07be023bc3266d41f6183395f204',
     'auto': '77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6',
@@ -51,6 +60,33 @@ CELL_LOCKS = {
   'native': (94,77,74.66666666666667,81,96,92,98,89,69,15.5,38.18560061870745,78.4037558685446,94,57.99999999999999)},
 }
 AUTO_LOCK = (89,66,56.333333333333336,77,94,66,89,87,60,12.083333333333336,13.578176715428778,66.19718309859155,93,60)
+# Exact new_percent vectors from the completed source-pinned summaries. The
+# original side remains CELL_LOCKS; summary float tails do not replace it.
+AUTO_EXTENSION_SOURCE_SHA = {
+ '4.1-mini': '433019fbe6c0e82727ae6fb2981473952401918371f5c2dd7f65a851622ec3df',
+ '5-mini': 'b6a450bc690f4f29124b4097097c86bf1efa1e8feb6356b029589f79e56c9f41',
+}
+AUTO_EXTENSION_CELL_LOCKS = {
+ '4.1-mini': (90,77,'61.666666666666664',83,96,69,92,86,53,'17.25',
+              '16.653066904794862','70.89201877934273',94,51),
+ '5-mini': (93,79,71,82,93,82,94,85,61,'13.833333333333336',
+            '25.27711738604311','79.34272300469485',95,59),
+}
+AUTO_EXTENSION_AGGREGATE_LOCKS = {
+ '4.1-mini': dict(MCC='79.2', AR='77.91666666666667', TTL='48.225',
+                  LRU='43.7725428420688', SF='72.5', Overall='60.603552377183874'),
+ '5-mini': dict(MCC='83.0', AR='81.25', TTL='48.41666666666667',
+                LRU='52.309920195368974', SF='77.0', Overall='64.74414671550892'),
+}
+AUTO_EXTENSION_ACTUAL_MODELS = {
+ '4.1-mini': 'gpt-4.1-mini-2025-04-14',
+ '5-mini': 'gpt-5-mini-2025-08-07',
+}
+AUTO_EXTENSION_READ_PROVENANCE = {
+ 'completed_extension_reader_response': 1082,
+ 'reused_original_saved_answer_identical_full_request': 530,
+ 'explicit_saved_raw_reuse_identical_request': 1,
+}
 PP_LOCK = (89,69,54,70,94,66,91,86,68,14.333333333333334,20.054907438800903,58.685446009389665,93,60)
 OLD_PAPER_HASHES = {
  'cabe57f083623fd6abcc93ea7fbe3724139fb4be7fcfc8e0220861233b406e7e',
@@ -61,13 +97,18 @@ OLD_PAPER_HASHES = {
  '6896e3379fdcbadb9f62638c3a80874e00a9de2b95b2293fe557aad3f613b920',
  '6694014de38ef0678ed8883cf3b543b8486e08534d63ac4388f3e7a4a2173b84',
  '9896afaaa81b2cac4ded183db675eb4fff3ec8e2df46c9bed995a56b8b273f8e',
+ # Actual v9 source/PDF/marked/ZIP pins remain historical, never v10 artifacts.
+ DIRECT_V9_SHA,
+ 'b8b02cd7db115d6be578deb552b9be401bfae4b0e1f4f60ecb4e49e4ec0ea338',
+ '83c7203dd2b313d03f258169ccd069c83bb563d773de79f54fbf9f830fe29d57',
+ '784483e4317f167fd02dae32cb6106de683e467c838261652f92c1383066fae4',
 }
 TABLE_SOURCES = {
- 'tab:board': 'five SDK paper-settings rows and one SDK automatic-settings row',
+ 'tab:board': 'five SDK paper-settings rows and three SDK automatic-settings rows',
  'tab:gate': 'original implementation rows plus source-bound SDK PP/final block',
  'tab:expanded4o-mini': '4o-mini original / SDK paper / SDK automatic / original Infini-style',
- 'tab:expanded4.1-mini': '4.1-mini original / SDK paper / original Infini-style',
- 'tab:expanded5-mini': '5-mini original / SDK paper / original Infini-style',
+ 'tab:expanded4.1-mini': '4.1-mini original / SDK paper / SDK automatic / original Infini-style',
+ 'tab:expanded5-mini': '5-mini original / SDK paper / SDK automatic / original Infini-style',
  'tab:expandedfrontier': 'GLM and Luna original / SDK paper cells',
 }
 
@@ -111,8 +152,13 @@ def validate_record(record, reader, automatic=False):
     for view in ('original','native'):
         expected = CELL_LOCKS[reader][view]
         if automatic and view == 'native':
-            require(reader == '4o-mini', 'Unmeasured automatic reader')
-            expected = AUTO_LOCK
+            require(reader in AUTO_READERS, 'Unmeasured automatic reader')
+            if reader == '4o-mini':
+                expected = AUTO_LOCK
+            else:
+                require(reader in AUTO_EXTENSION_CELL_LOCKS, 'Missing verified Auto extension cell pin: ' + reader)
+                expected = AUTO_EXTENSION_CELL_LOCKS[reader]
+                require(len(expected) == len(CELLS), 'Incomplete Auto extension cell lock: ' + reader)
         values = {c: number(record['cells'][c][view + '_percent']) for c in CELLS}
         for c, locked in zip(CELLS, expected):
             require(values[c] == number(locked), f'{reader}/{view}/{c}: source-locked cell differs')
@@ -120,7 +166,31 @@ def validate_record(record, reader, automatic=False):
         require(set(record[view]) == set(AGGREGATES), 'Wrong aggregate keys')
         for key in AGGREGATES:
             require(abs(number(record[view][key]) - computed[key]) <= Decimal('1e-10'), f'{reader}/{view}/{key}: aggregate')
+            if automatic and view == 'native' and reader in AUTO_EXTENSION_AGGREGATE_LOCKS:
+                require(number(record[view][key]) == number(AUTO_EXTENSION_AGGREGATE_LOCKS[reader][key]),
+                        f'{reader}/{view}/{key}: source-locked aggregate differs')
     return record
+
+
+def automatic_records(data):
+    records = data['protocol_auto_readers']
+    require(isinstance(records, list) and [r['id'] for r in records] == list(AUTO_READERS),
+            'Expected three automatic readers in fixed order')
+    require(data['protocol_auto_4omini'] == records[0], '4o-mini automatic alias differs')
+    return records
+
+
+def validate_auto_extension_accounting(record):
+    reader = record['id']
+    require(record['actual_reader_model'] == AUTO_EXTENSION_ACTUAL_MODELS[reader],
+            'Wrong Auto extension actual reader: ' + reader)
+    provenance = record['read_provenance']
+    require(provenance == AUTO_EXTENSION_READ_PROVENANCE
+            and all(type(value) is int for value in provenance.values()),
+            'Auto extension response provenance differs: ' + reader)
+    for field, expected in (('latest_SDK_FC_saved_request_reuses', 200), ('judge_jobs', 261)):
+        require(type(record[field]) is int and record[field] == expected,
+                'Auto extension ' + field + ' differs: ' + reader)
 
 
 def safe_path(value):
@@ -132,24 +202,28 @@ def safe_path(value):
 
 
 def validate_paper(paper, require_final=False):
-    require(paper['revision'] == PAPER_REVISION, 'Expected v9 paper metadata')
-    if paper['status'] == 'awaiting_v9_final_receipt':
-        require(not require_final, 'v9 final paper receipt is required')
+    require(paper['revision'] == PAPER_REVISION, 'Expected v10 paper metadata')
+    if paper['status'] == 'awaiting_v10_final_receipt':
+        require(not require_final, 'v10 final paper receipt is required')
         require(set(paper) == {'revision','status'}, 'Pending paper carries unverified metadata')
         return
-    require(paper['status'] == 'verified_v9_final_receipt', 'Unknown paper receipt status')
-    require(type(paper['pages']) is int and paper['pages'] > 0, 'Invalid v9 pages')
+    require(paper['status'] == 'verified_v10_final_receipt', 'Unknown paper receipt status')
+    require(type(paper['pages']) is int and paper['pages'] > 0, 'Invalid v10 pages')
     for field, digest_field in (('tex','tex_sha256'),('pdf','clean_pdf_sha256'),('marked_pdf','marked_pdf_sha256'),('source_zip','source_zip_sha256')):
         safe_path(paper[field])
         digest = paper[digest_field]
         require(isinstance(digest, str) and re.fullmatch('[0-9a-f]{64}', digest), 'Invalid artifact digest')
-        require(digest not in OLD_PAPER_HASHES, 'Earlier paper artifact mislabeled as v9')
+        require(digest not in OLD_PAPER_HASHES, 'Earlier paper artifact mislabeled as v10')
     safe_path(paper['baseline_tex'])
     require(paper['comparison_baselines']['public_B']['sha256'] == PUBLIC_B_SHA, 'Wrong public B baseline')
     require(paper['comparison_baselines']['direct_v6']['sha256'] == DIRECT_V6_SHA, 'Wrong direct v6 baseline')
-    require(isinstance(paper['source_receipt_sha256'], str) and re.fullmatch('[0-9a-f]{64}', paper['source_receipt_sha256']), 'Invalid final v9 receipt digest')
+    require(paper['comparison_baselines']['direct_v9']['sha256'] == DIRECT_V9_SHA, 'Wrong direct v9 baseline')
+    require(safe_path(paper['previous_tex']) == 'paper/MUSTER_native_20261109_v9.tex', 'Wrong previous paper path')
+    require(isinstance(paper['source_receipt_sha256'], str) and re.fullmatch('[0-9a-f]{64}', paper['source_receipt_sha256']), 'Invalid final v10 receipt digest')
     require(paper['allowed_modified_tables'] == list(TABLE_SOURCES), 'Unexpected paper change allowlist')
     require(paper['added_vs_public_B_tables'] == ['tab:expandedfrontier'], 'Only frontier may be added to public B')
+    require(paper['allowed_modified_tables_from_v9'] == list(V10_CHANGED_TABLES), 'Unexpected v9 numeric-table allowlist')
+    require(paper['caption_only_tables_from_v9'] == list(V10_CAPTION_ONLY_TABLES), 'Unexpected v9 caption-table allowlist')
 
 
 def validate_data(data, require_final_paper=False):
@@ -161,10 +235,23 @@ def validate_data(data, require_final_paper=False):
     require([r['id'] for r in records] == list(READERS), 'Expected five distinct readers in fixed order')
     for r in records:
         validate_record(r, r['id'])
-    validate_record(data['protocol_auto_4omini'], '4o-mini', automatic=True)
+    original_by_reader = {r['id']: r['original'] for r in records}
+    autos = automatic_records(data)
+    for r in autos:
+        validate_record(r, r['id'], automatic=True)
+        require(r['original'] == original_by_reader[r['id']], 'Auto original aggregates differ: ' + r['id'])
+        if r['id'] != '4o-mini':
+            validate_auto_extension_accounting(r)
     provenance = data['provenance']
     require(provenance['primary_metric_sha256'] == SOURCE_SHA['primary'], 'Primary source pin differs')
     require(provenance['auto_metric_sha256'] == SOURCE_SHA['auto'], 'Auto source pin differs')
+    extension_ids = set(AUTO_READERS[1:])
+    require(set(AUTO_EXTENSION_SOURCE_SHA) == extension_ids, 'Missing verified Auto extension source pins')
+    require(set(AUTO_EXTENSION_CELL_LOCKS) == extension_ids, 'Missing verified Auto extension cell pins')
+    require(set(AUTO_EXTENSION_AGGREGATE_LOCKS) == extension_ids, 'Missing verified Auto extension aggregate pins')
+    require(provenance['auto_extension_metric_sha256'] == AUTO_EXTENSION_SOURCE_SHA, 'Auto extension source pins differ')
+    for digest in AUTO_EXTENSION_SOURCE_SHA.values():
+        require(isinstance(digest, str) and re.fullmatch('[0-9a-f]{64}', digest), 'Invalid Auto extension source digest')
     require(provenance['frontier_merge_sha256'] == {k: SOURCE_SHA[k] for k in ('glmh','luna')}, 'Frontier merge pins differ')
     groups = provenance['response_accounting_groups']
     require(set(groups) == {'gpt_readers','frontier_readers'}, 'Accounting units must stay in separate groups')

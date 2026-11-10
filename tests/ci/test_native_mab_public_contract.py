@@ -1,12 +1,16 @@
-"""Research-number regressions: named cells, scopes and final v9 artifacts.
+"""Research-number regressions: named cells, scopes and final v10 artifacts.
 
 These document checks do not measure a model or call a service. In particular,
 a stale SDK value must fail even if it occurs in an original row elsewhere.
 """
 from copy import deepcopy
+import csv
+from decimal import Decimal, ROUND_HALF_UP
 import importlib.util
+import io
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -33,8 +37,17 @@ def source_checker(monkeypatch):
 
 
 @pytest.fixture
+def generator(monkeypatch):
+    monkeypatch.syspath_prepend(str(ROOT / "tools"))
+    spec = importlib.util.spec_from_file_location("mab_generator_document_test", ROOT / "tools/make_native_mab.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture
 def data():
-    return json.loads((ROOT / "docs/data/native_mab_0_1_2.json").read_text(encoding="utf-8"))
+    return json.loads((ROOT / "docs/data/native_mab_0_1_2.json").read_text(encoding="utf-8"), parse_float=Decimal)
 
 
 def run_tool(name, *args):
@@ -42,12 +55,52 @@ def run_tool(name, *args):
                           capture_output=True, text=True, timeout=120)
 
 
-def test_five_reader_rows_full_v9_artifacts_and_original_headline_are_current(contract, data):
+def test_thirteen_reader_rows_full_v10_artifacts_and_original_headline_are_current(contract, data):
     contract.validate_data(data, require_final_paper=True)
     for name, args in (("check_native_mab_tex.py", ()), ("make_native_mab.py", ("--check",)),
                        ("check_headline_tex.py", (ROOT / data["paper"]["tex"],))):
         result = run_tool(name, *args)
         assert result.returncode == 0, result.stdout + result.stderr
+        if name == "check_native_mab_tex.py":
+            audit = json.loads(result.stdout)
+            assert audit["table1_new_rows"] == 8
+            assert audit["expanded_auto_two_decimal_values"] == 45
+            assert audit["auto_extension_csv_rows"] == 30
+            assert audit["existing_auto4omini_csv_rows"] == 14
+            assert audit["source_zip_auto_csv_bytes_checked"] is True
+            assert audit["previous_v9_numeric_table_blocks"] == 3
+            assert audit["previous_v9_caption_only_table_blocks"] == 1
+            assert audit["previous_v9_unchanged_full_table_blocks"] == 27
+            assert audit["unchanged_full_table_blocks"] == 25
+            assert audit["original_and_Infini_style_expanded_rows_preserved"] == 45
+
+
+def test_readme_and_landing_bind_all_five_metrics_to_thirteen_scoped_rows(data):
+    primary = data["paper_configuration_readers"]
+    auto = data["protocol_auto_readers"]
+    expected = []
+    for scope, configuration, records, view in (
+        ("original", "Original implementation", primary, "original"),
+        ("sdk-paper", "SDK (paper settings)", primary, "native"),
+        ("sdk-auto", "SDK (automatic settings)", auto, "native"),
+    ):
+        for record in records:
+            values = [format(Decimal(str(record[view][metric])).quantize(Decimal(".01"), rounding=ROUND_HALF_UP), ".2f")
+                      for metric in ("AR", "TTL", "LRU", "SF", "Overall")]
+            expected.append((scope, record["id"], record["label"], configuration, values))
+    assert len(expected) == 13
+    start, end = "<!-- BEGIN native-mab -->", "<!-- END native-mab -->"
+    html = (ROOT / "docs/index.html").read_text(encoding="utf-8").split(start)[1].split(end)[0]
+    matches = re.findall(r'<tr data-result-scope="([^"]+)" data-reader="([^"]+)">'
+                         r'<th scope="row">([^<]+)</th><td>([^<]+)</td>(.*?)</tr>', html, re.S)
+    actual = [(scope, reader, label, config, re.findall(r'<td class="n">([^<]+)</td>', cells))
+              for scope, reader, label, config, cells in matches]
+    assert html.count("data-result-scope=") == len(actual) == 13
+    assert actual == expected
+    readme = (ROOT / "README.md").read_text(encoding="utf-8").split(start)[1].split(end)[0]
+    rows = [line[2:-2].split(" | ") for line in readme.splitlines()
+            if line.startswith("| ") and not line.startswith("| Reader |")]
+    assert rows == [[label, config, *values] for _, _, label, config, values in expected]
 
 
 @pytest.mark.parametrize("reader", ("4o-mini", "4.1-mini", "5-mini", "glmh", "luna"))
@@ -68,8 +121,82 @@ def test_frontier_readers_are_not_interchangeable(contract, data):
         contract.validate_data(data)
 
 
+@pytest.mark.parametrize("reader", ("4.1-mini", "5-mini"))
+def test_stale_sdk_summ_cannot_replace_an_auto_cell(contract, data, reader):
+    auto = next(r for r in data["protocol_auto_readers"] if r["id"] == reader)
+    paper = next(r for r in data["paper_configuration_readers"] if r["id"] == reader)
+    assert auto["cells"]["summ"]["native_percent"] != paper["cells"]["summ"]["native_percent"]
+    auto["cells"]["summ"]["native_percent"] = paper["cells"]["summ"]["native_percent"]
+    auto["native"] = contract.recompute({cell: entry["native_percent"] for cell, entry in auto["cells"].items()})
+    with pytest.raises(contract.ContractError, match="source-locked cell"):
+        contract.validate_data(data)
+
+
+def test_auto_4omini_alias_cannot_drift(contract, data):
+    data["protocol_auto_4omini"]["native"]["Overall"] = 60
+    with pytest.raises(contract.ContractError, match="automatic alias differs"):
+        contract.validate_data(data)
+
+
+def test_three_auto_readers_have_a_fixed_order(contract, data):
+    data["protocol_auto_readers"][1:] = reversed(data["protocol_auto_readers"][1:])
+    with pytest.raises(contract.ContractError, match="three automatic readers in fixed order"):
+        contract.validate_data(data)
+
+
+def test_auto_extension_source_pins_are_bound_to_their_reader(contract, data):
+    pins = data["provenance"]["auto_extension_metric_sha256"]
+    pins["4.1-mini"], pins["5-mini"] = pins["5-mini"], pins["4.1-mini"]
+    with pytest.raises(contract.ContractError, match="Auto extension source pins differ"):
+        contract.validate_data(data)
+
+
+def test_auto_fc_reuse_cannot_be_reported_as_fresh_responses(contract, data):
+    record = data["protocol_auto_readers"][1]
+    record["read_provenance"]["completed_extension_reader_response"] += record["latest_SDK_FC_saved_request_reuses"]
+    record["latest_SDK_FC_saved_request_reuses"] = 0
+    with pytest.raises(contract.ContractError, match="Auto extension response provenance differs"):
+        contract.validate_data(data)
+
+
+def test_auto_extension_csv_can_be_staged_before_pdf_receipt(generator, source_checker, data, tmp_path):
+    data["paper"] = {"revision": "v10", "status": "awaiting_v10_final_receipt"}
+    text = generator.render_auto_additional_csv(data)
+    reader = csv.DictReader(io.StringIO(text))
+    rows = {(row["reader"], row["cell"]): row for row in reader}
+    assert len(rows) == 30
+    assert rows["4.1-mini", "lme"]["old_percent"] == "61.66666666666667"
+    assert rows["4.1-mini", "lme"]["new_percent"] == "61.666666666666664"
+    assert rows["5-mini", "summ"]["new_percent"] == "25.27711738604311"
+    assert all(rows[key, "Overall"]["n"] == rows[key, "Overall"]["repeats"] == "" for key in ("4.1-mini", "5-mini"))
+    path = tmp_path / "additional.csv"
+    path.write_text(text, encoding="utf-8")
+    assert source_checker.check_auto_additional_csv(path, data) == 30
+    path.write_text(text.replace("4.1-mini,Overall,,,", "4.1-mini,Overall,1671,,", 1), encoding="utf-8")
+    with pytest.raises(source_checker.CheckError, match="Overall CSV must not invent an n"):
+        source_checker.check_auto_additional_csv(path, data)
+
+
+@pytest.mark.parametrize("mutation, error", (
+    ("tabular", "caption-only tabular changed"),
+    ("other_caption_text", "beyond the authorized clause"),
+))
+def test_v9_auto4omini_caption_exception_preserves_other_bytes(data, source_checker, mutation, error):
+    label = "tab:expanded4o-mini"
+    old = source_checker.table_map((ROOT / data["paper"]["previous_tex"]).read_text(encoding="utf-8"))[label]
+    new = source_checker.table_map((ROOT / data["paper"]["tex"]).read_text(encoding="utf-8"))[label]
+    source_checker.compare_auto_caption_table(old, new, label)
+    if mutation == "tabular":
+        altered = new.replace(r"\toprule", r"\midrule", 1)
+    else:
+        altered = new.replace("0--100 scale", "another scale", 1)
+    assert altered != new
+    with pytest.raises(source_checker.CheckError, match=error):
+        source_checker.compare_auto_caption_table(old, altered, label)
+
+
 def test_source_only_paper_status_cannot_satisfy_public_artifact_gate(contract, data):
-    data["paper"] = {"revision": "v9", "status": "awaiting_v9_final_receipt"}
+    data["paper"] = {"revision": "v10", "status": "awaiting_v10_final_receipt"}
     contract.validate_data(data)
     with pytest.raises(contract.ContractError, match="final paper receipt"):
         contract.validate_data(data, require_final_paper=True)
@@ -83,18 +210,22 @@ def test_source_only_paper_status_cannot_satisfy_public_artifact_gate(contract, 
     "6896e3379fdcbadb9f62638c3a80874e00a9de2b95b2293fe557aad3f613b920",
     "6694014de38ef0678ed8883cf3b543b8486e08534d63ac4388f3e7a4a2173b84",
     "9896afaaa81b2cac4ded183db675eb4fff3ec8e2df46c9bed995a56b8b273f8e",
+    "7ead1fcbc357864524931599bf22268f350be9d522f81958dbe8bde08c0af0a9",
+    "b8b02cd7db115d6be578deb552b9be401bfae4b0e1f4f60ecb4e49e4ec0ea338",
+    "83c7203dd2b313d03f258169ccd069c83bb563d773de79f54fbf9f830fe29d57",
+    "784483e4317f167fd02dae32cb6106de683e467c838261652f92c1383066fae4",
 ))
-def test_earlier_paper_digest_cannot_be_relabelled_v9(contract, data, old_sha):
+def test_earlier_paper_digest_cannot_be_relabelled_v10(contract, data, old_sha):
     data["paper"]["clean_pdf_sha256"] = old_sha
-    with pytest.raises(contract.ContractError, match="mislabeled as v9"):
+    with pytest.raises(contract.ContractError, match="mislabeled as v10"):
         contract.validate_data(data, require_final_paper=True)
 
 
-@pytest.mark.parametrize("old_revision", ("v7", "v8"))
+@pytest.mark.parametrize("old_revision", ("v7", "v8", "v9"))
 def test_earlier_metadata_is_not_accepted_as_the_current_paper(contract, data, old_revision):
     data["paper"]["revision"] = old_revision
     data["paper"]["status"] = "verified_" + old_revision + "_final_receipt"
-    with pytest.raises(contract.ContractError, match="Expected v9 paper metadata"):
+    with pytest.raises(contract.ContractError, match="Expected v10 paper metadata"):
         contract.validate_data(data, require_final_paper=True)
 
 

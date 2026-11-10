@@ -1,7 +1,7 @@
 {
   "schema": "muster.native_mab.v2",
   "sdk_version": "0.1.2",
-  "prepared_utc": "2026-11-10T13:47:22.213205+00:00",
+  "prepared_utc": "2026-11-10T22:21:12.817670+00:00",
   "benchmark": {
     "name": "MemoryAgentBench",
     "cells": 14,
@@ -26,10 +26,10 @@
     "score": "Original benchmark metrics. Overall averages AR/TTL/LRU/SF; MCC averages five ICL cells."
   },
   "paper": {
-    "revision": "v9",
+    "revision": "v10",
     "pages": 35,
     "baseline_tex": "paper/MUSTER_followup_20261107.tex",
-    "source_receipt_sha256": "8ff71aa2d270427dbf0a1a74c877b56ae4a51bbddf6daa2b2cd175ae42fe52e8",
+    "source_receipt_sha256": "587d93d52da886e99c664b605e544b0ca3c208ddacb7b6f4d5a39fdb45b33e82",
     "comparison_baselines": {
       "public_B": {
         "sha256": "37e5eaf1346c222ce4807a705d9e14527058368d8cc2f2ca240298b99f488003",
@@ -107,6 +107,44 @@
           "tab:writers"
         ],
         "source": "candidate_v6/MUSTER_native_20261109.tex"
+      },
+      "direct_v9": {
+        "path": "MUSTER_native_20261109_v9.tex",
+        "sha256": "7ead1fcbc357864524931599bf22268f350be9d522f81958dbe8bde08c0af0a9",
+        "table_labels": [
+          "tab:board",
+          "tab:gate",
+          "tab:locomo",
+          "tab:refined",
+          "tab:samebudget",
+          "tab:beamscale",
+          "tab:extend",
+          "tab:overview",
+          "tab:stores",
+          "tab:hyper",
+          "tab:expanded4o-mini",
+          "tab:expanded4.1-mini",
+          "tab:expanded5-mini",
+          "tab:expandedfrontier",
+          "tab:beamcatall",
+          "tab:beamcatboth",
+          "tab:beamcost",
+          "tab:mabcost",
+          "tab:t7paired",
+          "tab:overviewctx",
+          "tab:overviewstd",
+          "tab:readers",
+          "tab:samebudgetscale",
+          "tab:beamabl",
+          "tab:locomoall",
+          "tab:locomojudge",
+          "tab:refinedcat",
+          "tab:refinedpair",
+          "tab:slotsrc",
+          "tab:reach",
+          "tab:refine",
+          "tab:writers"
+        ]
       }
     },
     "allowed_modified_tables": [
@@ -121,14 +159,23 @@
       "tab:expandedfrontier"
     ],
     "tex": "paper/MUSTER_native_20261109.tex",
-    "tex_sha256": "7ead1fcbc357864524931599bf22268f350be9d522f81958dbe8bde08c0af0a9",
+    "tex_sha256": "8691252a49128040cd3662cc9aa688f9bd594a6d42d7b2ca468d8a026622e20c",
     "pdf": "paper/MUSTER_native_20261109.pdf",
-    "clean_pdf_sha256": "b8b02cd7db115d6be578deb552b9be401bfae4b0e1f4f60ecb4e49e4ec0ea338",
+    "clean_pdf_sha256": "ff0c4a3d744d9714b7dccd3f333992cbc791bd57e0c923c7ea827ff8c982986d",
     "marked_pdf": "paper/MUSTER_native_20261109_marked.pdf",
-    "marked_pdf_sha256": "83c7203dd2b313d03f258169ccd069c83bb563d773de79f54fbf9f830fe29d57",
+    "marked_pdf_sha256": "fe8f44857e21b423abaea0dead53ce2a05075db528c2d2e4422e0404e21d2dcf",
     "source_zip": "paper/MUSTER_native_20261109_source.zip",
-    "source_zip_sha256": "784483e4317f167fd02dae32cb6106de683e467c838261652f92c1383066fae4",
-    "status": "verified_v9_final_receipt"
+    "source_zip_sha256": "f81e2a4f9f739a3e2948f4d1d7a3b01c8aff2c91f450479e09425acc6652fbbb",
+    "status": "verified_v10_final_receipt",
+    "previous_tex": "paper/MUSTER_native_20261109_v9.tex",
+    "allowed_modified_tables_from_v9": [
+      "tab:board",
+      "tab:expanded4.1-mini",
+      "tab:expanded5-mini"
+    ],
+    "caption_only_tables_from_v9": [
+      "tab:expanded4o-mini"
+    ]
   },
   "paper_configuration_readers": [
     {
@@ -871,18 +918,18 @@
     "scope": "SDK paper-settings PP control. FC shares existing actual final results after Plan/full-message/request identity; not an independent FC reader trial."
   },
   "paper_source_labels": {
-    "tab:board": "five SDK paper-settings rows and one SDK automatic-settings row",
+    "tab:board": "five SDK paper-settings rows and three SDK automatic-settings rows",
     "tab:gate": "original implementation rows plus source-bound SDK PP/final block",
     "tab:expanded4o-mini": "4o-mini original / SDK paper / SDK automatic / original Infini-style",
-    "tab:expanded4.1-mini": "4.1-mini original / SDK paper / original Infini-style",
-    "tab:expanded5-mini": "5-mini original / SDK paper / original Infini-style",
+    "tab:expanded4.1-mini": "4.1-mini original / SDK paper / SDK automatic / original Infini-style",
+    "tab:expanded5-mini": "5-mini original / SDK paper / SDK automatic / original Infini-style",
     "tab:expandedfrontier": "GLM and Luna original / SDK paper cells"
   },
   "conditions": {
     "comparison_baseline": "Original implementation (historical harness); not a 0.1.0-native quality reread.",
     "native": "SDK (paper settings): frozen paper cell configuration in native mode, with 2048-token encoder/reranker input limits.",
-    "auto": "SDK (automatic settings): per-store derive at benchmark reference_chunk P, retaining the explicit original LongMemEval rounds adapter. Only 4o-mini is measured.",
-    "answer_reuse": "Archived answers require complete-message/request equality; changed inputs are read anew. DetectiveQA keeps three repeats.",
+    "auto": "SDK (automatic settings): per-store derive at benchmark reference_chunk P, retaining the explicit original LongMemEval rounds adapter. Three GPT readers are complete; GLM and Luna Auto are unmeasured.",
+    "answer_reuse": "An archived answer is reused only for a matching complete request. Otherwise the input is read anew. DetectiveQA keeps three repeats.",
     "development": "Numbered-fact rules were developed on reported FC600 and 262K data; this is not an independent held-out evaluation.",
     "preserved": "71.45 six-setting overview, original build timings and Infini-style results retain their original-implementation scope."
   },
@@ -939,11 +986,355 @@
       }
     },
     "count_scope": "Accounting groups retain their original units. Do not sum score units, raw slots or API POSTs as if interchangeable.",
-    "archived_judge_snapshot": "Historical actual judge snapshot was not stored; same requested alias is not a same-snapshot claim."
+    "archived_judge_snapshot": "Historical actual judge snapshot was not stored; same requested alias is not a same-snapshot claim.",
+    "auto_extension_metric_sha256": {
+      "4.1-mini": "433019fbe6c0e82727ae6fb2981473952401918371f5c2dd7f65a851622ec3df",
+      "5-mini": "b6a450bc690f4f29124b4097097c86bf1efa1e8feb6356b029589f79e56c9f41"
+    },
+    "auto_extension_independent_aggregation_sha256": "08a30d347cd4466c4870256c837e04370d71edd14afa43db9cbe4c8957c7c1ff"
   },
   "interpretation": {
     "primary": "Overall is higher for all five SDK paper-settings readers; individual cells are not universally improved.",
-    "auto": "4o-mini automatic settings improve SF/Overall while AR/TTL/LRU decrease versus the original implementation.",
+    "auto": "The three completed Auto readers share the SDK paper-settings FC inputs and scores. Auto Overall is 58.53, 60.60, and 64.74; each is lower than its SDK paper-settings result. InfBench-Sum shows the largest task loss. Per-store derivation and retrieval/render settings vary together.",
     "other_results": "No new Infini-style scores, other-dataset scores, six-setting headline or current-SDK timing is inferred."
-  }
+  },
+  "protocol_auto_readers": [
+    {
+      "id": "4o-mini",
+      "label": "GPT-4o-mini",
+      "request_model": "gpt-4o-mini-2024-07-18",
+      "cells": {
+        "shqa": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 92.0,
+          "native_percent": 89.0
+        },
+        "mhqa": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 65.0,
+          "native_percent": 66.0
+        },
+        "lme": {
+          "n": 300,
+          "repeats": 1,
+          "original_percent": 56.333333333333336,
+          "native_percent": 56.333333333333336
+        },
+        "evq": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 82.0,
+          "native_percent": 77.0
+        },
+        "b77": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 96.0,
+          "native_percent": 94.0
+        },
+        "trcC": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 70.0,
+          "native_percent": 66.0
+        },
+        "clin": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 90.0,
+          "native_percent": 89.0
+        },
+        "nlu": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 88.0,
+          "native_percent": 87.0
+        },
+        "trcF": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 65.0,
+          "native_percent": 60.0
+        },
+        "rec": {
+          "n": 200,
+          "repeats": 1,
+          "original_percent": 13.25,
+          "native_percent": 12.083333333333336
+        },
+        "summ": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 22.237952357760168,
+          "native_percent": 13.578176715428778
+        },
+        "det": {
+          "n": 71,
+          "repeats": 3,
+          "original_percent": 66.19718309859155,
+          "native_percent": 66.19718309859155
+        },
+        "fcsh": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 92.0,
+          "native_percent": 93.0
+        },
+        "fcmh": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 37.0,
+          "native_percent": 60.0
+        }
+      },
+      "original": {
+        "MCC": 81.8,
+        "AR": 73.83333333333333,
+        "TTL": 47.525,
+        "LRU": 44.21756772817586,
+        "SF": 64.5,
+        "Overall": 57.51897526537729
+      },
+      "native": {
+        "MCC": 79.2,
+        "AR": 72.08333333333333,
+        "TTL": 45.641666666666666,
+        "LRU": 39.88767990701017,
+        "SF": 76.5,
+        "Overall": 58.52816997675254
+      }
+    },
+    {
+      "id": "4.1-mini",
+      "label": "GPT-4.1-mini",
+      "request_model": "gpt-4.1-mini-2025-04-14",
+      "original": {
+        "AR": 77.41666666666667,
+        "MCC": 78.6,
+        "TTL": 47.133333333333326,
+        "LRU": 51.61092351049989,
+        "SF": 67.5,
+        "Overall": 60.91523087762497
+      },
+      "cells": {
+        "shqa": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 90.0,
+          "native_percent": 90.0
+        },
+        "mhqa": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 76.0,
+          "native_percent": 77.0
+        },
+        "lme": {
+          "n": 300,
+          "repeats": 1,
+          "original_percent": 61.66666666666667,
+          "native_percent": 61.666666666666664
+        },
+        "evq": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 82.0,
+          "native_percent": 83.0
+        },
+        "b77": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 97.0,
+          "native_percent": 96.0
+        },
+        "trcC": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 73.0,
+          "native_percent": 69.0
+        },
+        "clin": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 89.0,
+          "native_percent": 92.0
+        },
+        "nlu": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 85.0,
+          "native_percent": 86.0
+        },
+        "trcF": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 49.0,
+          "native_percent": 53.0
+        },
+        "rec": {
+          "n": 200,
+          "repeats": 1,
+          "original_percent": 15.666666666666664,
+          "native_percent": 17.25
+        },
+        "summ": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 32.32982824165706,
+          "native_percent": 16.653066904794862
+        },
+        "det": {
+          "n": 71,
+          "repeats": 3,
+          "original_percent": 70.89201877934272,
+          "native_percent": 70.89201877934273
+        },
+        "fcsh": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 93,
+          "native_percent": 94.0
+        },
+        "fcmh": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 42,
+          "native_percent": 51.0
+        }
+      },
+      "native": {
+        "MCC": 79.2,
+        "AR": 77.91666666666667,
+        "TTL": 48.225,
+        "LRU": 43.7725428420688,
+        "SF": 72.5,
+        "Overall": 60.603552377183874
+      },
+      "actual_reader_model": "gpt-4.1-mini-2025-04-14",
+      "read_provenance": {
+        "completed_extension_reader_response": 1082,
+        "reused_original_saved_answer_identical_full_request": 530,
+        "explicit_saved_raw_reuse_identical_request": 1
+      },
+      "latest_SDK_FC_saved_request_reuses": 200,
+      "judge_jobs": 261
+    },
+    {
+      "id": "5-mini",
+      "label": "GPT-5-mini",
+      "request_model": "gpt-5-mini",
+      "original": {
+        "AR": 81.0,
+        "MCC": 84.2,
+        "TTL": 47.93333333333334,
+        "LRU": 61.90529313047128,
+        "SF": 68.0,
+        "Overall": 64.70965661595116
+      },
+      "cells": {
+        "shqa": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 93.0,
+          "native_percent": 93.0
+        },
+        "mhqa": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 78.0,
+          "native_percent": 79.0
+        },
+        "lme": {
+          "n": 300,
+          "repeats": 1,
+          "original_percent": 71.0,
+          "native_percent": 71.0
+        },
+        "evq": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 82.0,
+          "native_percent": 82.0
+        },
+        "b77": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 95.0,
+          "native_percent": 93.0
+        },
+        "trcC": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 84.0,
+          "native_percent": 82.0
+        },
+        "clin": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 94.0,
+          "native_percent": 94.0
+        },
+        "nlu": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 89.0,
+          "native_percent": 85.0
+        },
+        "trcF": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 59.0,
+          "native_percent": 61.0
+        },
+        "rec": {
+          "n": 200,
+          "repeats": 1,
+          "original_percent": 11.666666666666666,
+          "native_percent": 13.833333333333336
+        },
+        "summ": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 44.46786325624772,
+          "native_percent": 25.27711738604311
+        },
+        "det": {
+          "n": 71,
+          "repeats": 3,
+          "original_percent": 79.34272300469483,
+          "native_percent": 79.34272300469485
+        },
+        "fcsh": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 94,
+          "native_percent": 95.0
+        },
+        "fcmh": {
+          "n": 100,
+          "repeats": 1,
+          "original_percent": 42,
+          "native_percent": 59.0
+        }
+      },
+      "native": {
+        "MCC": 83.0,
+        "AR": 81.25,
+        "TTL": 48.41666666666667,
+        "LRU": 52.309920195368974,
+        "SF": 77.0,
+        "Overall": 64.74414671550892
+      },
+      "actual_reader_model": "gpt-5-mini-2025-08-07",
+      "read_provenance": {
+        "completed_extension_reader_response": 1082,
+        "reused_original_saved_answer_identical_full_request": 530,
+        "explicit_saved_raw_reuse_identical_request": 1
+      },
+      "latest_SDK_FC_saved_request_reuses": 200,
+      "judge_jobs": 261
+    }
+  ]
 }

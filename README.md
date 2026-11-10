@@ -252,7 +252,7 @@ MUSTER  beam_conv0.txt  115,630 tokens
 <details>
 <summary><b>Library 0.1.2 on all fourteen MemoryAgentBench tasks</b></summary>
 
-SDK (paper settings) holds the paper cell settings fixed. SDK (automatic settings) is measured separately for GPT-4o-mini. Both are compared with the Original implementation using the same source stores and questions; selected reader contexts can differ.
+SDK (paper settings) holds the paper cell settings fixed. SDK (automatic settings) is measured separately for GPT-4o-mini, GPT-4.1-mini and GPT-5-mini. Both configurations are compared with the Original implementation using the same source stores and questions; selected reader contexts can differ.
 
 | Reader | Configuration | AR | TTL | LRU | SF | Overall |
 |---|---|---:|---:|---:|---:|---:|
@@ -267,14 +267,20 @@ SDK (paper settings) holds the paper cell settings fixed. SDK (automatic setting
 | GLM-5.3-Flash | SDK (paper settings) | 84.50 | 53.33 | 63.33 | 77.50 | 69.67 |
 | GPT-6 Luna | SDK (paper settings) | 81.67 | 52.15 | 58.29 | 76.00 | 67.03 |
 | GPT-4o-mini | SDK (automatic settings) | 72.08 | 45.64 | 39.89 | 76.50 | 58.53 |
+| GPT-4.1-mini | SDK (automatic settings) | 77.92 | 48.23 | 43.77 | 72.50 | 60.60 |
+| GPT-5-mini | SDK (automatic settings) | 81.25 | 48.42 | 52.31 | 77.00 | 64.74 |
 
-Overall is higher for all five readers with SDK paper settings; individual cells do not all improve. With automatic settings, GPT-4o-mini improves SF and Overall while AR, TTL and LRU decrease versus the original implementation.
+Overall is higher for all five readers with SDK paper settings than with the original implementation. Relative to the original implementation, automatic settings raise SF and lower LRU for each measured reader. Overall rises for GPT-4o-mini and GPT-5-mini and falls for GPT-4.1-mini.
 
-Each reader covers 1,671 questions and 1,813 response slots in 14 cells; DetectiveQA retains three reads. SDK encoder and reranker input limits are 2,048 tokens. Automatic settings derive a plan per store at the benchmark reference chunk P and retain the original LongMemEval rounds adapter.
+Each reader covers 1,671 questions and 1,813 response slots in 14 cells; DetectiveQA retains three reads. SDK encoder and reranker input limits are 2,048 tokens. Paper settings retain the cell representation originally derived from up to the first three stores of each cell. Automatic settings derive a plan per store at the benchmark reference chunk size P and retain the original LongMemEval rounds adapter.
 
-The three GPT readers use 678 fresh reader answers and 4,335 reused question-reader score units. The two frontier readers use 448 fresh response slots and 3,178 reused raw slots. These accounting units are kept separate; neither is an API POST count. Reuse requires identical complete messages and request settings.
+SDK paper-settings response accounting: the three GPT readers use 678 fresh reader answers and 4,335 reused question-reader score units. The two frontier readers use 448 fresh response slots and 3,178 reused raw slots. API attempt counts are tracked separately. Reuse requires identical complete messages and request settings.
+
+For each of GPT-4.1-mini and GPT-5-mini in Auto, 1,082 non-FC slots use completed extension responses, 530 reuse original answers, and 1 reuses a saved raw response. Each reader reuses 200 SDK paper-settings FC answers after full-request matching. All 261 judge jobs per reader were resolved and are tracked separately.
 
 [All task cells and conditions](https://github.com/saintmachines/MUSTER/blob/main/docs/data/native_mab_0_1_2.json) · [Updated paper](https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_native_20261109.pdf) · [Marked changes](https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_native_20261109_marked.pdf)
+
+[Additional automatic-setting task cells](https://github.com/saintmachines/MUSTER/blob/main/paper/auto_additional_mab_cells.csv) records 28 task rows and two Overall rows for GPT-4.1-mini and GPT-5-mini.
 
 The numbered-fact rules were developed on the reported FC data. The 71.45 six-setting overview, original build timings and original Infini-style results retain their original-implementation scope.
 

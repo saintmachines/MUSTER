@@ -157,6 +157,8 @@ the same condition (the record-preserving cut), the parent is eight times the un
 no order is claimed.
 \end{quote}
 
+On MemoryAgentBench, the original implementation applies this rule to the first up to three stores of each cell and uses the resulting representation throughout that cell. The released SDK's paper-settings configuration preserves these automatically derived cell representations, while Auto derives a plan separately for each store; Appendix~\ref{app:hyper} gives the channel and rendering choices.
+
 We follow \textsc{derive} (Figure~\ref{fig:read}) end to end on two stores. FactConsolidation's store arrives as
 lines of the form \texttt{1. Alice's employer is Zynga}, so \serial{} reads $0.9999$. The unit becomes one
 record with the serial stripped, the parent a slot key naming the record's entity and attribute, read by a
@@ -169,7 +171,7 @@ letting keep-newest delete by an arbitrary key.
 One cell is outside the rule. The benchmark's loader delivers LongMemEval as conversation rounds grouped
 into sessions, and we keep that segmentation. The rounds are the units and the sessions the parents. Both
 statistics are still computed for it, and neither fires, but the rule's unit and parent are not applied.
-Every other cell, thirteen of fourteen, is configured by the rule alone.
+For the other thirteen cells, the rule determines the representation.
 
 Besides the two thresholds, the rule's three constants come from the benchmark. They are the two chunk sizes it uses, $512$ and $4096$, their ratio of eight as the parent multiplier, and its retrieval budget of ten as the floor on parents (Table~\ref{tab:hyper}). Section~\ref{sec:results} therefore tests a fixed rule.
 
@@ -200,7 +202,7 @@ its error, over every later query.
 
 The compensated refinement branch spans the three parts. Detection takes it for a $4096$-token unit, retrieval searches at $1024$ tokens and selects four times as many units, and assembly shows them one container per parent in stored order. The nominal allowance is unchanged at $40{,}960$ tokens, so the branch raises retrieval resolution rather than buying more reader context (Appendix~\ref{app:hyper}).
 
-\paragraph{The released implementation.} On dot-numbered stores, the SDK groups qualifying records by subject and relation, leaving values out of the slot key. A relation must occur for at least two subjects, with changing subjects averaging at most four records. Other records keep the original slot rule. The question seeds subjects whose current values name further subjects. The read path follows these links for at most four rounds, ranks each round and presents the selected chain in hop order. Across these rounds it reranks at most $400$ walk candidates, in addition to the dense and parent-graph candidates already scored. Other numbering formats keep the original read path. Appendix~\ref{app:hyper} states the evaluation and development conditions.
+\paragraph{The released implementation.} On dot-numbered stores, the SDK groups qualifying records by subject and relation, leaving values out of the slot key. A relation must occur for at least two subjects, with changing subjects averaging at most four records. Other records keep the original slot rule. The question seeds subjects whose current values name further subjects. The read path follows these links for at most four rounds, ranks each round and presents the selected chain in hop order. Across these rounds it reranks at most $400$ walk candidates, in addition to the dense and parent-graph candidates already scored. Other numbering formats keep the original read path. SDK (paper settings) and Auto use this same numbered-fact path. Their complete reader inputs on the $200$ FC questions are identical, so the two configurations reuse the same responses and have the same FC scores. Appendix~\ref{app:hyper} states the evaluation and development conditions.
 
 \section{Setup}\label{sec:setup}
 
@@ -219,7 +221,7 @@ In the results below, \sys{} is the strongest memory system or matches it at equ
 
 \begin{table}[t]
 \centering\tabfont\setlength{\mw}{0.205\textwidth}\setlength{\cw}{\dimexpr(\textwidth-\mw)/15\relax}
-\caption{\textbf{MemoryAgentBench with the current SDK and the original implementation.} MemoryAgentBench \cite{mab}. Bold: \sys{}. $^{\dagger}$Built with GPT-OSS-120B \cite{gptoss} in place of the model of the system's paper. MCC: mean of the five in-context-learning cells. TTL: mean of MCC and Rec. All: mean of the four competencies. SDK (paper settings) uses released library 0.1.2 in native mode with the paper's cell configuration. The automatic row derives each store's plan and retains LongMemEval's rounds adapter. Original rows retain the original implementation.}
+\caption{\textbf{MemoryAgentBench with the current SDK and the original implementation.} MemoryAgentBench \cite{mab}. Bold: \sys{}. $^{\dagger}$Built with GPT-OSS-120B \cite{gptoss} in place of the model of the system's paper. MCC: mean of the five in-context-learning cells. TTL: mean of MCC and Rec. All: mean of the four competencies. SDK (paper settings) uses released library 0.1.2 in native mode with the paper's cell configuration. The Auto rows use the same library, deriving each store's plan at the cell's protocol chunk size $P$ and retaining LongMemEval's rounds adapter. Both use the updated FC path. Original rows retain the original implementation.}
 \label{tab:board}
 \setlength{\tabcolsep}{0pt}
 \begin{tabular}{@{}>{\raggedright\arraybackslash}p{\mw}*{15}{>{\centering\arraybackslash}p{\cw}}@{}}
@@ -283,11 +285,13 @@ GPT-5-mini 400K & 85.0 & 71.0 & 63.3 & 78.2 & 84.0 & 13.2 & 56.3 & 76.1 & 78.0 &
 \ours \textbf{SDK, GPT-6 Luna} & \textbf{94.0} & \textbf{77.0} & \textbf{74.7} & \textbf{81.0} & \textbf{88.8} & \textbf{15.5} & \textbf{38.2} & \textbf{78.4} & \textbf{94.0} & \textbf{58.0} & \textbf{81.7} & \textbf{52.2} & \textbf{58.3} & \textbf{76.0} & \textbf{67.0} \\
 \multicolumn{16}{l}{\textbf{SDK: per-store automatic configuration}}\\
 \ours \textbf{Auto, GPT-4o-mini} & \textbf{89.0} & \textbf{66.0} & \textbf{56.3} & \textbf{77.0} & \textbf{79.2} & \textbf{12.1} & \textbf{13.6} & \textbf{66.2} & \textbf{93.0} & \textbf{60.0} & \textbf{72.1} & \textbf{45.6} & \textbf{39.9} & \textbf{76.5} & \textbf{58.5} \\
+\ours \textbf{Auto, GPT-4.1-mini} & \textbf{90.0} & \textbf{77.0} & \textbf{61.7} & \textbf{83.0} & \textbf{79.2} & \textbf{17.3} & \textbf{16.7} & \textbf{70.9} & \textbf{94.0} & \textbf{51.0} & \textbf{77.9} & \textbf{48.2} & \textbf{43.8} & \textbf{72.5} & \textbf{60.6} \\
+\ours \textbf{Auto, GPT-5-mini} & \textbf{93.0} & \textbf{79.0} & \textbf{71.0} & \textbf{82.0} & \textbf{83.0} & \textbf{13.8} & \textbf{25.3} & \textbf{79.3} & \textbf{95.0} & \textbf{59.0} & \textbf{81.3} & \textbf{48.4} & \textbf{52.3} & \textbf{77.0} & \textbf{64.7} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The current implementation, released as library 0.1.2, scores $60.53$, $62.14$ and $67.02$ Overall with GPT-4o-mini, GPT-4.1-mini and GPT-5-mini, and $69.67$ and $67.03$ with GLM-5.3-Flash and GPT-6 Luna (Table~\ref{tab:board}). These SDK (paper settings) rows retain the paper's cell configuration. With per-store automatic configuration, GPT-4o-mini scores $58.53$. Appendix~\ref{app:hyper} gives the reader and answer-reuse conditions.
+The current implementation, released as library 0.1.2, scores $60.53$, $62.14$ and $67.02$ Overall with GPT-4o-mini, GPT-4.1-mini and GPT-5-mini, and $69.67$ and $67.03$ with GLM-5.3-Flash and GPT-6 Luna (Table~\ref{tab:board}). These SDK (paper settings) rows retain the paper's cell configuration. With per-store automatic configuration, the three GPT readers score $58.53$, $60.60$ and $64.74$, changing Overall by $+1.01$, $-0.31$ and $+0.03$ points from the original implementation. Both configurations share the FC gains, while their non-FC plans can differ. Appendix~\ref{app:hyper} gives the reader and answer-reuse conditions.
 
 The following comparisons use the original implementation.
 
@@ -732,15 +736,15 @@ with the shared cross-encoder. On a serial store the walk runs over slots. \emph
 
 \paragraph{The released library's native path.} On dot-numbered stores, version 0.1.2 forms recognised subject and relation slots separately from their values. From question matches it follows value-to-subject links and orders the selected records by hop. For these FC rows it selects ten units. At most four walk rounds and $400$ walk candidates are a separate search budget in addition to the initial retrieval. Other numbering formats retain the original read path. Slots are matched by text pattern. These rules were developed using the $600$ FactConsolidation questions at the smaller scales and the reported $262$K stores.
 
-\paragraph{Library evaluation conditions.} SDK (paper settings) in Tables~\ref{tab:board}, \ref{tab:expanded4o-mini}, \ref{tab:expanded4.1-mini}, \ref{tab:expanded5-mini} and~\ref{tab:expandedfrontier} is the released implementation in native mode with the paper's cell configuration held fixed. Auto is the library's default: it derives a plan for each store and retains LongMemEval's rounds adapter. Against the paper configuration, it groups the retrieved units of SH-QA, MH-QA, the five in-context-learning cells and Recsys by parent, under one \texttt{Memory n:} header per parent, and enables the neighbour channel of the balanced arm on EventQA, InfBench-Sum and DetectiveQA. The paper configuration pools the first three texts when choosing a cell's branch. Auto chooses InfBench-Sum's branch per novel, changing it on $74$ of the $100$ novels. Both paths use the original questions, reference answers, reader settings and MemoryAgentBench rubrics, with the encoder and reranker capped at $2048$ input tokens. Changed complete reader inputs are read anew. Archived answers are reused only after matching the full messages and request settings, and judgments only after matching the full judge payload. DetectiveQA retains three reads per question. The Infini-style columns keep the original implementation's values. The SDK (paper settings) columns of Table~\ref{tab:expandedfrontier} use this native path with each reader's original high-effort and empty-answer fallback contract. Ancillary per-cell CSVs accompany the source.
+\paragraph{Library evaluation conditions.} SDK (paper settings) in Tables~\ref{tab:board}, \ref{tab:expanded4o-mini}, \ref{tab:expanded4.1-mini}, \ref{tab:expanded5-mini} and~\ref{tab:expandedfrontier} is the released implementation in native mode with the paper's cell configuration held fixed. That configuration preserves the cell representations originally derived from the first up to three stores per cell. Auto uses per-store derivation in the same SDK at the cell's protocol chunk size $P$ and retains LongMemEval's rounds adapter. The original record branches use the balanced arm with neighbours and flat rendering on MemoryAgentBench, but the three channels without neighbours and parent-grouped rendering on LoCoMo and BEAM. On its record and prose branches, Auto uses neighbours and parent-grouped rendering. The two detection statistics therefore do not specify every channel and rendering choice across benchmarks. On MemoryAgentBench, relative to the paper configuration, Auto groups the retrieved units of SH-QA, MH-QA, the five in-context-learning cells and Recsys by parent, under one \texttt{Memory n:} header per parent, and enables the neighbour channel on EventQA, InfBench-Sum and DetectiveQA. Auto chooses InfBench-Sum's branch per novel, changing it on $74$ of the $100$ novels. Both paths use the original questions, reference answers, reader settings and MemoryAgentBench rubrics, with the encoder and reranker capped at $2048$ input tokens. We read anew when no archived answer matches the full messages and request settings. Judgments are reused only after matching the full judge payload. On FC, the two configurations have identical complete inputs and reuse the same updated-path responses. DetectiveQA retains three reads per question. The Infini-style columns keep the original implementation's values. The SDK (paper settings) columns of Table~\ref{tab:expandedfrontier} use this native path with each reader's original high-effort and empty-answer fallback contract. Ancillary per-cell CSVs accompany the source.
 
 \section{Complete cell results}\label{app:expanded}
 
-Tables~\ref{tab:expanded4o-mini}, \ref{tab:expanded4.1-mini} and~\ref{tab:expanded5-mini} give every cell of \sys{} at the three readers, GPT-4o-mini, GPT-4.1-mini and GPT-5-mini. In these three tables, the last column is \sys{} under Infini-style scoring, where Rec and Summ keep their MemoryAgentBench metrics. DetectiveQA is the mean of three reads. SDK (paper settings) uses the current released implementation with the paper configuration. Auto uses per-store automatic configuration and is reported only for GPT-4o-mini. Table~\ref{tab:expandedfrontier} adds GLM-5.3-Flash and GPT-6 Luna under their original MemoryAgentBench reader and scoring contracts. For each of these two readers, $224$ changed-input response slots are read anew and $1{,}589$ identical-input slots reuse archived answers, including the three DetectiveQA reads.
+Tables~\ref{tab:expanded4o-mini}, \ref{tab:expanded4.1-mini} and~\ref{tab:expanded5-mini} give every cell of \sys{} at the three readers, GPT-4o-mini, GPT-4.1-mini and GPT-5-mini. In these three tables, the last column is \sys{} under Infini-style scoring, where Rec and Summ keep their MemoryAgentBench metrics. DetectiveQA is the mean of three reads. SDK (paper settings) uses the current released implementation with the paper configuration. Auto uses per-store automatic configuration at all three readers. Table~\ref{tab:expandedfrontier} adds GLM-5.3-Flash and GPT-6 Luna under their original MemoryAgentBench reader and scoring contracts. For each of these two readers, $224$ changed-input response slots are read anew and $1{,}589$ identical-input slots reuse archived answers, including the three DetectiveQA reads.
 
 \begin{table}[!htbp]
 \centering\tabfont
-\caption{\textbf{Every cell with GPT-4o-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Original implementation: the original reported results. SDK (paper settings): released library 0.1.2 in native mode with the paper's cell configuration. Auto: per-store derivation with LongMemEval's rounds adapter. Infini-style retains the original implementation's judgments. Overall: mean of the four competencies (Table~\ref{tab:board}). Bold: \sys{}.}
+\caption{\textbf{Every cell with GPT-4o-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Original implementation: the original reported results. SDK (paper settings): released library 0.1.2 in native mode with the paper's cell configuration. Auto: per-store derivation at the cell's protocol chunk size $P$, with LongMemEval's rounds adapter. Infini-style retains the original implementation's judgments. Overall: mean of the four competencies (Table~\ref{tab:board}). Bold: \sys{}.}
 \label{tab:expanded4o-mini}
 \setlength{\tabcolsep}{4pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
 \begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
@@ -778,26 +782,26 @@ $78.87$, $83.10$ and $76.06$ with GPT-5-mini.
 \caption{\textbf{Every cell with GPT-4.1-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Columns, Infini-style and Overall: as in Table~\ref{tab:expanded4o-mini}. Bold: \sys{}.}
 \label{tab:expanded4.1-mini}
 \setlength{\tabcolsep}{4pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
-\begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
+\begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
 \toprule
-Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \textbf{\sys{}, Infini-style} \\
+Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \textbf{Auto} & \textbf{\sys{}, Infini-style} \\
 \midrule
-SH-QA & 100 & \textbf{90.00} & \textbf{90.00} & \textbf{96.00} \\
-MH-QA & 100 & \textbf{76.00} & \textbf{76.00} & \textbf{86.00} \\
-LongMemEval & 300 & \textbf{61.67} & \textbf{61.67} & \textbf{70.00} \\
-EventQA & 100 & \textbf{82.00} & \textbf{81.00} & \textbf{88.00} \\
-Banking77 & 100 & \textbf{97.00} & \textbf{97.00} & \textbf{96.00} \\
-TREC-coarse & 100 & \textbf{73.00} & \textbf{73.00} & \textbf{73.00} \\
-CLINC150 & 100 & \textbf{89.00} & \textbf{89.00} & \textbf{89.00} \\
-NLU & 100 & \textbf{85.00} & \textbf{85.00} & \textbf{85.00} \\
-TREC-fine & 100 & \textbf{49.00} & \textbf{49.00} & \textbf{47.00} \\
-Recsys & 200 & \textbf{15.67} & \textbf{15.67} & \textbf{15.67} \\
-InfBench-Sum & 100 & \textbf{32.33} & \textbf{32.62} & \textbf{32.33} \\
-DetectiveQA & 71 & \textbf{70.89} & \textbf{70.89} & \textbf{74.65} \\
-FC-SH & 100 & \textbf{93.00} & \textbf{94.00} & \textbf{92.00} \\
-FC-MH & 100 & \textbf{42.00} & \textbf{51.00} & \textbf{45.00} \\
+SH-QA & 100 & \textbf{90.00} & \textbf{90.00} & \textbf{90.00} & \textbf{96.00} \\
+MH-QA & 100 & \textbf{76.00} & \textbf{76.00} & \textbf{77.00} & \textbf{86.00} \\
+LongMemEval & 300 & \textbf{61.67} & \textbf{61.67} & \textbf{61.67} & \textbf{70.00} \\
+EventQA & 100 & \textbf{82.00} & \textbf{81.00} & \textbf{83.00} & \textbf{88.00} \\
+Banking77 & 100 & \textbf{97.00} & \textbf{97.00} & \textbf{96.00} & \textbf{96.00} \\
+TREC-coarse & 100 & \textbf{73.00} & \textbf{73.00} & \textbf{69.00} & \textbf{73.00} \\
+CLINC150 & 100 & \textbf{89.00} & \textbf{89.00} & \textbf{92.00} & \textbf{89.00} \\
+NLU & 100 & \textbf{85.00} & \textbf{85.00} & \textbf{86.00} & \textbf{85.00} \\
+TREC-fine & 100 & \textbf{49.00} & \textbf{49.00} & \textbf{53.00} & \textbf{47.00} \\
+Recsys & 200 & \textbf{15.67} & \textbf{15.67} & \textbf{17.25} & \textbf{15.67} \\
+InfBench-Sum & 100 & \textbf{32.33} & \textbf{32.62} & \textbf{16.65} & \textbf{32.33} \\
+DetectiveQA & 71 & \textbf{70.89} & \textbf{70.89} & \textbf{70.89} & \textbf{74.65} \\
+FC-SH & 100 & \textbf{93.00} & \textbf{94.00} & \textbf{94.00} & \textbf{92.00} \\
+FC-MH & 100 & \textbf{42.00} & \textbf{51.00} & \textbf{51.00} & \textbf{45.00} \\
 \midrule
-Overall &  & \textbf{60.92} & \textbf{62.14} & \textbf{63.46} \\
+Overall &  & \textbf{60.92} & \textbf{62.14} & \textbf{60.60} & \textbf{63.46} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -807,26 +811,26 @@ Overall &  & \textbf{60.92} & \textbf{62.14} & \textbf{63.46} \\
 \caption{\textbf{Every cell with GPT-5-mini.} The fourteen MemoryAgentBench cells of Table~\ref{tab:stores}, 0--100 scale. Columns, Infini-style and Overall: as in Table~\ref{tab:expanded4o-mini}. Bold: \sys{}.}
 \label{tab:expanded5-mini}
 \setlength{\tabcolsep}{4pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
-\begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
+\begin{tabular}{lc>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c>{\columncolor{oursbg}}c}
 \toprule
-Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \textbf{\sys{}, Infini-style} \\
+Cell & $n$ & \shortstack{\textbf{Original}\\\textbf{implementation}} & \shortstack{\textbf{SDK}\\\textbf{(paper settings)}} & \textbf{Auto} & \textbf{\sys{}, Infini-style} \\
 \midrule
-SH-QA & 100 & \textbf{93.00} & \textbf{93.00} & \textbf{97.00} \\
-MH-QA & 100 & \textbf{78.00} & \textbf{78.00} & \textbf{93.00} \\
-LongMemEval & 300 & \textbf{71.00} & \textbf{71.00} & \textbf{78.67} \\
-EventQA & 100 & \textbf{82.00} & \textbf{82.00} & \textbf{88.00} \\
-Banking77 & 100 & \textbf{95.00} & \textbf{95.00} & \textbf{95.00} \\
-TREC-coarse & 100 & \textbf{84.00} & \textbf{84.00} & \textbf{84.00} \\
-CLINC150 & 100 & \textbf{94.00} & \textbf{94.00} & \textbf{94.00} \\
-NLU & 100 & \textbf{89.00} & \textbf{89.00} & \textbf{88.00} \\
-TREC-fine & 100 & \textbf{59.00} & \textbf{59.00} & \textbf{58.00} \\
-Recsys & 200 & \textbf{11.67} & \textbf{12.17} & \textbf{11.67} \\
-InfBench-Sum & 100 & \textbf{44.47} & \textbf{44.48} & \textbf{44.47} \\
-DetectiveQA & 71 & \textbf{79.34} & \textbf{79.34} & \textbf{85.92} \\
-FC-SH & 100 & \textbf{94.00} & \textbf{95.00} & \textbf{92.00} \\
-FC-MH & 100 & \textbf{42.00} & \textbf{59.00} & \textbf{43.00} \\
+SH-QA & 100 & \textbf{93.00} & \textbf{93.00} & \textbf{93.00} & \textbf{97.00} \\
+MH-QA & 100 & \textbf{78.00} & \textbf{78.00} & \textbf{79.00} & \textbf{93.00} \\
+LongMemEval & 300 & \textbf{71.00} & \textbf{71.00} & \textbf{71.00} & \textbf{78.67} \\
+EventQA & 100 & \textbf{82.00} & \textbf{82.00} & \textbf{82.00} & \textbf{88.00} \\
+Banking77 & 100 & \textbf{95.00} & \textbf{95.00} & \textbf{93.00} & \textbf{95.00} \\
+TREC-coarse & 100 & \textbf{84.00} & \textbf{84.00} & \textbf{82.00} & \textbf{84.00} \\
+CLINC150 & 100 & \textbf{94.00} & \textbf{94.00} & \textbf{94.00} & \textbf{94.00} \\
+NLU & 100 & \textbf{89.00} & \textbf{89.00} & \textbf{85.00} & \textbf{88.00} \\
+TREC-fine & 100 & \textbf{59.00} & \textbf{59.00} & \textbf{61.00} & \textbf{58.00} \\
+Recsys & 200 & \textbf{11.67} & \textbf{12.17} & \textbf{13.83} & \textbf{11.67} \\
+InfBench-Sum & 100 & \textbf{44.47} & \textbf{44.48} & \textbf{25.28} & \textbf{44.47} \\
+DetectiveQA & 71 & \textbf{79.34} & \textbf{79.34} & \textbf{79.34} & \textbf{85.92} \\
+FC-SH & 100 & \textbf{94.00} & \textbf{95.00} & \textbf{95.00} & \textbf{92.00} \\
+FC-MH & 100 & \textbf{42.00} & \textbf{59.00} & \textbf{59.00} & \textbf{43.00} \\
 \midrule
-Overall &  & \textbf{64.71} & \textbf{67.02} & \textbf{67.40} \\
+Overall &  & \textbf{64.71} & \textbf{67.02} & \textbf{64.74} & \textbf{67.40} \\
 \bottomrule
 \end{tabular}
 \end{table}
