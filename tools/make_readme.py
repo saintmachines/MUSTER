@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write the README's headline blocks and figures from docs/data/headline.json, the one source of their numbers.
+"""Write the README's headline blocks, figures and landing data from docs/data/headline.json.
 
 Blocks are the text between `<!-- BEGIN headline:NAME -->` and `<!-- END headline:NAME -->` in README.md:
     overview   the paper's overview table: six settings, two readers, eight systems
@@ -18,7 +18,8 @@ added or moved is renumbered by running it.
 Nothing is typed twice. Before writing, the derived columns of the overview table (per-setting ranks, mean rank, worst rank,
 top-3 count, mean score) are recomputed from the scores and must equal the stored ones, and every LLM cost is recomputed
 from build tokens and the list prices in the same file and must equal the stored cost.
-Run from anywhere:  python tools/make_readme.py            write README.md blocks, its section numbers and the SVGs
+The landing page's single script#hd data block is synchronized from the same JSON.
+Run from anywhere:  python tools/make_readme.py            write README.md blocks, section numbers, SVGs and landing data
                     python tools/make_readme.py --check    exit 1 if any of them differs from what the data and the
                                                            README's sections give
 """
@@ -33,6 +34,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "docs" / "data" / "headline.json"
 README = ROOT / "README.md"
+INDEX = ROOT / "docs" / "index.html"
 ASSETS = ROOT / "docs" / "assets" / "readme"
 
 # GitHub's page colours and neutrals for its two themes; the SVGs carry no background of their own.
@@ -211,6 +213,15 @@ def fill_readme(text, d, v):
             sys.exit(f"README.md needs exactly one headline:{name} block")
         text = pat.sub(lambda m: m.group(1) + fn(d, v) + "\n" + m.group(2), text)
     return text
+
+
+def fill_landing_headline(text, d):
+    pat = re.compile(r'(<script id="hd" type="application/json">)(.*?)(</script>)', re.S)
+    if len(pat.findall(text)) != 1:
+        sys.exit("docs/index.html needs exactly one script#hd headline data block")
+    # Escaping '<' keeps JSON strings from closing the HTML script element.
+    data = json.dumps(d, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
+    return pat.sub(lambda m: m.group(1) + data + m.group(3), text)
 
 
 def number_picture(n):
@@ -452,7 +463,7 @@ def outputs():
     d = json.loads(DATA.read_text(encoding="utf-8"))
     v = derive(d)
     readme, numbers = number_sections(fill_readme(README.read_text(encoding="utf-8"), d, v))
-    files = {README: readme, **numbers}
+    files = {README: readme, INDEX: fill_landing_headline(INDEX.read_text(encoding="utf-8"), d), **numbers}
     for name, fn in FIGURES.items():
         for theme, c in THEMES.items():
             files[ASSETS / f"{name}_{theme}.svg"] = fn(d, v, c)

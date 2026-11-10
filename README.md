@@ -157,7 +157,7 @@ and nothing is written back.
 | True Memory | 43.6 | the strongest other retrieval or memory system; it also builds with no LLM call |
 | Retrieval + assembly, no detection | 50.3 | detection off: the benchmark's own chunks, balanced floors and one rerank, assembled in stored order |
 | + detection: units, parents, order | 56.0 | detection on: unit, parent and order from each store's structure; floors still balanced |
-| **+ retrieval mix matched (MUSTER)** | 57.5 | the shipped system: the floors also follow the structure, parent graph first on numbered logs, balanced elsewhere |
+| **+ retrieval mix matched (MUSTER)** | 57.5 | original paper implementation: the floors also follow the structure, parent graph first on numbered logs, balanced elsewhere |
 <!-- END headline:lead -->
 
 </details>
