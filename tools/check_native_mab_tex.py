@@ -50,6 +50,47 @@ READERS = {key: ("SDK, " + spec[0], spec[1], spec[2]) for key, spec in READER_SP
 ORIGINAL_BOARD_READERS = ("4o-mini", "4.1-mini", "5-mini")
 CHANGED_TABLES = set(TABLE_SOURCES)
 TOLERANCE = Decimal("0.0000000001")
+READ_SCOPE_CAPTION = (
+    (
+        "Detection derives unit, parent and order from two byte statistics, and its policy gate picks the arm, once per store and with no model.",
+        "Detection derives unit, parent and order from two byte statistics and picks the retrieval arm once per plan, with no model. "
+        "On MemoryAgentBench, the original implementation derives a representation for each cell from its first up to three stores.",
+    ),
+    (
+        r"Containers apply on the refined branch (Section~\ref{sec:resolve}).",
+        r"The refined branch, LoCoMo, LoCoMo-Refined and BEAM use one container per parent (Appendix~\ref{app:hyper}).",
+    ),
+)
+ALGORITHM_SCOPE_CAPTION = (
+    (
+        "Part~I runs detection, including the policy gate (step~11), once per store with no model.",
+        "Part~I runs detection, including the policy gate (step~11), once per plan with no model. "
+        "On MemoryAgentBench, the original implementation derives a representation for each cell from its first up to three stores.",
+    ),
+    (
+        "Part~II (retrieval and context assembly) answers a query with one embedding, one rerank and one reader call.",
+        "Part~II (retrieval and context assembly) uses one query embedding, an initial rerank and one reader call per query. "
+        "The SDK's numbered-fact walk can add rerank rounds.",
+    ),
+)
+ALGORITHM_SCOPE_BODY = (
+    (
+        r"\STATE \textbf{\textsc{Part I, Derive}} \emph{(once per store)}",
+        r"\STATE \textbf{\textsc{Part I, Derive}} \emph{(once per plan)}",
+    ),
+    (
+        "(balanced: also each seed's neighbours in its parent, floor $0$)",
+        "(when enabled, also each seed's neighbours in its parent, floor $0$)",
+    ),
+    (
+        "select the top units after one reranking pass",
+        "select the top units after the initial reranking pass",
+    ),
+    (
+        r"one container per parent on the refined branch; \textbf{return} the context",
+        r"one container per parent when parent-grouped rendering is used; \textbf{return} the context",
+    ),
+)
 
 
 class CheckError(Exception):
@@ -228,6 +269,52 @@ def compare_figure_blocks(before, after):
     return len(before)
 
 
+def restore_exact_clauses(block, start, end, changes, location):
+    """Restore the declared text only within its parsed caption or algorithmic body."""
+    scoped_text = block[start:end]
+    restored = scoped_text
+    for before, after in changes:
+        require(scoped_text.count(after) == block.count(after) == 1,
+                'Expected exact v10 scope clause once inside ' + location + ': ' + after)
+        require(before not in block, 'Old scope clause remains in ' + location + ': ' + before)
+        restored = restored.replace(after, before, 1)
+    return block[:start] + restored + block[end:]
+
+
+def restore_read_scope_caption(block):
+    require(re.findall(r"\\label\{([^}]+)\}", block) == ['fig:read'], 'Wrong fig:read scope label')
+    start, end = read_caption_span(block)
+    return restore_exact_clauses(block, start, end, READ_SCOPE_CAPTION, 'fig:read caption')
+
+
+def restore_algorithm_scope(block):
+    require(re.findall(r"\\label\{([^}]+)\}", block) == ['alg:muster', 'alg:lift'],
+            'Wrong Algorithm 1 scope labels')
+    start, end = caption_span(block, 'alg:muster')
+    block = restore_exact_clauses(block, start, end, ALGORITHM_SCOPE_CAPTION, 'alg:muster caption')
+    bodies = environments(block, {'algorithmic'})
+    require(len(bodies) == 1, 'Expected one alg:muster algorithmic body')
+    start = block.index(bodies[0])
+    return restore_exact_clauses(block, start, start + len(bodies[0]),
+                                 ALGORITHM_SCOPE_BODY, 'alg:muster algorithmic body')
+
+
+def restore_labeled_block(blocks, label, restore):
+    marker = r'\label{' + label + '}'
+    matches = [index for index, block in enumerate(blocks) if marker in block]
+    require(len(matches) == 1, 'Expected one scope block for ' + label)
+    index = matches[0]
+    return blocks[:index] + [restore(blocks[index])] + blocks[index + 1:]
+
+
+def restore_final_scope_floats(text):
+    figures = restore_labeled_block(environments(text, {'figure', 'figure*'}),
+                                    'fig:read', restore_read_scope_caption)
+    algorithms = restore_labeled_block(environments(text, {'algorithm', 'algorithm*'}),
+                                       'alg:muster', restore_algorithm_scope)
+    return figures, algorithms
+
+
 def unwrap(text, command):
     prefix = "\\" + command + "{"
     while prefix in text:
@@ -326,7 +413,7 @@ def expanded_gpt_header(block, label):
 
 
 def compare_previous_revision(previous, current):
-    """Three numeric tables plus one exact caption clause may differ from v9."""
+    """Check v9 table scope and preserve float blocks after exact text restoration."""
     old_tables, new_tables = table_map(previous), table_map(current)
     require(len(old_tables) == 31 and set(old_tables) == set(new_tables), 'Previous v9 table inventory differs')
     allowed = set(V10_CHANGED_TABLES) | set(V10_CAPTION_ONLY_TABLES)
@@ -337,9 +424,10 @@ def compare_previous_revision(previous, current):
     for label in V10_CAPTION_ONLY_TABLES:
         compare_auto_caption_table(old_tables[label], new_tables[label], label)
     require(section_headings(previous) == section_headings(current), 'Changed v9 section structure')
-    require(environments(previous, {'figure', 'figure*'}) == environments(current, {'figure', 'figure*'}),
+    restored_figures, restored_algorithms = restore_final_scope_floats(current)
+    require(environments(previous, {'figure', 'figure*'}) == restored_figures,
             'Changed v9 figure block')
-    require(environments(previous, {'algorithm', 'algorithm*'}) == environments(current, {'algorithm', 'algorithm*'}),
+    require(environments(previous, {'algorithm', 'algorithm*'}) == restored_algorithms,
             'Changed v9 algorithm')
     return unchanged
 
@@ -490,10 +578,11 @@ def main():
     for label in unchanged:
         require(before[label] == now[label], "Changed full public B table block " + label)
     preservation = {}
+    restored_figures, restored_algorithms = restore_final_scope_floats(current)
     preservation["figures"] = compare_figure_blocks(environments(baseline, {"figure", "figure*"}),
-                                                    environments(current, {"figure", "figure*"}))
-    old_algorithms, new_algorithms = environments(baseline, {"algorithm", "algorithm*"}), environments(current, {"algorithm", "algorithm*"})
-    require(old_algorithms and old_algorithms == new_algorithms, "Changed algorithms")
+                                                    restored_figures)
+    old_algorithms = environments(baseline, {"algorithm", "algorithm*"})
+    require(old_algorithms and old_algorithms == restored_algorithms, "Changed algorithms")
     preservation["algorithms"] = len(old_algorithms)
     source_receipt_path = None
     if args.source_receipt:
@@ -529,8 +618,8 @@ def main():
         require(sorted(set(direct_tables) - CHANGED_TABLES) == unchanged, "Direct v6 unchanged-table mapping differs")
         for label in unchanged:
             require(direct_tables[label] == now[label], "Changed full direct v6 table block " + label)
-        compare_figure_blocks(environments(direct_text, {"figure", "figure*"}), environments(current, {"figure", "figure*"}))
-        require(environments(direct_text, {"algorithm", "algorithm*"}) == new_algorithms, "Changed direct v6 algorithms")
+        compare_figure_blocks(environments(direct_text, {"figure", "figure*"}), restored_figures)
+        require(environments(direct_text, {"algorithm", "algorithm*"}) == restored_algorithms, "Changed direct v6 algorithms")
         require(section_headings(direct_text) == new_headings, "Changed direct v6 section structure")
         if source_receipt_path:
             require(set(source_receipt["comparison_baselines"]["direct_v6"]["table_labels"]) == set(direct_tables), "Receipt direct v6 table inventory differs")
@@ -653,10 +742,18 @@ def main():
         "original_board_rows_preserved_except_three_explicit_reader_labels": len(old_rows),
         "original_and_Infini_style_expanded_rows_preserved": 45,
         "section_headings_preserved": len(old_headings),
-        "figure_blocks_preserved_except_one_exact_caption_clause": preservation["figures"],
+        "figure_blocks_preserved_after_exact_caption_restoration": preservation["figures"],
         "unmodified_figure_blocks": preservation["figures"] - 1,
         "figure_caption_exception": {"label": "fig:read", "before": READ_CAPTION_BEFORE, "after": READ_CAPTION_AFTER,
-                                     "scope": "one exact substring inside the actual caption; all other block bytes equal"},
+                                     "scope": "earlier rerank clause for public B and v6 after the final v10 scope restoration"},
+        "final_v10_scope_exceptions": {
+            "fig:read": {"caption": [{"before": old, "after": new} for old, new in READ_SCOPE_CAPTION]},
+            "alg:muster": {
+                "caption": [{"before": old, "after": new} for old, new in ALGORITHM_SCOPE_CAPTION],
+                "algorithmic": [{"before": old, "after": new} for old, new in ALGORITHM_SCOPE_BODY],
+            },
+        },
+        "other_figure_and_algorithm_block_bytes_preserved": True,
         "figure_assets_and_labels_preserved": True, "algorithms_preserved": preservation["algorithms"],
         "display_rounding": "Decimal ROUND_HALF_UP", "new_quality_or_publication_claim": False,
         "v10_final_artifact_hashes_checked": artifact_checks,

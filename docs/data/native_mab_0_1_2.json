@@ -1,7 +1,7 @@
 {
   "schema": "muster.native_mab.v2",
   "sdk_version": "0.1.2",
-  "prepared_utc": "2026-11-10T22:21:12.817670+00:00",
+  "prepared_utc": "2026-11-11T00:06:20.924369+00:00",
   "benchmark": {
     "name": "MemoryAgentBench",
     "cells": 14,
@@ -27,9 +27,9 @@
   },
   "paper": {
     "revision": "v10",
-    "pages": 35,
+    "pages": 36,
     "baseline_tex": "paper/MUSTER_followup_20261107.tex",
-    "source_receipt_sha256": "587d93d52da886e99c664b605e544b0ca3c208ddacb7b6f4d5a39fdb45b33e82",
+    "source_receipt_sha256": "cabc35fa3a218b9043cdfd00f7a1ef39d50119fc353a516aeb701b3fc8a7920a",
     "comparison_baselines": {
       "public_B": {
         "sha256": "37e5eaf1346c222ce4807a705d9e14527058368d8cc2f2ca240298b99f488003",
@@ -159,13 +159,13 @@
       "tab:expandedfrontier"
     ],
     "tex": "paper/MUSTER_native_20261109.tex",
-    "tex_sha256": "8691252a49128040cd3662cc9aa688f9bd594a6d42d7b2ca468d8a026622e20c",
+    "tex_sha256": "8a7966bcb05a56bb772352d9031082ad5329e80d5023508b540c4d35b283863a",
     "pdf": "paper/MUSTER_native_20261109.pdf",
-    "clean_pdf_sha256": "ff0c4a3d744d9714b7dccd3f333992cbc791bd57e0c923c7ea827ff8c982986d",
+    "clean_pdf_sha256": "779b7516cdedb085092041c5afcf1f5a97dac42401a79c7c94fca636e18d936b",
     "marked_pdf": "paper/MUSTER_native_20261109_marked.pdf",
-    "marked_pdf_sha256": "fe8f44857e21b423abaea0dead53ce2a05075db528c2d2e4422e0404e21d2dcf",
+    "marked_pdf_sha256": "2b33e423f6a8e4ffe75943b6fcc01399f03db778221121b0ee17c88bf52020ce",
     "source_zip": "paper/MUSTER_native_20261109_source.zip",
-    "source_zip_sha256": "f81e2a4f9f739a3e2948f4d1d7a3b01c8aff2c91f450479e09425acc6652fbbb",
+    "source_zip_sha256": "63c99d7d003c368077f62ff30180b39456e57b8ad6170309c3538d71d9ca7a23",
     "status": "verified_v10_final_receipt",
     "previous_tex": "paper/MUSTER_native_20261109_v9.tex",
     "allowed_modified_tables_from_v9": [

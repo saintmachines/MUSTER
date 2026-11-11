@@ -60,6 +60,13 @@ def original_board_scope(block):
     return "\n".join(lines[:marker[0]] if marker else lines), bool(current)
 
 
+def rule_quote(tex):
+    matches = re.findall(r"\\label\{sec:rule\}\s*\\begin\{quote\}(.*?)\\end\{quote\}", tex, re.S)
+    if len(matches) != 1:
+        sys.exit(f"Expected one detection-rule quotation; found {len(matches)}")
+    return matches[0]
+
+
 def main():
     tex = Path(sys.argv[1]).read_text(encoding="utf-8")
     bad, n = [], 0
@@ -189,8 +196,11 @@ def main():
     same("detection stores", sorted(s["key"] for s in ds["stores"]), sorted(printed))
     for s in ds["stores"]:
         same(f"detection {s['key']}", (s["recshare"], s["serial"]), printed[s["key"]])
-    rule = re.search(r"If \$\\serial \\ge ([\d.]+)\$.*?when \$\\cov \\ge ([\d.]+)\$", tex, re.S)
-    same("detection thresholds", [f"{ds['tau']['serial']:.2f}", f"{ds['tau']['recshare']:.2f}"], [rule.group(1), rule.group(2)])
+    thresholds = re.findall(r"If \$\\serial \\ge ([\d.]+)\$.*?[Ww]hen \$\\cov \\ge ([\d.]+)\$",
+                            rule_quote(tex), re.S)
+    if len(thresholds) != 1:
+        sys.exit(f"sec:rule needs one serial and record-coverage threshold pair; found {len(thresholds)}")
+    same("detection thresholds", [f"{ds['tau']['serial']:.2f}", f"{ds['tau']['recshare']:.2f}"], list(thresholds[0]))
     cap = re.search(r"\$([\d.]+)\$ wide for \\serial\{\} and \$([\d.]+)\$ for \\cov\{\}", tex)
     same("detection gaps", [f"{ds['gap']['serial']:.3f}", f"{ds['gap']['recshare']:.3f}"], [cap.group(1), cap.group(2)])
     for stat in ("serial", "recshare"):

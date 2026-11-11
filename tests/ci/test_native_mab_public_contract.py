@@ -73,6 +73,11 @@ def test_thirteen_reader_rows_full_v10_artifacts_and_original_headline_are_curre
             assert audit["previous_v9_unchanged_full_table_blocks"] == 27
             assert audit["unchanged_full_table_blocks"] == 25
             assert audit["original_and_Infini_style_expanded_rows_preserved"] == 45
+            scope = audit["final_v10_scope_exceptions"]
+            assert len(scope["fig:read"]["caption"]) == 2
+            assert len(scope["alg:muster"]["caption"]) == 2
+            assert len(scope["alg:muster"]["algorithmic"]) == 4
+            assert audit["other_figure_and_algorithm_block_bytes_preserved"] is True
 
 
 def test_readme_and_landing_bind_all_five_metrics_to_thirteen_scoped_rows(data):
@@ -259,6 +264,40 @@ def test_caption_exception_does_not_hide_other_figure_changes(contract, source_c
     else:
         with pytest.raises(source_checker.CheckError):
             source_checker.compare_figure_blocks([before], [after])
+
+
+@pytest.mark.parametrize("mutation, error", (
+    ("figure_asset", "Changed v9 figure block"),
+    ("duplicate_caption_clause", "once inside fig:read caption"),
+    ("algorithm_parent_multiplier", "Changed v9 algorithm"),
+    ("misplaced_algorithm_clause", "once inside alg:muster algorithmic body"),
+))
+def test_final_scope_restoration_preserves_unrelated_float_bytes(data, source_checker, mutation, error):
+    previous = (ROOT / data["paper"]["previous_tex"]).read_text(encoding="utf-8")
+    current = (ROOT / data["paper"]["tex"]).read_text(encoding="utf-8")
+    if mutation in ("figure_asset", "duplicate_caption_clause"):
+        figures = source_checker.environments(current, {"figure", "figure*"})
+        block = next(block for block in figures if r"\label{fig:read}" in block)
+        if mutation == "figure_asset":
+            changed = block.replace("fig_read3_v122.pdf", "other_asset.pdf", 1)
+        else:
+            clause = (
+                "The refined branch, LoCoMo, LoCoMo-Refined and BEAM use one container per parent "
+                r"(Appendix~\ref{app:hyper})."
+            )
+            changed = block.replace(clause, clause + " " + clause, 1)
+    else:
+        algorithms = source_checker.environments(current, {"algorithm", "algorithm*"})
+        block = next(block for block in algorithms if r"\label{alg:muster}" in block)
+        if mutation == "algorithm_parent_multiplier":
+            changed = block.replace(r"$8\times$ the unit", r"$9\times$ the unit", 1)
+        else:
+            clause = "select the top units after the initial reranking pass"
+            changed = block.replace(clause, "select the top units after reranking", 1)
+            changed = changed.replace(r"\begin{algorithmic}", clause + "\n" + r"\begin{algorithmic}", 1)
+    assert changed != block
+    with pytest.raises(source_checker.CheckError, match=error):
+        source_checker.compare_previous_revision(previous, current.replace(block, changed, 1))
 
 
 def test_pp_control_is_bound_to_its_own_axis(contract, data):

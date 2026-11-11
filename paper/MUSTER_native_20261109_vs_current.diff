@@ -14,21 +14,26 @@
  
  \begin{abstract}
 -An AI agent's memory stores differ in the structure they already record. Logs number their lines, example banks separate their records, and prose does neither. RAG keeps every word and can score well after heavy tuning to a dataset, but the tuning does not generalize. Model-built memory scales to long histories but is costly to build and can drop evidence. Agents need an autonomous strategy that is cheap to build and leaves little to tune. \sys{} detects each store's structure and builds memory from it. Two byte statistics, the shares of numbered lines and of text in records short enough to keep whole, set how a store is cut, grouped and ordered, with no model, labels, queries or candidate runs. \sys{} matches retrieval to that structure, which sets how dense, lexical and parent-graph channels split the slots. It assembles the context in stored order, keeping the newest version of each fact where an order is recorded. One rule, set on MemoryAgentBench, configures LoCoMo and BEAM unchanged. On MemoryAgentBench it is the strongest retrieval and memory system at the benchmark's reader ($57.5$ against $43.6$). On LoCoMo it is the strongest row under both answer prompts ($86.04$ and $93.46$) with no generative call before the answer, where the strongest other system makes $9{,}398$. On LoCoMo-Refined it matches that system under the official evaluation ($77.57$ against $75.33$) and leads it by $8.5$ points with a reasoning reader. On BEAM, from 100K to 10M tokens, it matches the strongest system we compare at equal context and has the highest mean with an open-weight reader at 9.7K tokens. It builds a 10M-token memory in $77$ seconds, where model-built memories take hours. Read beside a model-built memory, it averages $73.1$ on BEAM at $19.5$K tokens, above either store alone and every system at that budget. \sys{} keeps each store as written and re-derives its configuration in seconds as the store grows.
-+An AI agent's memory stores differ in the structure they already record. Logs number their lines, example banks separate their records, and prose does neither. RAG keeps every word and can score well after heavy tuning to a dataset, but the tuning does not generalize. Model-built memory scales to long histories but is costly to build and can drop evidence. Agents need an autonomous strategy that is cheap to build and leaves little to tune. \sys{} detects each store's structure and builds memory from it. Two byte statistics, the shares of numbered lines and of text in records short enough to keep whole, set how a store is cut, grouped and ordered, with no model, labels, queries or candidate runs. \sys{} matches retrieval to that structure, which sets how dense, lexical and parent-graph channels split the slots. It assembles the context in stored order, keeping the newest version of each fact where an order is recorded. One rule, set on MemoryAgentBench, configures LoCoMo and BEAM unchanged. On MemoryAgentBench the released implementation with the paper settings has the highest Overall among the retrieval and memory systems at the benchmark's reader ($60.5$ against $43.6$). Its per-store automatic configuration scores $58.5$. The original implementation is the strongest row on LoCoMo under both answer prompts ($86.04$ and $93.46$) with no generative call before the answer, where the strongest other system makes $9{,}398$. On LoCoMo-Refined it matches that system under the official evaluation ($77.57$ against $75.33$) and leads it by $8.5$ points with a reasoning reader. On BEAM, from 100K to 10M tokens, it matches the strongest system we compare at equal context and has the highest mean with an open-weight reader at 9.7K tokens. It builds a 10M-token memory in $77$ seconds, where model-built memories take hours. Read beside a model-built memory, it averages $73.1$ on BEAM at $19.5$K tokens, above either store alone and every system at that budget. \sys{} keeps each store as written and re-derives its configuration in seconds as the store grows.
++An AI agent's memory stores differ in the structure they already record. Logs number their lines, example banks separate their records, and prose does neither. RAG keeps every word and can score well after heavy tuning to a dataset, but the tuning does not generalize. Model-built memory scales to long histories but is costly to build and can drop evidence. Agents need an autonomous strategy that is cheap to build and leaves little to tune. \sys{} detects each store's structure and builds memory from it. Two byte statistics, the shares of numbered lines and of text in records short enough to keep whole, set how a store is cut, grouped and ordered, with no model, labels, queries or candidate runs. \sys{} matches retrieval to that structure, which sets how dense, lexical and parent-graph channels split the slots. It assembles the context in stored order, keeping the newest version of each fact where an order is recorded. The rule for cutting and grouping, set on MemoryAgentBench, applies unchanged to LoCoMo and BEAM. On MemoryAgentBench the released implementation with the paper settings has the highest Overall among the retrieval and memory systems at the benchmark's reader ($60.5$ against $43.6$). Its per-store automatic configuration scores $58.5$. The original implementation is the strongest row on LoCoMo under both answer prompts ($86.04$ and $93.46$) with no generative call before the answer, where the strongest other system makes $9{,}398$. On LoCoMo-Refined it matches that system under the official evaluation ($77.57$ against $75.33$) and leads it by $8.5$ points with a reasoning reader. On BEAM, from 100K to 10M tokens, it matches the strongest system we compare at equal context and has the highest mean with an open-weight reader at 9.7K tokens. It builds a 10M-token memory in $77$ seconds, where model-built memories take hours. Read beside a model-built memory, it averages $73.1$ on BEAM at $19.5$K tokens, above either store alone and every system at that budget. \sys{} keeps each store as written and re-derives its configuration in seconds as the store grows.
  \end{abstract}
  
  
-@@ -89,18 +89,18 @@
+@@ -87,20 +87,20 @@
+ two statistics see no question, gold answer or dataset name and call no model, and over fourteen stores they run
+ in three seconds and configure thirteen (LongMemEval keeps its sessions).
  
- The memory systems we run are reported on conversation benchmarks alone, and their lead does not carry. The strongest other system we ran on LoCoMo scores $23.1$ on MemoryAgentBench, below BM25's $41.5$ (Table~\ref{tab:board}). \sys{} is set on MemoryAgentBench, and its rule configures LoCoMo, LoCoMo-Refined, BEAM and a model-built memory automatically from their bytes, with no change. In the results of Section~\ref{sec:results}, \sys{} is the strongest memory system on each benchmark or matches it at equal context.
- 
+-The memory systems we run are reported on conversation benchmarks alone, and their lead does not carry. The strongest other system we ran on LoCoMo scores $23.1$ on MemoryAgentBench, below BM25's $41.5$ (Table~\ref{tab:board}). \sys{} is set on MemoryAgentBench, and its rule configures LoCoMo, LoCoMo-Refined, BEAM and a model-built memory automatically from their bytes, with no change. In the results of Section~\ref{sec:results}, \sys{} is the strongest memory system on each benchmark or matches it at equal context.
+-
 -\paragraph{Detect before you construct.} Unlike True Memory \cite{truememory}, which reads every store with one fixed representation, and Adaptive Chunking \cite{adaptivechunk}, which picks a chunker by running every candidate, \sys{} derives a store's unit, parent, order and retrieval policy from two byte statistics, with no model and no candidate run. It \emph{detects} whether the store records the structure a reader needs, including an order, and sets the unit and hierarchy from it. It \emph{matches} a hybrid retrieval to that structure, giving the parent graph most slots on a numbered log and balancing it with dense and lexical search elsewhere. It \emph{assembles} the context in stored order, keeping the newest version of a numbered fact. An order the store does not record is worse than none. On fixed selections, shuffled serials score $59$ on one fact-consolidation cell, below $64$ with no order and $92$ with the recorded one (Appendix~\ref{app:slotsrc}). Deterministic conflict resolution \cite{freshness} assumes the serial from the task format and extracts facts with a model on every query, while \sys{} detects the serial and scores $92.0$ and $37.0$ on the fact-consolidation cells against the $82.0$ and $27.0$ it reports at the same reader.
++The memory systems we run are reported on conversation benchmarks alone, and their lead does not carry. The strongest other system we ran on LoCoMo scores $23.1$ on MemoryAgentBench, below BM25's $41.5$ (Table~\ref{tab:board}). The rule set on MemoryAgentBench derives the units and parents of LoCoMo, LoCoMo-Refined, BEAM and a model-built memory from their bytes, with no change to the rule. In the results of Section~\ref{sec:results}, \sys{} is the strongest memory system on each benchmark or matches it at equal context.
++
 +\paragraph{Detect before you construct.} Unlike True Memory \cite{truememory}, which reads every store with one fixed representation, and Adaptive Chunking \cite{adaptivechunk}, which picks a chunker by running every candidate, \sys{} derives a store's unit, parent, order and retrieval policy from two byte statistics, with no model and no candidate run. It \emph{detects} whether the store records the structure a reader needs, including an order, and sets the unit and hierarchy from it. It \emph{matches} a hybrid retrieval to that structure, giving the parent graph most slots on a numbered log and balancing it with dense and lexical search elsewhere. It \emph{assembles} the context in stored order, keeping the newest version of a numbered fact. An order the store does not record is worse than none. On fixed selections, shuffled serials score $59$ on one fact-consolidation cell, below $64$ with no order and $92$ with the recorded one (Appendix~\ref{app:slotsrc}). Deterministic conflict resolution \cite{freshness} assumes the serial from the task format and extracts facts with a model on every query, while \sys{} detects the serial and scores $93.0$ and $60.0$ on the fact-consolidation cells with the released implementation ($92.0$ and $37.0$ in the original), against the $82.0$ and $27.0$ it reports at the same reader.
  
  \paragraph{Contributions.}
  \begin{enumerate}[label=(\roman*),leftmargin=*,nosep]
  \item \textbf{Detection before construction, for different kinds of agent memory.}
- \sys{} configures a store's read path from two closed-form statistics of its bytes, with no model, labels, per-store queries or candidate runs. It re-derives that configuration in seconds as the store grows. The share of numbered lines tells whether the store records an order and only then turns on keep-newest resolution and parent-priority retrieval. The share of text in short records tells whether a finer cut keeps every record whole. The detected structure then sets how hybrid retrieval splits the slots among its channels, and assembly keeps stored order.
+-\sys{} configures a store's read path from two closed-form statistics of its bytes, with no model, labels, per-store queries or candidate runs. It re-derives that configuration in seconds as the store grows. The share of numbered lines tells whether the store records an order and only then turns on keep-newest resolution and parent-priority retrieval. The share of text in short records tells whether a finer cut keeps every record whole. The detected structure then sets how hybrid retrieval splits the slots among its channels, and assembly keeps stored order.
++\sys{} configures a store's read path from two closed-form statistics of its bytes, with no model, labels, per-store queries or candidate runs. It re-derives that configuration in seconds as the store grows. The share of numbered lines tells whether the store records an order and only then turns on keep-newest resolution and parent-priority retrieval. The share of text in short records tells whether to use a finer cut at record boundaries. The detected structure then sets how hybrid retrieval splits the slots among its channels, and assembly keeps stored order.
  \item \textbf{First place on MemoryAgentBench.}
 -\sys{} ranks first overall among the retrieval and memory systems at the benchmark's reader, $57.5$ against $43.6$, with its hybrid retrieval and assembly alone at $50.3$ (Table~\ref{tab:gate}), and first on every competency among the retrieval and memory systems the benchmark reports, rising to $60.9$ and $64.7$ with GPT-4.1-mini and GPT-5-mini.\looseness=-1
 +The released implementation with the paper settings scores $60.5$ against $43.6$ at the benchmark's GPT-4o-mini reader and has the highest Overall among the retrieval and memory systems in Table~\ref{tab:board} at that reader. It scores $62.1$ and $67.0$ with GPT-4.1-mini and GPT-5-mini, and $69.7$ and $67.0$ with GLM-5.3-Flash and GPT-6 Luna. Per-store automatic configuration scores $58.5$ at GPT-4o-mini. Table~\ref{tab:board} retains the original implementation for comparison.\looseness=-1
@@ -41,25 +46,60 @@
  \end{enumerate}
  
  \begin{figure}[t]
-@@ -125,7 +125,7 @@
+@@ -118,14 +118,14 @@
+ 
+ \paragraph{Memory without a generative write.} Fidelity Before Structure \cite{fidelity} finds that verbatim chunks beat extracted artifacts and pools both in one list, whereas \sys{} gives each store its own share of the budget (Table~\ref{tab:extend}). EdgeMem \cite{edgemem}, like True Memory, builds memory with no generative call through one pipeline for every store, and LazyMem \cite{lazymem} defers construction to query time with a trained 4B model. \sys{} also writes with no generative call, trains nothing and adds detection, reading the configuration from each store's bytes.
+ 
+-\paragraph{Choosing the cut, resolving conflicts, assembling.} Mix-of-Granularity \cite{mog}, AutoRAG \cite{autorag}, HiChunk \cite{hichunk}, FluxMem \cite{fluxmem} and Adaptive Chunking \cite{adaptivechunk} search for each store's RAG recipe by running every candidate, by labelled answers or by a trained model. OP-RAG \cite{oprag}, SeCom \cite{secom} and MacRAG \cite{macrag} assemble by order or by parent over preset or model-cut units, and other 2026 work resolves conflicts once they are known \cite{supersede,statefuse,tepa,lattice,toki,memlace,memtxn}. \sys{} instead measures two byte statistics once per store and sets the unit, the parent and the order from them, including whether an order exists at all, and resolves conflicts as a read-time view (Appendix~\ref{app:slotsrc}).
++\paragraph{Choosing the cut, resolving conflicts, assembling.} Mix-of-Granularity \cite{mog}, AutoRAG \cite{autorag}, HiChunk \cite{hichunk}, FluxMem \cite{fluxmem} and Adaptive Chunking \cite{adaptivechunk} search for each store's RAG recipe by running every candidate, by labelled answers or by a trained model. OP-RAG \cite{oprag}, SeCom \cite{secom} and MacRAG \cite{macrag} assemble by order or by parent over preset or model-cut units, and other 2026 work resolves conflicts once they are known \cite{supersede,statefuse,tepa,lattice,toki,memlace,memtxn}. \sys{} instead measures two byte statistics before retrieval and sets the unit, the parent and the order from them, including whether an order exists at all, and resolves conflicts as a read-time view (Appendix~\ref{app:slotsrc}).
+ 
+ \section{Method}\label{sec:method}
+ 
  \begin{figure}[t]
  \centering
  \includegraphics[width=\textwidth]{fig_read3_v122.pdf}
 -\caption{\textbf{\sys{} detects once, then reads} (Algorithm~\ref{alg:muster}). \textbf{(A)} Detection derives unit, parent and order from two byte statistics, and its policy gate picks the arm, once per store and with no model. \textbf{(B)} Retrieval (reach, rerank) and assembly (resolve, render) answer each query with one query embedding, one rerank and one reader call over units embedded once per store. Nothing is written back. Containers apply on the refined branch (Section~\ref{sec:resolve}).}
-+\caption{\textbf{\sys{} detects once, then reads} (Algorithm~\ref{alg:muster}). \textbf{(A)} Detection derives unit, parent and order from two byte statistics, and its policy gate picks the arm, once per store and with no model. \textbf{(B)} Retrieval (reach, rerank) and assembly (resolve, render) answer each query with one query embedding, an initial rerank and one reader call over units embedded once per store. The SDK's numbered-fact walk can add rerank rounds. Nothing is written back. Containers apply on the refined branch (Section~\ref{sec:resolve}).}
++\caption{\textbf{\sys{} detects once, then reads} (Algorithm~\ref{alg:muster}). \textbf{(A)} Detection derives unit, parent and order from two byte statistics and picks the retrieval arm once per plan, with no model. On MemoryAgentBench, the original implementation derives a representation for each cell from its first up to three stores. \textbf{(B)} Retrieval (reach, rerank) and assembly (resolve, render) answer each query with one query embedding, an initial rerank and one reader call over units embedded once per store. The SDK's numbered-fact walk can add rerank rounds. Nothing is written back. The refined branch, LoCoMo, LoCoMo-Refined and BEAM use one container per parent (Appendix~\ref{app:hyper}).}
  \label{fig:read}
  \end{figure}
  
-@@ -157,6 +157,8 @@
+@@ -133,7 +133,7 @@
+ 
+ \subsection{Detection: byte statistics}\label{sec:stats}
+ 
+-A retriever needs a unit, a parent and an order, and before the first query the only store content it may consult is the bytes. Two byte properties decide these choices. Whether an order exists is decided by whether the store counts. A leading integer on a line is the simplest surface form a writing process appends, and the rule takes a larger one as a later write. Whether the store may be cut finer is decided by whether it is made of pieces already small enough to keep whole. Neither statistic needs a query, a label or a model, and \cov{} is measured against the cut the benchmark would otherwise make, which lets one threshold license a finer cut on a record store and refuse it on a novel.
++A retriever needs a unit, a parent and an order, and before the first query the only store content it may consult is the bytes. Two byte properties decide these choices. Whether an order exists is decided by whether the store counts. A leading integer on a line is the simplest surface form a writing process appends, and the rule takes a larger one as a later write. Whether the store may be cut finer depends on how much of its text lies in records that fit the reference chunk. Neither statistic needs a query, a label or a model, and \cov{} is measured against the cut the benchmark would otherwise make, which lets one threshold license a finer cut on a record store and refuse it on a novel.
+ \begin{align}
+ \serial &= \frac{\#\{\ell \in L : \ell \text{ matches } \langle\textit{integer}\rangle\texttt{.}\ \langle\textit{body}\rangle\}}{|L|},
+ \qquad L = \text{non-empty lines}, \\
+@@ -143,8 +143,8 @@
+ where $c$ is the reference scale, the chunk size the benchmark prescribes for the cell and the one operating
+ input the rule takes besides the bytes.
+ \serial{}, short for \emph{serial fraction}, asks whether the store counts. High means the store recorded its own order, and low means the rule claims no order to resolve by. Numbered lines do not push a conversation to the threshold. In the 65 BEAM conversations and the 500 LongMemEval-S histories \cite{longmemeval} they are $15\%$ to $35\%$ of the lines on average and at most $45\%$, and no store reaches $0.80$. \cov{}, short for \emph{record share}, asks whether the store is made of
+-records rather than merely containing some. High means it can be cut finer without
+-splitting a record, and low means it is narrative and a finer cut would be arbitrary. \cov{} weights records by their tokens. Counted by records, InfBench-Sum would join the record stores, though two of its records hold $45.0\%$ of its tokens (Appendix~\ref{app:hyper}).
++records rather than merely containing some. With a high share, the cut follows record boundaries and slices records longer than the unit.
++With a low share, the store is narrative and a finer cut would be arbitrary. \cov{} weights records by their tokens. Counted by records, InfBench-Sum would join the record stores, though two of its records hold $45.0\%$ of its tokens (Appendix~\ref{app:hyper}).
+ 
+ 
+ \subsection{Detection: derivation rule}\label{sec:rule}
+@@ -152,10 +152,13 @@
+ \begin{quote}
+ If $\serial \ge 0.80$, the unit is the record with its serial stripped, the parent is the record's
+ normalised slot, and the order is the serial. Otherwise the unit is the chunk size the benchmark
+-prescribes, cut so a record is never split when $\cov \ge 0.90$ and refined one documented step ($4096\to512$) under
+-the same condition (the record-preserving cut), the parent is eight times the unit, halved until at least ten parents remain, and
++prescribes. When $\cov \ge 0.90$, the rule refines the unit by one documented step ($4096\to512$)
++and cuts at record boundaries, slicing only records longer than the resulting unit (the record-preserving cut).
++In the non-serial case, the parent is eight times the unit, halved until at least ten parents remain, and
  no order is claimed.
  \end{quote}
- 
-+On MemoryAgentBench, the original implementation applies this rule to the first up to three stores of each cell and uses the resulting representation throughout that cell. The released SDK's paper-settings configuration preserves these automatically derived cell representations, while Auto derives a plan separately for each store; Appendix~\ref{app:hyper} gives the channel and rendering choices.
 +
++On MemoryAgentBench, the original implementation applies this rule to the first up to three stores of each cell and uses the resulting representation throughout that cell. The released SDK's paper-settings configuration preserves these automatically derived cell representations, while Auto derives a plan separately for each store; Appendix~\ref{app:hyper} gives the channel and rendering choices.
+ 
  We follow \textsc{derive} (Figure~\ref{fig:read}) end to end on two stores. FactConsolidation's store arrives as
  lines of the form \texttt{1. Alice's employer is Zynga}, so \serial{} reads $0.9999$. The unit becomes one
- record with the serial stripped, the parent a slot key naming the record's entity and attribute, read by a
-@@ -169,7 +171,7 @@
+@@ -169,7 +172,7 @@
  One cell is outside the rule. The benchmark's loader delivers LongMemEval as conversation rounds grouped
  into sessions, and we keep that segmentation. The rounds are the units and the sessions the parents. Both
  statistics are still computed for it, and neither fires, but the rule's unit and parent are not applied.
@@ -68,7 +108,16 @@
  
  Besides the two thresholds, the rule's three constants come from the benchmark. They are the two chunk sizes it uses, $512$ and $4096$, their ratio of eight as the parent multiplier, and its retrieval budget of ten as the floor on parents (Table~\ref{tab:hyper}). Section~\ref{sec:results} therefore tests a fixed rule.
  
-@@ -200,6 +202,8 @@
+@@ -188,7 +191,7 @@
+ let strong dense recall take almost every slot, and lexical or structural evidence that would answer the
+ harder questions never reaches the reader. \emph{Reach} therefore gives each channel a \emph{reserved floor}, a minimum number of selected units drawn from its own ranking. The shared score fills the slots, and a channel left short trades the weakest selected unit outside it for its own next candidate.
+ 
+-At $U{=}10$ units the default arm, \balanced{}, sets the floors $(f_d,f_s,f_g)=(4,3,3)$ and admits a fourth channel at floor zero, the immediate neighbours of each seed inside its own parent, which enters only on its score. \parprio{} inverts the emphasis at $(2,0,8)$. Two dense anchors represent the query, and the parent graph spends the rest on breadth. Where the derived parent map has semantic meaning, that breadth is useful, and otherwise the balanced arm avoids paying for it (Table~\ref{tab:gate}).
++At $U{=}10$ units the default arm, \balanced{}, sets the floors $(f_d,f_s,f_g)=(4,3,3)$ and, in the paper configuration for MemoryAgentBench's record cells and LongMemEval, admits a fourth channel at floor zero, the immediate neighbours of each seed inside its own parent, which enters only on its score. \parprio{} inverts the emphasis at $(2,0,8)$. Two dense anchors represent the query, and the parent graph spends the rest on breadth. Where the derived parent map has semantic meaning, that breadth is useful, and otherwise the balanced arm avoids paying for it (Table~\ref{tab:gate}).
+ 
+ \subsection{Context assembly: read-time supersession and containers}\label{sec:resolve}
+ 
+@@ -200,6 +203,8 @@
  
  The compensated refinement branch spans the three parts. Detection takes it for a $4096$-token unit, retrieval searches at $1024$ tokens and selects four times as many units, and assembly shows them one container per parent in stored order. The nominal allowance is unchanged at $40{,}960$ tokens, so the branch raises retrieval resolution rather than buying more reader context (Appendix~\ref{app:hyper}).
  
@@ -77,7 +126,7 @@
  \section{Setup}\label{sec:setup}
  
  We evaluate all fourteen cells of MemoryAgentBench, an aggregate of separate public datasets whose stores span $25$ units for a detective novel to $18{,}333$ for an assertion log, a range of $733\times$ that one threshold pair has to cross without per-dataset tuning (Table~\ref{tab:stores}). We keep the benchmark's four competencies, accurate retrieval (AR), test-time learning (TTL), long-range understanding (LRU) and selective forgetting (SF), the last being the conflict-resolution family this paper turns on. Each cell keeps its own metric, substring match except GPT-4o judgment for LongMemEval and InfBench-Sum and recall@5 for Recsys. GPT-4o-mini \cite{gpt4omini}, GPT-4.1-mini \cite{gpt41} and GPT-5-mini \cite{gpt5} each answer $1{,}671$ questions (Table~\ref{tab:stores}), and Overall averages the four competency scores as \cite{mab} defines them. Mem0 2.1.0 \emph{full-ver.}\ reads its top $100$ extracted memories as the benchmark reads Mem0. Its raw-chunk row (the benchmark's chunks stored without extraction) and Honcho, Hindsight, EverMemOS and True Memory are cut at \sys{}'s per-question budget, never below one whole unit, and on FactConsolidation each reads its own uncut retrieval (Appendix~\ref{app:beamscale}).
-@@ -210,14 +214,14 @@
+@@ -210,14 +215,14 @@
  
  \section{Results}\label{sec:results}
  
@@ -94,7 +143,7 @@
  \label{tab:board}
  \setlength{\tabcolsep}{0pt}
  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{\mw}*{15}{>{\centering\arraybackslash}p{\cw}}@{}}
-@@ -259,7 +263,7 @@
+@@ -259,7 +264,7 @@
  GPT-4o-mini 128K & 64.0 & 43.0 & 30.7 & 59.0 & 82.0 & 15.1 & 28.9 & 63.4 & 45.0 & \phantom{0}5.0 & 49.2 & 48.6 & 46.2 & 25.0 & 42.2 \\
  \midrule
  \multicolumn{16}{l}{\emph{\textbf{read-time memory only}: structure read from the bytes, ours}}\\
@@ -103,7 +152,7 @@
  \midrule[\heavyrulewidth]
  \multicolumn{16}{l}{\textbf{Stronger readers}, named in each row, all but \sys{} reported in \cite{mab}}\\
  MIRIX 4.1-mini \cite{mirix} & 73.0 & 75.0 & 51.0 & 53.0 & 61.0 & 10.3 & 18.9 & 62.0 & 20.0 & \phantom{0}3.0 & 63.0 & 35.7 & 40.5 & 11.5 & 37.7 \\
-@@ -270,11 +274,26 @@
+@@ -270,11 +275,26 @@
  GPT-4.1-mini 1M & 83.0 & 66.0 & 55.7 & 82.6 & 75.6 & 16.7 & 41.9 & 56.3 & 36.0 & \phantom{0}5.0 & 71.8 & 46.2 & 49.1 & 20.5 & 46.9 \\
  GPT-5-mini 400K & 85.0 & 71.0 & 63.3 & 78.2 & 84.0 & 13.2 & 56.3 & 76.1 & 78.0 & 28.0 & 74.4 & 48.6 & 66.2 & 53.0 & 60.6 \\
  \midrule
@@ -135,7 +184,7 @@
  
  \textbf{First among retrieval and memory systems.} At the benchmark's reader, GPT-4o-mini, \sys{} leads every retrieval and memory system in
  Table~\ref{tab:board} on the total, $57.5$ against $43.6$ for the strongest, True Memory, $41.6$ for HippoRAG-v2, which builds its graph with a language model, and $41.5$ for BM25, which uses none. \sys{} also leads on three of the four competencies, and against True Memory on all four, widest on selective forgetting, where detection acts ($64.5$ against $26.0$). At the
-@@ -284,7 +303,7 @@
+@@ -284,7 +304,7 @@
  \textbf{Raw chunks above extraction, below \sys{}.} Consistent with \cite{fidelity}, Mem0 2.1.0 scores higher on the raw chunks than on the memories GPT-4o-mini or GPT-OSS-120B writes from them ($38.9$ against $26.7$ and $28.6$), mostly because both writers drop the labels of in-context examples, which leaves MCC at $5.6$ and $12.0$ against $67.4$ on the raw chunks (Appendix~\ref{app:beamscale}). The raw-chunk row is also a control for \sys{}. With the same text, reader and prompt and at least \sys{}'s per-question budget, it scores $38.9$ against \sys{}'s $57.5$ and is lower in every column. The two differ in all three parts (cut, retrieval and assembly). \sys{} sets all three from the store's bytes, with no per-store tuning.
  
  Two competencies show detection most clearly. Conflict resolution is where \serial{} fires and
@@ -144,7 +193,7 @@
  $400$K reader's $28.0$, in a column where twenty-four of the twenty-five rows of the other systems are in single digits.
  The competency reads $64.5$ against that reader's $53.0$.
  In-context learning is where \cov{} licenses a finer cut, worth $4.0$ on the MCC aggregate and $1.3$ on test-time learning (both at $U=10$, Table~\ref{tab:refine}). On long-range understanding, \sys{} leads every retrieval and memory system on DetectiveQA, $66.2$, above MIRIX's $62.0$ at the stronger GPT-4.1-mini reader.
-@@ -297,7 +316,7 @@
+@@ -297,7 +317,7 @@
  
  \begin{table}[t]
  \centering\tabfont
@@ -153,7 +202,7 @@
  \label{tab:gate}
  \setlength{\tabcolsep}{3pt}\setlength{\aboverulesep}{0pt}\setlength{\belowrulesep}{0pt}\setlength{\extrarowheight}{0.8pt}
  \begin{tabular}{l*{5}{c}}
-@@ -310,11 +329,17 @@
+@@ -310,15 +330,21 @@
  + detection, \parprio{} everywhere & 70.3 & 47.7 & 39.5 & 64.5 & 55.5 \\
  \midrule
  \ours \textbf{+ detection with its gate (\sys{})} & \textbf{73.8} & \textbf{47.5} & \textbf{44.2} & \textbf{64.5} & \textbf{57.5} \\
@@ -176,7 +225,12 @@
  
  \subsection{Transfer to LoCoMo}\label{sec:locomo}
  
-@@ -465,7 +490,9 @@
+-LoCoMo \cite{locomo} holds ten two-person conversations and $1{,}540$ questions in four answerable categories. No choice of Section~\ref{sec:method} was revisited. Each turn is one record (\cov{} $1.000$, \serial{} $0$), so the rule takes $512$-token units and halves the parent to $2{,}048$ tokens so that at least ten parents remain, and we read $U{=}10$ units ($5.0$K tokens). LoCoMo prescribes no answer prompt, and the two in use move every store by $7.4$ to $11.9$ points, so each store is read under both, Mem0's \cite{mem0} and EverMemOS's \cite{evermemos}. GPT-4.1-mini \cite{gpt41} is the reader and GPT-4o-mini \cite{gpt4omini} the judge. Every competitor runs its released code (Appendix~\ref{app:locomo}), and Table~\ref{tab:locomo} lists each system's context and language-model calls.
++LoCoMo \cite{locomo} holds ten two-person conversations and $1{,}540$ questions in four answerable categories. The derivation rule of Section~\ref{sec:rule} applies unchanged. Each turn is one record (\cov{} $1.000$, \serial{} $0$), so the rule takes $512$-token units and halves the parent to $2{,}048$ tokens so that at least ten parents remain, and we read $U{=}10$ units ($5.0$K tokens). LoCoMo prescribes no answer prompt, and the two in use move every store by $7.4$ to $11.9$ points, so each store is read under both, Mem0's \cite{mem0} and EverMemOS's \cite{evermemos}. GPT-4.1-mini \cite{gpt41} is the reader and GPT-4o-mini \cite{gpt4omini} the judge. Every competitor runs its released code (Appendix~\ref{app:locomo}), and Table~\ref{tab:locomo} lists each system's context and language-model calls.
+ 
+ \begin{table}[t]
+ \centering\tabfont
+@@ -465,12 +491,14 @@
  
  \subsection{Across the three benchmarks}\label{sec:across}
  
@@ -187,7 +241,42 @@
  
  \FloatBarrier
  \section{Conclusion}
-@@ -691,7 +718,7 @@
+ 
+-RAG keeps every word and can score well after heavy tuning to a dataset, but the tuning does not generalize. Model-built memory scales to long histories but pays up front and can drop evidence. \sys{} finds the recipe in each store's structure, with neither per-store tuning nor a language model at write time. It detects that structure from the bytes, including whether an order exists, matches retrieval to it and assembles the context in stored order. Set on MemoryAgentBench, \sys{} ranks first among the retrieval and memory systems at the benchmark's reader. Applied unchanged, it is the strongest row on LoCoMo under both answer prompts and matches the strongest system on LoCoMo-Refined, with no generative call before the answer. On BEAM it matches the strongest system we compare at equal context and builds a 10M-token memory in $77$ seconds, where model-built memories take hours. By the same rule it also reads memories a language model has extracted, and on BEAM reading them beside the conversation gives a higher mean than either alone. Because \sys{} keeps each store as written and re-derives its configuration in seconds as the store grows, we expect it to serve the memory and long contexts of many AI agents.
++RAG keeps every word and can score well after heavy tuning to a dataset, but the tuning does not generalize. Model-built memory scales to long histories but pays up front and can drop evidence. \sys{} finds the recipe in each store's structure, with neither per-store tuning nor a language model at write time. It detects that structure from the bytes, including whether an order exists, matches retrieval to it and assembles the context in stored order. Set on MemoryAgentBench, \sys{} ranks first among the retrieval and memory systems at the benchmark's reader. With the same derivation rule, it is the strongest row on LoCoMo under both answer prompts and matches the strongest system on LoCoMo-Refined, with no generative call before the answer. On BEAM it matches the strongest system we compare at equal context and builds a 10M-token memory in $77$ seconds, where model-built memories take hours. By the same rule it also reads memories a language model has extracted, and on BEAM reading them beside the conversation gives a higher mean than either alone. Because \sys{} keeps each store as written and re-derives its configuration in seconds as the store grows, we expect it to serve the memory and long contexts of many AI agents.
+ 
+ \subsection*{AI use statement}
+ 
+@@ -564,12 +592,12 @@
+ 
+ \begin{algorithm}[H]
+ \small
+-\caption{\sys{}. Part~I runs detection, including the policy gate (step~11), once per store with no model. Part~II (retrieval and context assembly) answers a query with one embedding, one rerank and one reader call. $\tau_{\mathrm{num}}=0.80$ and $\tau_{\mathrm{rec}}=0.90$, and $P$ is the benchmark's chunk ($512$ or $4096$, Table~\ref{tab:hyper}). LongMemEval keeps its delivered rounds and sessions as units and parents (Section~\ref{sec:rule}).}
++\caption{\sys{}. Part~I runs detection, including the policy gate (step~11), once per plan with no model. On MemoryAgentBench, the original implementation derives a representation for each cell from its first up to three stores. Part~II (retrieval and context assembly) uses one query embedding, an initial rerank and one reader call per query. The SDK's numbered-fact walk can add rerank rounds. $\tau_{\mathrm{num}}=0.80$ and $\tau_{\mathrm{rec}}=0.90$, and $P$ is the benchmark's chunk ($512$ or $4096$, Table~\ref{tab:hyper}). LongMemEval keeps its delivered rounds and sessions as units and parents (Section~\ref{sec:rule}).}
+ \label{alg:muster}
+ \footnotesize
+ \textbf{Input:} store bytes $S$ (never modified), query $q$. \textbf{Output:} the context.
+ \begin{algorithmic}[1]
+-\STATE \textbf{\textsc{Part I, Derive}} \emph{(once per store)}
++\STATE \textbf{\textsc{Part I, Derive}} \emph{(once per plan)}
+ \STATE $\serial \gets$ share of lines opening with a serial marker; $\cov \gets$ share of text inside bounded records
+ \IF{$\serial \ge \tau_{\mathrm{num}}$}
+   \STATE unit $\gets$ record, parent $\gets$ slot, order $\gets$ serial
+@@ -581,10 +609,10 @@
+ \STATE \textbf{if} $\serial < \tau_{\mathrm{num}}$: parents $\gets$ $8\times$ the unit, halved until at least ten parents remain
+ \STATE channel floors $\gets$ parent-priority $(2,0,8)$ if $\serial \ge \tau_{\mathrm{num}}$, else balanced $(4,3,3)$
+ \STATE \textbf{\textsc{Part II, Read}} \emph{(once per query)}
+-\STATE candidates $\gets$ dense $\cup$ lexical $\cup$ parent walk, each channel with a floor (balanced: also each seed's neighbours in its parent, floor $0$)
+-\STATE select the top units after one reranking pass; lift any channel below its floor\label{alg:lift}
++\STATE candidates $\gets$ dense $\cup$ lexical $\cup$ parent walk, each channel with a floor (when enabled, also each seed's neighbours in its parent, floor $0$)
++\STATE select the top units after the initial reranking pass; lift any channel below its floor\label{alg:lift}
+ \IF{order} \STATE replace each unit by the newest unit of its slot in the store, keep one per slot and refill freed slots in rank order (a view, not a write) \ENDIF
+-\STATE assemble in stored order, one container per parent on the refined branch; \textbf{return} the context
++\STATE assemble in stored order, one container per parent when parent-grouped rendering is used; \textbf{return} the context
+ \end{algorithmic}
+ \end{algorithm}
+ 
+@@ -691,7 +719,7 @@
  filename, and scoring runs through one entry point that owns the metric map, so a cell can neither be
  scored by the wrong metric nor filled from a run it did not come from.
  
@@ -196,7 +285,7 @@
  \verb|^\s*(\d+)\.\s+(.+)$|. On a serial store the slot key is the record's first capitalised entity
  span, lower-cased, joined to the record body in which every capitalised span is masked to \texttt{\_}.
  Appendix~\ref{app:more} reports three coarser keys. Entities everywhere are capitalised spans found by a
-@@ -707,99 +734,134 @@
+@@ -707,99 +735,134 @@
  
  \paragraph{Floors in priority order.} Under \parprio{} the two dense anchors are filled first and the parent graph then spends the remaining budget on breadth. A neighbour under \balanced{} is never reserved a slot.
  
