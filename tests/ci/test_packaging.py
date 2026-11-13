@@ -211,10 +211,12 @@ assert Path(muster.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve(
 assert muster.presets.names()
 with muster.Store.open('wheel.muster', models=Models.fake()) as store:
     store.add({'text': 'The public fixture is in the blue cabinet.'})
-    output = store.context('Where is the public fixture?').text
+    context = store.context('Where is the public fixture?')
+    output = context.text
     assert 'blue cabinet' in output
-    print(json.dumps({'context': output, 'version': store.version}))
+    print(json.dumps({'context': output, 'style': context.style, 'version': store.version}))
 '''
     result = _run([sys.executable, "-I", "-c", script, str(target)], cwd=tmp_path)
     receipt = json.loads(result.stdout)
-    assert receipt["version"] == 1 and receipt["context"].startswith("Memory 1:\n")
+    assert receipt["version"] == 1 and receipt["style"] == "flat"
+    assert "blue cabinet" in receipt["context"]

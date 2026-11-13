@@ -56,6 +56,23 @@ That demo uses fake retrieval models and a fixed reply. It checks the connection
 to the reader and persistence across reopening, not answer quality. The normal
 `Store.open` example above uses the real local retrieval models.
 
+## Several independent stores in Python
+
+`Store` and `muster.build(source)` each hold one memory store. When your application already has a collection of
+independent source stores, `muster.build_collection(stores)` derives a shared configuration and returns separate memories:
+
+```python
+cohort = muster.build_collection([
+    ["The spare cable is in the blue drawer.", "The charger is on the shelf."],
+    ["The spare cable is in the red drawer.", "The charger is in the bag."],
+])
+messages = cohort[0].context("Where is the spare cable?").messages("Where is the spare cable?")
+answer = call_model(messages)  # your app's existing answer model
+```
+
+The index identifies the store your application is querying; stores are not merged. A list of strings passed to
+ordinary `build` is still one store of records. MUSTER derives its configuration automatically from those source inputs. Preserve source dates and speakers when they are present in your logs.
+
 ## MCP: register the server with your host
 
 Install `muster-memory[models,mcp]` in the Python environment your host will run.

@@ -1,0 +1,641 @@
+{
+  "schema": "muster.collection_auto.mab.v2",
+  "sdk_version": "0.1.3",
+  "configuration": "source_collection_auto",
+  "status": "mixed_archived_and_measured_scores",
+  "api": "muster.build_collection(source_texts, embed=False)",
+  "benchmark": {
+    "name": "MemoryAgentBench",
+    "cells": 14,
+    "questions_per_reader": 1671,
+    "raw_slots_per_reader": 1813,
+    "cell_order": [
+      "shqa",
+      "mhqa",
+      "lme",
+      "evq",
+      "b77",
+      "trcC",
+      "clin",
+      "nlu",
+      "trcF",
+      "rec",
+      "summ",
+      "det",
+      "fcsh",
+      "fcmh"
+    ],
+    "score": "Original benchmark metrics. Overall averages AR/TTL/LRU/SF; MCC averages five ICL cells."
+  },
+  "reference_scale_override": false,
+  "explicit_LME_adapter": false,
+  "strategy_override": false,
+  "sample_default": 3,
+  "source_boundaries": "Each collection member remains an independent memory; no question, gold or benchmark name configures it.",
+  "readers": [
+    {
+      "id": "4o-mini",
+      "label": "GPT-4o-mini",
+      "request_model": "gpt-4o-mini-2024-07-18",
+      "metrics": {
+        "AR": "74.33333333333333333333333332",
+        "MCC": 81.8,
+        "TTL": 47.525,
+        "LRU": 44.027260147538016,
+        "SF": 76.5,
+        "Overall": "60.59639837021783708333333332"
+      },
+      "original_implementation": {
+        "AR": 73.83333333333333,
+        "MCC": 81.8,
+        "TTL": 47.525,
+        "LRU": 44.21756772817586,
+        "SF": 64.5,
+        "Overall": 57.51897526537729
+      },
+      "previous_sdk_0_1_2_per_store_auto": {
+        "MCC": 79.2,
+        "AR": 72.08333333333333,
+        "TTL": 45.641666666666666,
+        "LRU": 39.88767990701017,
+        "SF": 76.5,
+        "Overall": 58.52816997675254
+      },
+      "cells": {
+        "shqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 92
+        },
+        "mhqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 65
+        },
+        "lme": {
+          "n": 300,
+          "repeats": 1,
+          "percent": "57.33333333333333333333333333"
+        },
+        "evq": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 83
+        },
+        "b77": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 96
+        },
+        "trcC": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 70
+        },
+        "clin": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 90
+        },
+        "nlu": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 88
+        },
+        "trcF": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 65
+        },
+        "rec": {
+          "n": 200,
+          "repeats": 1,
+          "percent": 13.25
+        },
+        "summ": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 21.85733719648448
+        },
+        "det": {
+          "n": 71,
+          "repeats": 3,
+          "percent": 66.19718309859155
+        },
+        "fcsh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 93
+        },
+        "fcmh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 60
+        }
+      }
+    },
+    {
+      "id": "4.1-mini",
+      "label": "GPT-4.1-mini",
+      "request_model": "gpt-4.1-mini-2025-04-14",
+      "metrics": {
+        "AR": "77.33333333333333333333333332",
+        "MCC": 78.6,
+        "TTL": 47.133333333333326,
+        "LRU": 51.7574095768062,
+        "SF": 72.5,
+        "Overall": "62.18101906086821508333333332"
+      },
+      "original_implementation": {
+        "AR": 77.41666666666667,
+        "MCC": 78.6,
+        "TTL": 47.133333333333326,
+        "LRU": 51.61092351049989,
+        "SF": 67.5,
+        "Overall": 60.91523087762497
+      },
+      "previous_sdk_0_1_2_per_store_auto": {
+        "MCC": 79.2,
+        "AR": 77.91666666666667,
+        "TTL": 48.225,
+        "LRU": 43.7725428420688,
+        "SF": 72.5,
+        "Overall": 60.603552377183874
+      },
+      "cells": {
+        "shqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 90
+        },
+        "mhqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 76
+        },
+        "lme": {
+          "n": 300,
+          "repeats": 1,
+          "percent": "62.33333333333333333333333333"
+        },
+        "evq": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 81
+        },
+        "b77": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 97
+        },
+        "trcC": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 73
+        },
+        "clin": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 89
+        },
+        "nlu": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 85
+        },
+        "trcF": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 49
+        },
+        "rec": {
+          "n": 200,
+          "repeats": 1,
+          "percent": 15.666666666666664
+        },
+        "summ": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 32.62280037426967
+        },
+        "det": {
+          "n": 71,
+          "repeats": 3,
+          "percent": 70.89201877934272
+        },
+        "fcsh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 94
+        },
+        "fcmh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 51
+        }
+      }
+    },
+    {
+      "id": "5-mini",
+      "label": "GPT-5-mini",
+      "request_model": "gpt-5-mini",
+      "metrics": {
+        "AR": "81.08333333333333333333333332",
+        "MCC": 84.2,
+        "TTL": 48.18333333333334,
+        "LRU": 61.909175302519856,
+        "SF": 77,
+        "Overall": "67.04396049229662908333333332"
+      },
+      "original_implementation": {
+        "AR": 81,
+        "MCC": 84.2,
+        "TTL": 47.93333333333334,
+        "LRU": 61.90529313047128,
+        "SF": 68,
+        "Overall": 64.70965661595116
+      },
+      "previous_sdk_0_1_2_per_store_auto": {
+        "MCC": 83,
+        "AR": 81.25,
+        "TTL": 48.41666666666667,
+        "LRU": 52.309920195368974,
+        "SF": 77,
+        "Overall": 64.74414671550892
+      },
+      "cells": {
+        "shqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 93
+        },
+        "mhqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 78
+        },
+        "lme": {
+          "n": 300,
+          "repeats": 1,
+          "percent": "71.33333333333333333333333333"
+        },
+        "evq": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 82
+        },
+        "b77": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 95
+        },
+        "trcC": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 84
+        },
+        "clin": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 94
+        },
+        "nlu": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 89
+        },
+        "trcF": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 59
+        },
+        "rec": {
+          "n": 200,
+          "repeats": 1,
+          "percent": 12.166666666666666
+        },
+        "summ": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 44.47562760034487
+        },
+        "det": {
+          "n": 71,
+          "repeats": 3,
+          "percent": 79.34272300469483
+        },
+        "fcsh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 95
+        },
+        "fcmh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 59
+        }
+      }
+    },
+    {
+      "id": "glmh",
+      "label": "GLM-5.3-Flash",
+      "request_model": "z-ai/glm-5.3-flash",
+      "metrics": {
+        "AR": "84.75",
+        "MCC": 91,
+        "TTL": 53.33333333333333,
+        "LRU": 63.33024787189664,
+        "SF": 77.5,
+        "Overall": "69.72839530130749225"
+      },
+      "original_implementation": {
+        "AR": 84.75,
+        "MCC": 91,
+        "TTL": 53.583333333333336,
+        "LRU": 63.48077852344058,
+        "SF": 69,
+        "Overall": 67.70352796419348
+      },
+      "previous_sdk_0_1_2_per_store_auto": null,
+      "cells": {
+        "shqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 97
+        },
+        "mhqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 77
+        },
+        "lme": {
+          "n": 300,
+          "repeats": 1,
+          "percent": "73"
+        },
+        "evq": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 92
+        },
+        "b77": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 97
+        },
+        "trcC": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 92
+        },
+        "clin": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 96
+        },
+        "nlu": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 90
+        },
+        "trcF": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 80
+        },
+        "rec": {
+          "n": 200,
+          "repeats": 1,
+          "percent": 15.666666666666664
+        },
+        "summ": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 42.622937058347254
+        },
+        "det": {
+          "n": 71,
+          "repeats": 3,
+          "percent": 84.03755868544602
+        },
+        "fcsh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 94
+        },
+        "fcmh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 61
+        }
+      }
+    },
+    {
+      "id": "luna",
+      "label": "GPT-6 Luna",
+      "request_model": "openai/gpt-6-luna",
+      "metrics": {
+        "AR": "81.66666666666666666666666668",
+        "MCC": 88.8,
+        "TTL": 52.15,
+        "LRU": 58.294678243626024,
+        "SF": 76,
+        "Overall": "67.02783622757317166666666668"
+      },
+      "original_implementation": {
+        "AR": 81.41666666666667,
+        "MCC": 88.8,
+        "TTL": 52.15,
+        "LRU": 57.927040757917275,
+        "SF": 66.5,
+        "Overall": 64.49842685614598
+      },
+      "previous_sdk_0_1_2_per_store_auto": null,
+      "cells": {
+        "shqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 94
+        },
+        "mhqa": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 77
+        },
+        "lme": {
+          "n": 300,
+          "repeats": 1,
+          "percent": "74.66666666666666666666666667"
+        },
+        "evq": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 81
+        },
+        "b77": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 96
+        },
+        "trcC": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 92
+        },
+        "clin": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 98
+        },
+        "nlu": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 89
+        },
+        "trcF": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 69
+        },
+        "rec": {
+          "n": 200,
+          "repeats": 1,
+          "percent": 15.5
+        },
+        "summ": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 38.18560061870745
+        },
+        "det": {
+          "n": 71,
+          "repeats": 3,
+          "percent": 78.4037558685446
+        },
+        "fcsh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 94
+        },
+        "fcmh": {
+          "n": 100,
+          "repeats": 1,
+          "percent": 57.99999999999999
+        }
+      }
+    }
+  ],
+  "input_verification": {
+    "receipt": "data/auto_0_1_3/API_INPUT_REPLAY.json",
+    "actual_nonFC_search_replays": 1471,
+    "exact_complete_reader_messages": 1450,
+    "FC_frozen_trace_render_replays": 200,
+    "FC_search_recomputed": false,
+    "FC_invariance_method": "frozen selection-trace rendering plus unchanged numbered search/function/data path; no new neural FC search",
+    "new_encoder_calls": null,
+    "new_reranker_calls": null,
+    "new_reader_calls": 0,
+    "new_judge_calls": 0,
+    "receipt_sha256": "6194e5f39cb87b02cee46582806581a965304174b5cd54f540242817ff4e7804",
+    "changed_complete_reader_messages": 21,
+    "CPU_warming": "Call counters not persisted; stopped at281/300 by the1000-pair work guard",
+    "MPS_assistance": {
+      "encoder_calls": 0,
+      "reranker_calls": 21,
+      "reranker_pairs": 442
+    },
+    "final_cache_only_replay": {
+      "encoder_encode_calls": 0,
+      "texts_encoded": 0,
+      "reranker_calls": 0,
+      "reranker_pairs": 0
+    }
+  },
+  "conditions": [
+    "Complete inputs match the archived SDK 0.1.2 paper-settings responses at 1,450 non-FC positions; each reader combines 279 archived LME judgments with evaluation of 21 changed LME inputs. The other 13 cells and all historical results retain their recorded scopes.",
+    "Encoder and reranker inputs are capped at2048tokens, as in the verified SDK evaluation.",
+    "The 0.1.3 collection API uses all default strategy/resource arguments; the first up to three supplied stores set its shared statistics.",
+    "This does not establish new scores on LoCoMo, BEAM or the additional primary benchmarks, or performance for every single-store input.",
+    "The dot-numbered subject-relation slots and value walk were developed on the reported FactConsolidation data; individual task types do not universally improve."
+  ],
+  "historical_scope": {
+    "source": "docs/data/native_mab_0_1_2.json",
+    "source_provenance": {
+      "primary_metric_sha256": "b59a231b51a115449da1cbc6c144ffdffa5b07be023bc3266d41f6183395f204",
+      "auto_metric_sha256": "77b3d497e8d2dd61842bcf159e9c81ab1722d141df8ddffd9ac94f9612e144f6",
+      "frontier_merge_sha256": {
+        "glmh": "563ed3fd409ae2f5a7dad5e7a8389ab44096051b8f3513455396dae0e192d566",
+        "luna": "8d9cf8f24539077799ad70484b961fa629cd836704009a432d9f0baac1301dd8"
+      },
+      "frontier_handoff_sha256": "b16c71305ab9d96cb8c741c8f97f537116e85a8aada436693179f057c2b20385",
+      "public_wheel_sha256_previously_verified": "781353244249e417c3b0d1e73e15f44138e1c684285fc51aa5ec07f041204fee",
+      "wheel_scope": "Release provenance only; exporter does not rehash a wheel.",
+      "response_accounting_groups": {
+        "gpt_readers": {
+          "readers": [
+            "4o-mini",
+            "4.1-mini",
+            "5-mini"
+          ],
+          "unique_questions": 1671,
+          "question_reader_score_units": 5013,
+          "unique_nonFC_questions": 1471,
+          "unchanged_nonFC_questions": 1445,
+          "changed_nonFC_questions": 26,
+          "full_message_reused_question_reader_score_units": 4335,
+          "fresh_primary_reader_responses": 78,
+          "fresh_FC_reader_responses": 600,
+          "fresh_validated_reader_response_rows": 678,
+          "full_message_reused_raw_response_slots": 4761,
+          "total_raw_response_slots_including_Det_repeats": 5439,
+          "Det_repeats_per_question": 3,
+          "fresh_judge_response_rows": 19,
+          "old_judge_identical_full_payload_reuses": 2,
+          "actual_POST_count": "Financial ledger separately records retries and holds; not inferred from score units or response rows"
+        },
+        "frontier_readers": {
+          "readers": [
+            "glmh",
+            "luna"
+          ],
+          "fresh_reader_response_slots": 448,
+          "reused_raw_response_slots": 3178,
+          "by_reader": {
+            "glmh": {
+              "fresh_reader_response_slots": 224,
+              "reused_raw_response_slots": 1589
+            },
+            "luna": {
+              "fresh_reader_response_slots": 224,
+              "reused_raw_response_slots": 1589
+            }
+          }
+        }
+      },
+      "count_scope": "Accounting groups retain their original units. Do not sum score units, raw slots or API POSTs as if interchangeable.",
+      "archived_judge_snapshot": "Historical actual judge snapshot was not stored; same requested alias is not a same-snapshot claim.",
+      "auto_extension_metric_sha256": {
+        "4.1-mini": "433019fbe6c0e82727ae6fb2981473952401918371f5c2dd7f65a851622ec3df",
+        "5-mini": "b6a450bc690f4f29124b4097097c86bf1efa1e8feb6356b029589f79e56c9f41"
+      },
+      "auto_extension_independent_aggregation_sha256": "08a30d347cd4466c4870256c837e04370d71edd14afa43db9cbe4c8957c7c1ff"
+    },
+    "SDK_paper_readers_preserved": 5,
+    "SDK_previous_per_store_auto_readers_preserved": 3
+  },
+  "paper": {
+    "tex": "paper/MUSTER_auto_20261111.tex",
+    "pdf": "paper/MUSTER_auto_20261111.pdf",
+    "source_zip": "paper/MUSTER_auto_20261111_source.zip"
+  },
+  "checked_utc": "2026-11-13T02:00:10.770729+00:00",
+  "quality_verification": {
+    "receipt": "data/auto_0_1_3/LME_REFRESH.json",
+    "receipt_sha256": "e13c0380fc2b4b34f935d64d7284e84f06bd56d14dae4a8d2590ca0183248125",
+    "readers": 5,
+    "questions_per_reader": 300,
+    "changed_inputs_per_reader": 21,
+    "unchanged_inputs_per_reader": 279,
+    "archived_actual_judge_snapshot": "not recorded; same requested alias does not prove snapshot identity"
+  }
+}

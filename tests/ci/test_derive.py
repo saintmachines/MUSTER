@@ -46,7 +46,15 @@ def test_cli_equals_scripts_derive(tmp_path, name, capsys):
             if isinstance(e.code, str):
                 print(e.code, file=sys.stderr)
         got = capsys.readouterr()
-        assert got.out == ref.stdout
+        if extra:
+            # The historical oracle owns the original fields; the normal API
+            # now also reports its actual policy, renderer and read budget.
+            wanted, actual = json.loads(ref.stdout), json.loads(got.out)
+            assert {key: actual[key] for key in wanted} == wanted
+        else:
+            historical = "\n".join(line for line in got.out.splitlines()
+                                   if not line.startswith(("  policy", "  render", "  read"))) + "\n"
+            assert historical == ref.stdout
         assert (code != 0) == (ref.returncode != 0)
 
 
@@ -83,3 +91,36 @@ def test_records_input():
     text, spans = muster.serialize(recs)
     assert text.split("\n\n")[0] == "D1:0 [2023-05-08] Caroline: I moved to Paris in May."
     assert spans[1][0] == len(text.split("\n\n")[0]) + 2
+
+
+@pytest.mark.parametrize("text", [
+    "first record\n\nsecond record",
+    "A long uninterrupted narrative. " * 1800,
+    "[2026-10-01] Alice: first message.\n\n[2026-10-02] Bob: second message.",
+    repr(["2026-10-01", [{"role": "user", "content": "first turn"},
+                          {"role": "assistant", "content": "first answer"}]]),
+    "\n".join("Step %d: Person%d lives in Place%d." % (i, i % 8, i % 3) for i in range(40)),
+])
+def test_cli_reports_the_actual_normal_api_recipe(tmp_path, capsys, text):
+    path = tmp_path / "source.txt"
+    path.write_text(text, encoding="utf-8")
+    cli_main(["derive", str(path), "--json"])
+    output = json.loads(capsys.readouterr().out)
+    plan = muster.derive(text)
+    assert (output["policy"], output["render"], output["U"], output["mode"], output["reference_chunk"]) == (
+        plan.policy, plan.render, plan.U, plan.mode, plan.reference_chunk)
+    if plan.branch == "rounds":
+        memory = muster.build(text, embed=False)
+        assert output["store"] == "conversation rounds" and output["units"] == len(memory)
+        assert output["parents"] == 1
+
+
+def test_cli_human_output_explains_source_session_rounds(tmp_path, capsys):
+    text = repr(["2026-10-01", [{"role": "user", "content": "first turn"},
+                                {"role": "assistant", "content": "first answer"}]] )
+    path = tmp_path / "sessions.txt"
+    path.write_text(text, encoding="utf-8")
+    cli_main(["derive", str(path)])
+    output = capsys.readouterr().out
+    assert "conversation rounds" in output and "1 rounds" in output
+    assert "flrs" in output and "flat" in output and "10 units per query" in output

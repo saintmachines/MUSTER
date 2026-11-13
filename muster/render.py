@@ -2,7 +2,7 @@
 
   r4        one block per parent: units of a block in id order, blocks in order of their first unit,
             "Memory <n>:" before each block (harness/render_rule.py:18-21). The paper's render.
-  flat      units in id order, one per line (harness/lme_pf29.py:764-765).
+  flat      units in id order, or supplied source order, one per line (harness/lme_pf29.py:764-765).
   numbered  "[<serial>] <unit>" in walk order, stable by serial (lme_pf29.py:3630-3632, without the tag); a log
             numbered under its own spelling is shown as written, "<prefix><unit>". A native read puts the lines its
             walk reached first, in the order it reached them.
@@ -64,9 +64,11 @@ def r4(ids, units, parent) -> Context:
     return Context(text, "r4", tuple(i for b in groups for i in b), blocks)
 
 
-def flat(ids, units) -> Context:
-    s = sorted(ids)
-    return Context("\n".join(units[i] for i in s), "flat", tuple(s))
+def flat(ids, units, parent=None, order=None) -> Context:
+    s = sorted(ids) if order is None else sorted(ids, key=lambda i: (order[i], i))
+    blocks = tuple(Block(n + 1, parent[i] if parent is not None else i, (i,), units[i])
+                   for n, i in enumerate(s))
+    return Context("\n".join(units[i] for i in s), "flat", tuple(s), blocks)
 
 
 def numbered(walk_ids, units, order, prefixes=None, first=()) -> Context:

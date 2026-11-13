@@ -7,11 +7,11 @@ Three shapes, chosen by the plan:
   numbered        one unit per "<serial>. <body>" line, serial stripped; order = the serial; parent = the slot the
                   record updates ("s:" + entity | relation skeleton). A plan with serial "lead" reads each line's
                   own prefix instead ("Step 3: <body>") and keeps it for the render.
-  rounds          a LongMemEval-style literal [date, turns, date, turns, ...]: one unit per user turn with the
-                  assistant reply, parent = the session.
+  rounds          a date/turn-list literal [date, turns, date, turns, ...]: one unit per user turn with the
+                  following reply, parent = the session. Native mode also keeps every unpaired nonempty turn.
 
 In exact mode every step is the harness's (harness/lme_pf29.py:1224-1291, 2089-2146, 2232-2247, 1059-1101), and the
-harness's refusals become StoreRefused. Native mode departs only where the harness would crash or split a character.
+harness's refusals become StoreRefused. Native mode also preserves otherwise omitted turns and character boundaries.
 """
 import ast
 import os
@@ -31,9 +31,9 @@ JOIN = {"blank": "\n\n", "newline": "\n", "sentence": " "}
 @dataclass(frozen=True)
 class Cut:
     units: Tuple[str, ...]
-    keys: Tuple[str, ...]                 # what is embedded: the unit, except rounds (the user turn)
+    keys: Tuple[str, ...]                 # embedded text: the unit, or the nonempty user turn for a round
     parent: tuple                         # "m%d", "u%d", "s:<slot>" or an int session, as the harness labels them
-    order: tuple                          # the serial on numbered logs, else 0..N-1
+    order: tuple                          # serials, native round source positions, or 0..N-1
     spans: Tuple[Optional[Tuple[int, int]], ...]
     n_o200k: Tuple[int, ...]
     sep: Optional[str]
@@ -56,9 +56,10 @@ def _ensure_punkt(exact):
         if exact:
             raise AssetMissing("sentence splitting needs nltk's punkt_tab; run `muster fetch`")
         os.makedirs(d, exist_ok=True)
-        nltk.download("punkt_tab", download_dir=d, quiet=True)
         if d not in nltk.data.path:
             nltk.data.path.insert(0, d)
+        nltk.download("punkt_tab", download_dir=d, quiet=True)
+        nltk.data.find("tokenizers/punkt_tab")
     return nltk
 
 
@@ -346,6 +347,54 @@ def _rounds(literal):
                tuple(bpe.count(enc, u) for u in rtext), None, dict(n_sessions=len(sess), dates=tuple(rdate)))
 
 
+def _native_rounds(literal):
+    """Retain legacy round IDs and append turns that no user round contains.
+
+    Unit order is separate from IDs: appended turns render at their source
+    positions, while existing user rounds keep their text and nonempty keys.
+    source_turns records the original (session, turn) positions of each unit.
+    """
+    sess = sessions_from_literal(literal)
+    rtext, rkey, sid, rdate = rounds_of(sess)
+    order, source_turns, unpaired = [], [], []
+    offset = 0
+    for si, (date, turns) in enumerate(sess):
+        covered = set()
+        for ti, turn in enumerate(turns):
+            if not isinstance(turn, dict) or turn.get("role") != "user":
+                continue
+            positions = [(si, ti)]
+            covered.add(ti)
+            if ti + 1 < len(turns) and isinstance(turns[ti + 1], dict) and turns[ti + 1].get("role") != "user":
+                covered.add(ti + 1)
+                positions.append((si, ti + 1))
+            order.append(offset + ti)
+            source_turns.append(tuple(positions))
+        for ti, turn in enumerate(turns):
+            if ti in covered or not isinstance(turn, dict):
+                continue
+            content = turn.get("content", "")
+            if content:
+                unpaired.append((si, ti, offset + ti, date, content))
+        offset += len(turns)
+    n_rounds = len(rtext)
+    # A blank user key would leave BM25 with no words even if its reply has text.
+    rkey = [key if key else text for key, text in zip(rkey, rtext)]
+    for si, ti, position, date, content in unpaired:
+        text = "[" + date + "] " + content
+        rtext.append(text)
+        rkey.append(content.strip() or text)
+        sid.append(si)
+        rdate.append(date)
+        order.append(position)
+        source_turns.append(((si, ti),))
+    enc = bpe.o200k()
+    diagnostics = dict(n_sessions=len(sess), dates=tuple(rdate), n_user_rounds=n_rounds,
+                       orphan_units=tuple(range(n_rounds, len(rtext))), source_turns=tuple(source_turns))
+    return Cut(tuple(rtext), tuple(rkey), tuple(sid), tuple(order), tuple([None] * len(rtext)),
+               tuple(bpe.count(enc, u) for u in rtext), None, diagnostics)
+
+
 # ---------------------------------------------------------------- entry point
 def cut(text: str, plan, *, exact: Optional[bool] = None) -> Cut:
     """Cut `text` under `plan`. `exact` defaults to plan.mode == "exact"."""
@@ -355,7 +404,7 @@ def cut(text: str, plan, *, exact: Optional[bool] = None) -> Cut:
     if plan.branch == "numbered":
         return _numbered(text, exact, plan.serial)
     if plan.branch == "rounds":
-        return _rounds(text)
+        return _rounds(text) if exact else _native_rounds(text)
     enc = bpe.o200k()
     if exact:
         bad = [s for s in _special_strings(enc, text) if s != "<|endoftext|>"]

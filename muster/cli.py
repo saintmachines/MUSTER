@@ -1,8 +1,6 @@
 """The `muster` command.
 
-  muster derive PATH [--json]               the plan muster.derive picks (same output as scripts/derive.py, which keeps
-                                            the paper's rule, except a log numbered under its own spelling and a serial
-                                            log that shows no updates, which is read without replacing anything)
+  muster derive PATH [--json]               the source plan muster.derive picks, including its policy and renderer
   muster query PATH "question"              build a memory from a file once and print what a reader gets
   muster add --store S.muster FILE.jsonl    append records (one JSON object per line: text, speaker, time, ...)
   muster context --store S.muster "query"   what a reader gets for a query
@@ -51,6 +49,12 @@ def _show(path, total, d):
                 ("order", d["order"]), ("retrieval", d["retrieval"])]
         if "leading_serial_share" in d:
             rows.append(("serials", "each line's own prefix, shown as written"))
+    elif d["store"] == "conversation rounds":
+        unit = ("user/answer rounds and %d unpaired turns (%d units)" % (d["unpaired_turns"], d["units"])
+                if d.get("unpaired_turns") else "one user turn with its answer (%d rounds)" % d["units"])
+        rows = [("store", d["store"]), ("units", unit),
+                ("parents", "one per source session (%d sessions)" % d["parents"]),
+                ("order", d["order"]), ("retrieval", d["retrieval"])]
     else:
         if not d["units"]:
             unit = "whole store (under one unit)"
@@ -61,6 +65,8 @@ def _show(path, total, d):
         par = "%s tokens, %d of them" % (format(d["parent_tokens"], ","), d["parents"]) if d["parent_tokens"] else "none (too short)"
         rows = [("store", d["store"]), ("units", unit), ("parents", par), ("order", d["order"]),
                 ("retrieval", d["retrieval"])]
+    if "policy" in d:
+        rows += [("policy", d["policy"]), ("render", d["render"]), ("read", "%d units per query" % d["U"])]
     for k, v in rows:
         print("  %-10s %s" % (k, v))
 
@@ -74,16 +80,28 @@ def cmd_derive(a):
         sys.exit("%s is not UTF-8 text; save it as UTF-8 and run again" % a.path)
     except MusterError as e:
         sys.exit(str(e))
-    st = store_stats(text, P)
-    if st.tokens == 0:
+    plan = derive(text)
+    st = store_stats(text, plan.reference_chunk)
+    if plan.branch == "empty":
         sys.exit("%s is empty: nothing to configure" % a.path)
     share, med = lead_serial(text) if st.serial < NUMBERED_TAU else (0.0, None)
-    form = "dot" if st.serial >= NUMBERED_TAU else ("lead" if med is not None and med <= LEAD_LINE_TOKENS else None)
-    numbered = derive(text).branch == "numbered"   # the library's own decision, so the two cannot disagree
-    lead = numbered and form == "lead"
-    d = _decision(st.serial if numbered else 0.0, st.record_share, st.tokens, lead=lead)
+    lead = plan.branch == "numbered" and plan.serial == "lead"
+    if plan.branch == "rounds":
+        from .cut import cut
+        rounds = cut(text, plan)
+        d = dict(store="conversation rounds", unit_tokens=None, units=len(rounds), parent_tokens=None,
+                 parents=rounds.diagnostics["n_sessions"],
+                 user_rounds=rounds.diagnostics["n_user_rounds"],
+                 unpaired_turns=len(rounds.diagnostics["orphan_units"]),
+                 order="source sessions and turns: all versions kept",
+                 retrieval="balanced, 3 channels",
+                 channel_floors=dict(meaning=4, keyword=3, parent=3, per_selected_units=10))
+    else:
+        d = _decision(st.serial if plan.branch == "numbered" else 0.0, st.record_share, st.tokens, lead=lead)
     if lead:
         d = dict(leading_serial_share=round(share, 4), median_line_tokens=med, **d)
+    d.update(policy=plan.policy, render=plan.render, U=plan.U,
+             reference_chunk=plan.reference_chunk, mode=plan.mode)
     if a.json:
         print(json.dumps(dict(path=a.path, tokens=st.tokens, serial_fraction=round(st.serial, 4),
                               record_share=round(st.record_share, 4), **d), indent=1))

@@ -1,4 +1,4 @@
-"""Derived plans use the final balanced method; explicit published plans retain their policy."""
+"""Source shapes choose recipes; explicit published plans retain their policy."""
 import json
 import math
 import re
@@ -11,21 +11,22 @@ from muster.models import Models
 from muster.serve import Service
 
 
-@pytest.mark.parametrize("text,branch", [
-    ("first record\n\nsecond record", "record"),
-    ("A long uninterrupted narrative. " * 1800, "prose"),
+@pytest.mark.parametrize("text,branch,policy,style", [
+    ("first record\n\nsecond record", "record", "flrs", "flat"),
+    ("A long uninterrupted narrative. " * 1800, "prose", "flr", "r4"),
 ], ids=["record", "prose"])
-def test_nonempty_derived_plan_uses_sibling_candidates(text, branch):
+def test_nonempty_derived_plan_uses_its_source_recipe(text, branch, policy, style):
     plan = muster.derive(text)
-    assert plan.branch == branch and plan.policy == "flrs"
+    assert (plan.branch, plan.policy, plan.render) == (branch, policy, style)
     restored = muster.Plan.from_dict(json.loads(plan.to_json()))
     assert restored == plan and restored.plan_id == plan.plan_id
 
 
 @pytest.mark.parametrize("mode", ["native", "exact"])
-def test_collection_derivation_uses_the_same_balanced_policy(mode):
+def test_collection_record_policy_and_historical_exact_statistics_path(mode):
     plan = muster.derive_collection(["one record\n\nanother record"] * 3, mode=mode)
     assert plan.branch == "record" and plan.policy == "flrs"
+    assert plan.render == ("r4" if mode == "exact" else "flat")
 
 
 def test_numbered_and_empty_branches_keep_their_existing_policies():

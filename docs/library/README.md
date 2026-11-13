@@ -1,13 +1,14 @@
 # MUSTER memory library
 
 Long-term memory for agents that keeps every word. It reads its own text to decide how to cut, group and search it,
-and it makes no LLM call to build or grow the memory. This package is the method of the MUSTER paper as a library:
-the paper's runs are reproduced by it, question by question (see [Verification](#verification)).
+and it makes no LLM call to build or grow the memory. Frozen presets retain the paper's replay paths;
+evaluation results state their SDK version and input boundary (see [Verification](#verification)).
 
 ## Install
 
-See the [0.1.1 changes](https://github.com/saintmachines/MUSTER/blob/main/docs/library/changes.md) for input validation,
-native numbered-log reading and their compatibility limits.
+The [0.1.3 changelog](https://github.com/saintmachines/MUSTER/blob/main/CHANGELOG.md) describes source-derived
+configuration for single stores and collections. The [0.1.1 changes](https://github.com/saintmachines/MUSTER/blob/main/docs/library/changes.md)
+retain the earlier input validation, native numbered-log reading and compatibility limits.
 
 Install `muster-memory` from PyPI. The basic install provides structure inspection.
 The commands below add local retrieval models and the optional MCP server.
@@ -49,12 +50,36 @@ print(mem.context("Where does Caroline live now?").text)    # what your LLM read
 
 `muster.build` derives the plan from the text: a numbered log (most lines start with `12. `), a record store (most of
 the text sits in short blank-line records, like a chat) or prose (books, documents). `print(muster.explain(mem.plan))`
-shows the decision and why. Nothing is tuned per dataset.
+shows the decision and why. No dataset name, question or answer is supplied to the configuration step.
+
+## Several independent stores
+
+Use `muster.build(source)` for one memory store. For several independent stores sharing a configuration boundary,
+`muster.build_collection(stores)` derives their configuration from the sources and keeps their contents separate:
+
+```python
+cohort = muster.build_collection([
+    ["The spare cable is in the blue drawer.", "The charger is on the shelf."],
+    ["The spare cable is in the red drawer.", "The charger is in the bag."],
+])
+print(cohort[0].context("Where is the spare cable?").text)
+print(muster.explain(cohort.plan))
+```
+
+The returned `MemoryCollection` supports indexing and iteration over the separate memories. Its statistics use the
+first up to three stores by default; `sample=None` uses all stores. Every member is checked for compatible source
+boundaries, and each store is cut and searched separately. A list of strings passed to ordinary `build` remains
+one store of records. The input boundary supplies the available sources; MUSTER derives retrieval and rendering automatically.
+
+MUSTER distinguishes independent records from dated, speaker-tagged conversation records using source structure.
+It also recognizes a complete serialized sequence alternating session dates and turn lists, keeping its original
+user/answer rounds and sessions. Neither path branches on a benchmark name or on words in a question.
 
 The numbered branch also recognizes serials written in the log's own style (`Step 12: ...`, `#12 ...`, `(12) ...`).
 This form is detected when 95% of the lines after the first carry a serial one above the previous line's and
 the median line is at most 20 tokens, and the reader sees each line as written. The check was added after the paper and
-its two thresholds were set on public benchmark logs; the paper's presets and `derive_collection` do not use it.
+its two thresholds were set on public benchmark logs. Frozen presets and the historical exact collection path retain
+their recorded behavior; native collection derivation checks the source serial format.
 The extra native slot rule and value walk described below apply only to the dot form.
 
 ## A memory that grows: `Store`
@@ -105,7 +130,8 @@ Units are the store's own records, packed up to a token budget (512 tokens for r
 never split mid-record. Parents group about eight neighbouring units. A query is matched three ways: meaning (bge-m3),
 keywords (BM25) and an entity graph over parents. The read budget (`U` units, 10 by default, 40 for prose) is split
 between the three by reserved floors (4/3/3 per ten), so each signal always contributes; candidates are ordered by a
-cross-encoder. Selected units are shown verbatim, one block per parent, in stored order. On numbered logs the newest
+cross-encoder. Selected units are shown verbatim in stored order. Independent records are shown flat; prose and dated,
+speaker-tagged conversations use parent-grouped context. On numbered logs the newest
 version of a slot replaces older ones. In native mode a slot is the line's subject and relation without its value, once
 two subjects share that relation and a changed subject holds at most 4 lines on average, so `... the sport of cricket`
 retires `... the sport of basketball`. Other lines keep the paper's slot, the sentence with its capitalised names masked.
@@ -133,9 +159,42 @@ FactConsolidation, and reads dot-serial logs only; exact mode does not walk.
 With the same plan, native mode departs from exact mode only in the nine places [exact.md][exact] lists, among them canonical
 iteration over entity sets and a stable sort for exact dense-score ties.
 
-Automatically derived non-numbered plans use the balanced method with immediate sibling candidates (`flrs`).
-The frozen paper presets retain each published run's policy, including `flr` where it was recorded; explicit or
-JSON-restored plans are not migrated. See [exact.md][exact] when choosing between automatic planning and replay.
+Automatic native configuration follows source structure: independent records use sibling candidates and flat
+passages; prose and dated, speaker-tagged conversations use the three main channels and parent-grouped context.
+Source session-round literals retain round units and session parents. Frozen presets, explicit plans and
+JSON-restored plans keep their recorded policy and renderer. [Exact mode][exact] retains the historical replay path.
+
+## Evaluation scope
+
+The [MAB comparison](https://github.com/saintmachines/MUSTER#native-mab) preserves the original implementation,
+SDK 0.1.2 paper settings, and the measured 0.1.2 per-store Auto results (58.53, 60.60 and 64.74 Overall at the three GPT readers).
+<!-- BEGIN collection-auto -->
+<a id="collection-auto"></a>
+### SDK 0.1.3 collection Auto on MemoryAgentBench
+
+Pass one store to `muster.build(source)` and several independent source stores to `muster.build_collection(source_texts)`. Collection members stay separate; a list of strings passed to ordinary `build` remains one store of records. The SDK derives the shared retrieval and rendering plan from the first up to three supplied stores and checks every member; strategies are not selected by the user.
+
+| Reader | AR | TTL | LRU | SF | Overall |
+|---|---:|---:|---:|---:|---:|
+| GPT-4o-mini | 74.33 | 47.53 | 44.03 | 76.50 | 60.60 |
+| GPT-4.1-mini | 77.33 | 47.13 | 51.76 | 72.50 | 62.18 |
+| GPT-5-mini | 81.08 | 48.18 | 61.91 | 77.00 | 67.04 |
+| GLM-5.3-Flash | 84.75 | 53.33 | 63.33 | 77.50 | 69.73 |
+| GPT-6 Luna | 81.67 | 52.15 | 58.29 | 76.00 | 67.03 |
+
+Original benchmark metrics, 0–100 scale. Overall averages AR, TTL, LRU and SF.
+
+The default `muster.build_collection(source_texts, embed=False)` replay compared 1,471 non-FC inputs: 1,450 complete reader messages matched the SDK 0.1.2 paper-settings archive; 21 LongMemEval messages changed after unpaired source turns were preserved. For each of the five readers, the LongMemEval cell merges 279 archived judgments with evaluation of those 21 changed inputs under the original requested model/provider/request and scorer contracts. The other 13 task cells retain the canonical archived values. For FC, 200 frozen selection traces reproduced context bytes under the unchanged numbered cut/search/function/data path; neural FC search was not rerun. Local cache warming and fresh reader/judge work are recorded separately in the receipts; the final input replay used caches only.
+
+Each reader covers 1,671 questions and 1,813 raw response slots across 14 cells; DetectiveQA retains three reads. Encoder and reranker inputs are capped at 2,048 tokens. Input replay alone does not measure answer quality. These rows combine archived identical-input results with the separately evaluated changed LongMemEval inputs; they do not establish results for other benchmarks or every single-store input. The archived actual judge snapshot was not stored; a matching requested alias does not establish the same snapshot.
+
+[All task cells and historical provenance](https://github.com/saintmachines/MUSTER/blob/main/docs/data/auto_0_1_3.json) · [API input replay and scope](https://github.com/saintmachines/MUSTER/blob/main/data/auto_0_1_3/API_INPUT_REPLAY.json) · [LongMemEval response and judgment coverage](https://github.com/saintmachines/MUSTER/blob/main/data/auto_0_1_3/LME_REFRESH.json)
+<!-- END collection-auto -->
+
+SDK evaluations use 2,048-token encoder and reranker inputs. The additional subject–relation slot and value-walk
+rules apply to qualifying dot-numbered facts and were developed on the reported FactConsolidation data. Archived
+answers require identical complete messages and request settings; judge reuse requires the same judge payload.
+Other benchmarks, original build timings and Infini-style judgments retain their original implementation scope.
 
 ## Verification
 

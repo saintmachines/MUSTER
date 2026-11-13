@@ -197,7 +197,8 @@ class Memory:
         elif style == "r4":
             c = r4(ids, self.cut.units, self.cut.parent)
         elif style == "flat":
-            c = flat(ids, self.cut.units)
+            order = self.cut.order if self.plan.mode == "native" and self.plan.branch == "rounds" else None
+            c = flat(ids, self.cut.units, self.cut.parent, order)
         elif style == "numbered":
             order = self.cut.order
             if self.cut.diagnostics.get("unmarked_records"):
@@ -251,8 +252,9 @@ def resolve_plan(store_text_, plan):
 
 
 def build(store, plan=None, *, models=None, embed=True, template: str = DEFAULT_TEMPLATE,
-          normalize_newlines: bool = True, declared_order=None, record_format: str = "content") -> Memory:
-    """Cut, index and (unless embed=False) embed a store. `plan`: None derives it, a string names a preset."""
+          normalize_newlines: bool = True, declared_order=None, record_format: str = "content",
+          reference_chunk: int = 4096) -> Memory:
+    """Build one store. reference_chunk configures Auto; an explicit plan is used unchanged."""
     exact_preset = isinstance(plan, str) or (isinstance(plan, Plan) and plan.mode == "exact")
     if declared_order is not None:
         if template != DEFAULT_TEMPLATE:
@@ -265,8 +267,9 @@ def build(store, plan=None, *, models=None, embed=True, template: str = DEFAULT_
     if record_format != "content":
         raise PlanError("record_format requires declared_order provenance")
     text, spans, recs = store_text(store, template=template, normalize=(normalize_newlines and not exact_preset))
-    p = (derive(recs, template=template, normalize_newlines=normalize_newlines)
-         if recs is not None and plan is None else resolve_plan(text, plan))
+    p = (derive(recs if recs is not None else text, reference_chunk=reference_chunk,
+                template=template, normalize_newlines=normalize_newlines)
+         if plan is None else resolve_plan(text, plan))
     semantic, record_indices = None, None
     if recs is not None and p.mode == "native" and p.branch == "numbered":
         from .record_serial import cut_record_serials

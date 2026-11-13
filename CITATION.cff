@@ -1,6 +1,7 @@
 cff-version: 1.2.0
 message: "If you use MUSTER's configuration rule, implementation, or released evaluation artifacts, please cite the MUSTER paper."
 type: software
+version: 0.1.3
 title: "MUSTER"
 repository-code: "https://github.com/saintmachines/MUSTER"
 url: "https://saintmachines.github.io/MUSTER/"

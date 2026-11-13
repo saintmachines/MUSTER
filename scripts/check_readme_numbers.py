@@ -5,6 +5,20 @@ import sys, re
 from pathlib import Path
 import subprocess
 readme = open(sys.argv[1], encoding='utf-8').read()
+# The collection table has its own source/cell/rounding/API-proof contract.
+# Strip it only after that complete generated block has been validated.
+collection = re.compile(r'<!-- BEGIN collection-auto -->.*?<!-- END collection-auto -->', re.S)
+if '<!-- BEGIN collection-auto -->' in readme or '<!-- END collection-auto -->' in readme:
+    if (readme.count('<!-- BEGIN collection-auto -->') != 1
+            or readme.count('<!-- END collection-auto -->') != 1 or len(collection.findall(readme)) != 1):
+        sys.exit('Expected exactly one collection Auto result block')
+    root = Path(sys.argv[1]).resolve().parent
+    result = subprocess.run([sys.executable, str(root / 'tools/make_collection_auto.py'), '--check'],
+                            capture_output=True, text=True)
+    if result.returncode:
+        print(result.stdout + result.stderr)
+        sys.exit(result.returncode)
+    readme = collection.sub('', readme)
 # The generated native table is checked by its exact cells and display rounding,
 # rather than by finding a rounded substring somewhere in a full-precision JSON.
 native = re.compile(r'<!-- BEGIN native-mab -->.*?<!-- END native-mab -->', re.S)

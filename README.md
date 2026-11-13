@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://saintmachines.github.io/MUSTER/"><b>Project page</b></a> ·
-  <a href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_native_20261109.pdf"><b>Paper (PDF)</b></a> ·
+  <a href="https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_auto_20261111.pdf"><b>Paper (PDF)</b></a> ·
   <a href="https://pypi.org/project/muster-memory/"><b>PyPI</b></a> ·
   <a href="https://saintmachines.github.io/MUSTER/try/"><b>Inspect a store in your browser</b></a> ·
   <a href="https://huggingface.co/datasets/saintmachines/MUSTER-eval"><b>Evaluation data</b></a> ·
@@ -28,7 +28,7 @@
 pip install "muster-memory[models,mcp]"
 ```
 
-The figures report the paper's original evaluation. The [0.1.2 evaluation on all fourteen MAB tasks](#native-mab) and the [0.1.1 FC follow-up](https://saintmachines.github.io/MUSTER/#sdk-followup) are shown separately with their conditions. Frozen exact-mode paper presets retain their existing behavior.
+The figures report the paper's original evaluation. [SDK 0.1.3 automatically configures source collections](#collection-auto) on all fourteen MAB tasks; [the 0.1.2 evaluations](#native-mab) retain their original conditions. The [0.1.1 FC follow-up](https://saintmachines.github.io/MUSTER/#sdk-followup) retains its own conditions. Frozen exact-mode paper presets retain their existing behavior.
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_01_dark.svg"><img src="docs/assets/readme/h2_01_light.svg" alt="" height="18"></picture>Results
 
@@ -129,7 +129,7 @@ order to show it.
 2. **Match retrieval to it.** Dense search, BM25 and a parent graph each keep a floor of slots, set by the structure.
    On a numbered log the parent graph takes most of them, elsewhere the three are balanced. One rerank fills the rest.
    *Parent graph first on numbered logs adds 6.0 on selective forgetting.*
-3. **Assemble in its order.** The context is shown in stored order, one block per parent. Where the store numbers its
+3. **Assemble in its order.** The context is shown in stored order. Prose and dated, speaker-tagged conversations can be grouped by parent; independent records are shown flat. Where the store numbers its
    records, only the newest version of each fact is shown, at read time, so nothing is deleted. *Fact consolidation,
    one store, scores 92 in the recorded order, 64 with none and 59 shuffled.*
 
@@ -219,6 +219,21 @@ print(store.context("Where does the user live now?").text)   # the stored passag
 The store measures its own structure as it grows (`muster.explain(store.head().plan)` shows what it chose), keeps every
 word, and makes no LLM call to build or grow.
 
+For several independent stores that share a configuration boundary, use `build_collection`. Each store stays separate:
+
+```python
+cohort = muster.build_collection([
+    ["The spare cable is in the blue drawer.", "The charger is on the shelf."],
+    ["The spare cable is in the red drawer.", "The charger is in the bag."],
+])
+print(cohort[0].context("Where is the spare cable?").text)
+```
+
+`build(source)` describes one memory store; `build_collection(stores)` describes several independent stores.
+MUSTER derives the configuration from their source structure. These calls preserve the application's input boundaries and derive retrieval and rendering automatically. A list of strings passed to `build` remains one store of records. Collection statistics use
+the first up to three stores by default; `sample=None` uses all stores. Every member is checked, and stores are never
+joined for cutting or search.
+
 * **Claude, Cursor or any MCP client:** `muster mcp --store agent.muster`
 * **Any app or robot over HTTP:** `muster http --store agent.muster` (`POST /v1/add`, `/v1/context`)
 * **Agent frameworks:** OpenAI Agents SDK, LangChain and LangGraph through `muster.integrations`
@@ -243,9 +258,37 @@ MUSTER  beam_conv0.txt  115,630 tokens
   parents    4,096 tokens, 28 of them
   order      none: all versions kept
   retrieval  balanced, 3 channels
+  policy     flr
+  render     r4
+  read       10 units per query
 ```
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_05_dark.svg"><img src="docs/assets/readme/h2_05_light.svg" alt="" height="18"></picture>Detailed results
+
+<!-- BEGIN collection-auto -->
+<a id="collection-auto"></a>
+### SDK 0.1.3 collection Auto on MemoryAgentBench
+
+Pass one store to `muster.build(source)` and several independent source stores to `muster.build_collection(source_texts)`. Collection members stay separate; a list of strings passed to ordinary `build` remains one store of records. The SDK derives the shared retrieval and rendering plan from the first up to three supplied stores and checks every member; strategies are not selected by the user.
+
+| Reader | AR | TTL | LRU | SF | Overall |
+|---|---:|---:|---:|---:|---:|
+| GPT-4o-mini | 74.33 | 47.53 | 44.03 | 76.50 | 60.60 |
+| GPT-4.1-mini | 77.33 | 47.13 | 51.76 | 72.50 | 62.18 |
+| GPT-5-mini | 81.08 | 48.18 | 61.91 | 77.00 | 67.04 |
+| GLM-5.3-Flash | 84.75 | 53.33 | 63.33 | 77.50 | 69.73 |
+| GPT-6 Luna | 81.67 | 52.15 | 58.29 | 76.00 | 67.03 |
+
+Original benchmark metrics, 0–100 scale. Overall averages AR, TTL, LRU and SF.
+
+The default `muster.build_collection(source_texts, embed=False)` replay compared 1,471 non-FC inputs: 1,450 complete reader messages matched the SDK 0.1.2 paper-settings archive; 21 LongMemEval messages changed after unpaired source turns were preserved. For each of the five readers, the LongMemEval cell merges 279 archived judgments with evaluation of those 21 changed inputs under the original requested model/provider/request and scorer contracts. The other 13 task cells retain the canonical archived values. For FC, 200 frozen selection traces reproduced context bytes under the unchanged numbered cut/search/function/data path; neural FC search was not rerun. Local cache warming and fresh reader/judge work are recorded separately in the receipts; the final input replay used caches only.
+
+Each reader covers 1,671 questions and 1,813 raw response slots across 14 cells; DetectiveQA retains three reads. Encoder and reranker inputs are capped at 2,048 tokens. Input replay alone does not measure answer quality. These rows combine archived identical-input results with the separately evaluated changed LongMemEval inputs; they do not establish results for other benchmarks or every single-store input. The archived actual judge snapshot was not stored; a matching requested alias does not establish the same snapshot.
+
+[All task cells and historical provenance](https://github.com/saintmachines/MUSTER/blob/main/docs/data/auto_0_1_3.json) · [API input replay and scope](https://github.com/saintmachines/MUSTER/blob/main/data/auto_0_1_3/API_INPUT_REPLAY.json) · [LongMemEval response and judgment coverage](https://github.com/saintmachines/MUSTER/blob/main/data/auto_0_1_3/LME_REFRESH.json)
+<!-- END collection-auto -->
+
+### Historical SDK 0.1.2 results
 
 <!-- BEGIN native-mab -->
 <a id="native-mab"></a>
@@ -446,7 +489,7 @@ GitHub's *Cite this repository* button reads [CITATION.cff](CITATION.cff).
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_09_dark.svg"><img src="docs/assets/readme/h2_09_light.svg" alt="" height="18"></picture>Paper, status, license
 
 The paper is *MUSTER: Top-Ranked, Self-Configuring Agent Memory That Knows a Log from a Novel and Retrieves Each by Its Structure*; the PDF is in
-[`paper/MUSTER_native_20261109.pdf`](https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_native_20261109.pdf). The [paper archive](https://github.com/saintmachines/MUSTER/blob/main/paper/README.md) retains the submitted manuscript and earlier drafts. This is a research release. What was checked, and the evidence for each line,
+[`paper/MUSTER_auto_20261111.pdf`](https://github.com/saintmachines/MUSTER/blob/main/paper/MUSTER_auto_20261111.pdf). The [paper archive](https://github.com/saintmachines/MUSTER/blob/main/paper/README.md) retains the submitted manuscript and earlier drafts. This is a research release. What was checked, and the evidence for each line,
 is in [STATUS.md](STATUS.md).
 
 The library is Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). Benchmark content keeps its own license.

@@ -2,13 +2,30 @@
 
 ## Building and reading a memory
 
-`muster.build(store, plan=None, *, models=None, embed=True, template=DEFAULT_TEMPLATE, normalize_newlines=True) -> Memory`
+`muster.build(store, plan=None, *, models=None, embed=True, template=DEFAULT_TEMPLATE, normalize_newlines=True, declared_order=None, record_format="content", reference_chunk=4096) -> Memory`
 : `store` is a string, or records: `muster.Record`, mappings (`text` or `content`, `id`, `time` or `timestamp`,
   `speaker` or `role`, `session`, other keys go to `meta`) or plain strings. `plan=None` derives the plan from the
-  text; a string names a preset (exact mode); a `Plan` is used as given. `embed=False` defers the embedding pass.
+  source; a string names a preset (exact mode); a `Plan` is used as given. `reference_chunk` is a positive integer
+  resource scale for automatic derivation. An explicit plan keeps its own settings. `embed=False` defers embedding.
+  A list of strings is one store of records; it is not a collection of independent stores.
   One mapping or `Record` alone is a list of one. A `content` list of chat parts keeps its text parts, joined by a new
   line; any other part is refused, so pass what should be remembered as text. Text holding half of a surrogate pair
   (usually an emoji cut by a stream) raises `RecordError` at the call that brought it in.
+
+`muster.build_collection(stores, *, reference_chunk=4096, sample=3, step8=True, models=None, embed=True, template=DEFAULT_TEMPLATE, normalize_newlines=True) -> MemoryCollection`
+: `stores` is an ordered iterable of independent stores, each accepted as text or records. It must not be a bare
+  string, mapping, Record or unordered set. Statistics use the first up to `sample` stores; `sample=None` uses all.
+  Every nonempty member is checked for compatible source boundaries. Stores are cut and searched separately.
+  Numbered formats cannot be mixed with each other or with unnumbered stores; source session-round literals cannot
+  be mixed with other structures. Empty members remain empty memories with `U=0`; an entirely empty collection
+  has an empty plan. If nonempty members occur only outside an entirely empty sampled prefix, derivation is refused;
+  `sample=None` lets all sources supply statistics. Within a derived record branch, the conversation recipe applies
+  only when all nonempty members have sufficient dated-speaker records; otherwise it uses the independent-record recipe.
+
+`MemoryCollection`: `plan` is the source-derived shared plan; `memories` is a tuple of independent `Memory`
+objects. It supports `len(collection)`, iteration and `collection[index]`. Retrieve from the member associated
+with the application's requested source owner. Collection construction does not merge their contents or search them
+as one store. Configuration is derived from source structure without benchmark names, questions or answers.
 
 `Memory.search(query, *, U=None, models=None, cache=None, scores=None) -> Selection`
 : `U` overrides the plan's read budget: a positive whole number (an int or a numpy integer), or `None` or 0 for the plan's
@@ -34,16 +51,27 @@
 ## Deciding the plan
 
 `muster.derive(store, *, reference_chunk=4096, template=..., normalize_newlines=True) -> Plan`
-: the rule of scripts/derive.py on one store. `muster.explain(plan) -> str` describes it and lists the decision steps.
+: source-only automatic configuration for one store. `muster.explain(plan) -> str` describes the decision and trace.
+  Independent records use `flrs/flat`; prose and sufficiently dated, speaker-tagged records use `flr/r4`.
+  A complete serialized sequence alternating session dates and role/content turn lists retains round units and source
+  session parents with `flrs/flat`. The recognizer checks the source structure, not protocol names in its content.
 
-`muster.derive_collection(stores, *, reference_chunk=4096, sample=3, step8=True, mode="native") -> Plan`
-: one plan for a benchmark cell from its first `sample` stores (harness/derive_config.py, then step 8).
+`muster.derive_collection(stores, *, reference_chunk=4096, sample=3, step8=True, mode="native", template=DEFAULT_TEMPLATE, normalize_newlines=True) -> Plan`
+: one shared plan from independent source stores. The default first up to three members supply statistics and a mean
+  whole-store size estimate; `sample=None` uses all. Native mode checks every member for compatible source boundaries,
+  even those outside the sampled prefix. Store contents are never concatenated for cutting. `mode="exact"` retains
+  historical collection-statistics behavior. `build_collection` is the native build entry point; it does not accept
+  a caller-supplied plan or exact-mode selection.
 
 `Plan` fields: `branch` (numbered, record, prose, rounds, empty), `atom`, `chunk`, `mscale`, `U`, `policy` (flr, flrs,
 attprio_sess), `render`, `mode` (native, exact), `frozen`, `supersede`, `reference_chunk`, `encoder`, `reranker`
 (`ModelSpec(name, revision, max_length, batch_size)`), `compat`, `stats`, `source`, `trace`; `plan_id`, `to_json()`.
 
 `muster.presets.names()`, `muster.presets.get(name_or_leg_tag)`, `muster.presets.legs()`, `muster.presets.PAPER`.
+
+`declared_order` and `record_format` on `build` retain the separate [declared-record input contract](declared-records.md).
+They do not choose a retrieval strategy or alter frozen exact replay. Explicit and JSON-restored plans retain their
+recorded policy and renderer.
 
 ## A memory that grows
 

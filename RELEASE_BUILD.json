@@ -1,7 +1,7 @@
 {
   "package": "muster-memory",
-  "version": "0.1.2",
-  "source_date_epoch": 1794052800,
+  "version": "0.1.3",
+  "source_date_epoch": 1794484800,
   "build_tools": {
     "build": "1.6.1",
     "hatchling": "1.32.4",
@@ -11,7 +11,7 @@
     "comrak": "0.0.16"
   },
   "artifacts": {
-    "muster_memory-0.1.2-py3-none-any.whl": "781353244249e417c3b0d1e73e15f44138e1c684285fc51aa5ec07f041204fee",
-    "muster_memory-0.1.2.tar.gz": "b3dc69f2a9affdaf3c60f8abde2997d7d4a31f272274ed995a7dff8b2cb7ed5f"
+    "muster_memory-0.1.3-py3-none-any.whl": "7c983c573cb8a4b64c91fb5ce9568b95364ed689230e7a2c77eff285af464348",
+    "muster_memory-0.1.3.tar.gz": "227f22012c1e53f25b0193dab4ecd94263d8d534152645b11a68f8de42a11cb0"
   }
 }

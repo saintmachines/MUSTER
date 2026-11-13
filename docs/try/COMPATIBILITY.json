@@ -1,14 +1,17 @@
 {
   "status": "configuration_preview_validated",
-  "checked_utc": "2026-11-07T12:51:25.323368+00:00",
-  "reference_candidate_patch_sha256": "806b64d2046a4128b3f80abf8e823390f7a3fb123f28eff7a611baed679b0dec",
+  "checked_utc": "2026-11-12T23:58:39.723060+00:00",
+  "package_version": "0.1.3",
+  "reference_snapshot": "sdk_final01",
+  "reference_sdk_source_file_count": 37,
   "reference_sdk_source_sha256": {
-    "muster/__init__.py": "dd47c4e9655f1f5c88b351c0ddedd3a729e5023108b88174dd6cd3f8966f1133",
-    "muster/_version.py": "62fb98cd69cab6a05bf88a86f0702efa7848600b208fd56673f6fda3bbcefa3b",
+    "muster/__init__.py": "f4a9a747353c772ae230bcd7b16654310806bb718cc6ec450ccd877faf8f2460",
+    "muster/_version.py": "5c4a9bd9a8889fc7f3184ebc329878724d45b50aac47f6a6d30456beb60f7df4",
     "muster/adapters.py": "6a2e7b9fed37e15ae9629601ccf07159c454992eb79357408a72647a870bdace",
     "muster/bpe.py": "6ae2072e3be2dcd4195d1d57a3758c6b8d5bb67452fe9546874823e8c0736ab5",
     "muster/cache.py": "bb02b611e872af1ce8878081b09d0e0e6f89e4dca2134b6a4d82668e4337ad9a",
-    "muster/cli.py": "94f5afd97899e9fd02d9067b297b93a4fe70578162799c8657d587bc7a6206f0",
+    "muster/cli.py": "904f906a0a3aa5eb3e5957806e6bba23f6d9e8f453aaf544193780f56a3defe8",
+    "muster/collection.py": "2220e0f5a08c0fcc70995005c9833d56c048836025eab9c77d3e393da7f21c63",
     "muster/compat/__init__.py": "127d0f5108c3e1ce5ff0cc80618e83073e7fbf8edc62a4859938979b9117cfe6",
     "muster/compat/bundles.py": "98778297206613965055fe953548cc4b10b431428ee12b465c6bd72ae3cbf8da",
     "muster/compat/ce_cache.py": "1cbc938ac0bd9f89e9451023565fc146ff51fc72719d4d97723c632b24a0f6c4",
@@ -16,8 +19,8 @@
     "muster/compat/intermediates.py": "43b0ed1918da8b58bb4e1476a59a9a2286e6f1a94cbe6a7d64468250f86d6bfd",
     "muster/compat/recover.py": "bae3c4c2ef359c9186c0af394b0db3cabbb8b12dac5280ddd41ffc86b8d34f9c",
     "muster/compat/verify.py": "a84592f4a662f7b5918a129314a4fcc2d352c7c2242a7ef0fe0095cd00712570",
-    "muster/cut.py": "b07cae1a71eeff50bfcf613e6e1753d96f11550170d32cdcd735561e17c48fa6",
-    "muster/derive.py": "6b1a37593f7ce43ca3a4265c165c18d802b04a2f88f51cdaea117eee3aa20c78",
+    "muster/cut.py": "167ef90dec435ad9f409e8705bd92990b6d6195756a1da3ba1851805047482be",
+    "muster/derive.py": "8b9c838926ccecc32988d09ae5ae2a83b8cf53be522abe9080233498adf9856a",
     "muster/errors.py": "67e2f1118a85346da49b542c7f19873efd5dd9a0f96767bf595fa4e6555ead23",
     "muster/index.py": "ae0f2f54bfafeff33e91b6684b7d893700ed427c8c9fdaa212a0e95f89afa265",
     "muster/integrations/__init__.py": "2769012753ceefe13a964ce54387cdd47e0515c4cb0b33ab42de37721ae53dca",
@@ -26,13 +29,14 @@
     "muster/integrations/langgraph.py": "81ef5b265e18a0956ef970854bbd9eb23dfb61489c3787183497ed974e437243",
     "muster/integrations/openai_agents.py": "f36815a9d006cb653b20f74b8ba47385069f80d9bbd97f12be34290353d84a68",
     "muster/io.py": "f96577ee5b0fb031b7f32bc43c9f61c6a315f24a0e3f5155987f9c9fc3cca907",
-    "muster/memory.py": "d079fdc47014204dcaef10d673db1f7c01c6606035e75910c56c1e367b3199e7",
+    "muster/memory.py": "30d7ad9515a3b9b2edbcf4bdd3b871ab5447e03467409bcb598f6fac4d75f2f2",
     "muster/models.py": "0b5d17f5d81de309bb1b7168234f9168b80f840cd286892069044fb7c5847006",
     "muster/plan.py": "327134cec72dc96dc0a06b494326a0de4cea5867ef513d27d064ac64de9c604c",
     "muster/presets/__init__.py": "230b4bff47e4720ed450bd34bac51e693bf4b8b0cf11395a312df5f0fe0039d2",
+    "muster/presets/paper.json": "9a0b2fa33631c2926e2a9181acdcaded9bcd3d26051d5e5ce54e49245ecc29ef",
     "muster/record_serial.py": "faffdfb769dae37e11bb51cb29faa09ba86a84c5c17d1ef972ea76f312c60153",
     "muster/records.py": "bc70f70ebbd90f5adb5db8611394bf261006d244b2ff12467e266c87b7355092",
-    "muster/render.py": "112bdc577dc951726779097346d7d3036166f12147bc2f823dc2c0c68943c0f0",
+    "muster/render.py": "b0a0b528ae552369c5f807374fbb315a7629384a5231b1537cbe4f62ace35160",
     "muster/search.py": "7a2f4ee4fbb0906ff7ff5a2517e1dcf28d0f38240ca0740f5c247531be83e818",
     "muster/serve.py": "a2bf93d07a1bdd574d925fe878c5de11f2258cb2c617268a3c9cecfa3c83d1b6",
     "muster/source_order.py": "b8899707aaf65b6eab9e0bc1594e66823be0a3fd360d8a0a093f073c042efbb9",
@@ -40,19 +44,40 @@
     "muster/store.py": "7ae9edfebf6530ca149201883a1225baf88607e0c2e290d3c91fddfaab04e8e0"
   },
   "browser_source_sha256": {
-    "docs/try/index.html": "401bf76f53a24f8bc1ce5bcc0aee78b43bd17f92544c6e58025a28d933de3774",
-    "docs/try/ui.js": "a53368eac75362deea12480063100821f857fa91abb443140f55d31b30b83fa1",
-    "docs/try/inspect.js": "694e5d09f21d10857e14ea8bf781f5d82d206340c0a4a23fb64adf059878391d",
-    "docs/try/inspect.bundle.js": "9fa1d272854d0d7ceb9d9a49779afaeacdfa7fe7143bd5a211dc25c7a6d86f39",
-    "docs/try/decimal-ranges.js": "2cc8d3b063a3a54213aa2a99fc37bb6994357584c7defe70f879858cc8f8992c",
-    "docs/try/README.md": "fa527411b4079440ca5ac340d732569edb9631dd6b870d854ca18a5c8374a317",
-    "docs/try/package.json": "fb2046b3d6095eb9bd3d2d6937dc05cb3c208aaf11ad0f6a42a5dc1a1d0b143b",
-    "docs/try/package-lock.json": "14a4ff93cfc3e99740d53ab8d7851721788e7172365eef17d96aed18ca1aa68f",
+    "docs/assets/brand/saintmachines_mark.svg": "42d746b18b93ae3cadfe693397465a6f5405f4903753ee10fe635fc407074bac",
     "docs/try/LICENSE": "c95bae1d1ce0235ecccd3560b772ec1efb97f348a79f0fbe0a634f0c2ccefe2c",
+    "docs/try/LICENSE.base64-js": "5b37224c080cdcc97c871ada971c224e9926370fe74f11b539aa1cf9f3b1aca1",
     "docs/try/LICENSE.js-tiktoken": "418cb499b436128d653d79941333a5437b7be2ea9213dcc2f04d15d5d2c51d86",
-    "docs/try/LICENSE.base64-js": "5b37224c080cdcc97c871ada971c224e9926370fe74f11b539aa1cf9f3b1aca1"
+    "docs/try/README.md": "37b718c19eee85fae86966bc818daed2726a74f446eb3bc297bb29a701775f6a",
+    "docs/try/decimal-ranges.js": "2cc8d3b063a3a54213aa2a99fc37bb6994357584c7defe70f879858cc8f8992c",
+    "docs/try/index.html": "401bf76f53a24f8bc1ce5bcc0aee78b43bd17f92544c6e58025a28d933de3774",
+    "docs/try/inspect.bundle.js": "7cab77583f11448fe55f5c3758bc825f72c3692ebad761d26cefdea8be5dad01",
+    "docs/try/inspect.js": "e078a657d19f5ddba1a65bf44fd551182471c06fc170f21809f652fcbcd4adb3",
+    "docs/try/package-lock.json": "14a4ff93cfc3e99740d53ab8d7851721788e7172365eef17d96aed18ca1aa68f",
+    "docs/try/package.json": "fb2046b3d6095eb9bd3d2d6937dc05cb3c208aaf11ad0f6a42a5dc1a1d0b143b",
+    "docs/try/ui.js": "5ddf18687cea3ccf3bbffda12bdcfa0e431552e658a4bd4015406b7ed569322b",
+    "docs/try/word-ranges.js": "d6abf93f53c8b8430f36222cb47b2e934649d81238a34642cf438caacf494c1e"
   },
-  "scope": "Valid-Unicode plain-text single-store native derive configuration preview at reference_chunk=4096, including the post-paper serial extension. This report compares plans, statistics and token counts. It does not certify retrieval, slot selection, answer quality or collection-exact replay.",
+  "scope": "Raw-text single-store native derive at reference_chunk=4096, including dated speaker records and Python-compatible JSON session arrays. Plan, statistics and token parity only.",
+  "supported_inputs": [
+    "valid-Unicode raw text within the input limit",
+    "integer-dot and short consecutive serial logs",
+    "dated speaker records, month-name dates and inherited session dates across multiline messages",
+    "JSON spelling of the SDK session-literal structure"
+  ],
+  "refused_inputs": [
+    "Python-literal session arrays: use JSON or the Python SDK",
+    "invalid Unicode",
+    "oversize input without truncation"
+  ],
+  "sdk_only": [
+    "typed record metadata",
+    "independent-store collections and collection statistics",
+    "retrieval index, dense, graph and reranking",
+    "slot selection and context assembly",
+    "answer generation and quality scores",
+    "exact paper replay"
+  ],
   "input_limit": {
     "maximum_utf16_code_units": 200000,
     "oversize_refused_without_truncation": true
@@ -63,47 +88,227 @@
     "python_tiktoken": "0.13.0",
     "js_tiktoken": "1.0.21",
     "tokenizer_encoding": "cl100k_base",
+    "browser_word_class_unicode": "15.0.0",
     "esbuild": "0.25.12",
-    "node": "v25.9.0",
+    "node": "25.9.0",
+    "node_Unicode": "17.0",
     "playwright": "1.56.1",
-    "chromium": "Chromium 131.0.6778.33"
+    "chromium": "Chromium 157.0.8103.38"
   },
-  "python_sdk_comparisons": 1277,
-  "exact_plan_stat_token_matches": 1277,
+  "python_sdk_comparisons": 1372,
+  "exact_plan_stat_token_matches": 1372,
+  "explicit_refusal_checks": 3,
   "mismatches": 0,
   "fixture_suites": {
-    "original_input_regressions": 125,
     "original_fixtures_total": 867,
+    "original_input_regressions": 125,
     "token_boundary_fixtures": 360,
-    "additional_fixed_long_serial_and_Unicode": 50
+    "additional_fixed_serial_and_Unicode": 50,
+    "release013_source_shapes": 98
   },
   "fixture_provenance_sha256": {
     "original_fixture_sha256": "bd40a4533dad7b48637d6985aeaa6c8a776606026ff0a3bbe03982ec023e67c7",
     "original_125_generator_sha256": "dbeded5889f29a2444e432589d72b34776af2d0b4c8fddf46a93db8411dc5968",
     "boundary_fixture_sha256": "22f823bc7fdbb5ac56ce500347fcc2297cc7abd0f36f14766a5b437adf3c2e93",
-    "tested_fixture_sha256": "d766c4eb87b25d0d0987e73aa2cc7d671ebe33cbb7f1686424f645564c25a8bf"
+    "tested_fixture_sha256": "1705d47f45ec914817b7991606574109b34a98107d4af59e5538d392cfaddeac"
   },
-  "rebuilt_bundle_sha256": "9fa1d272854d0d7ceb9d9a49779afaeacdfa7fe7143bd5a211dc25c7a6d86f39",
+  "rebuilt_bundle_sha256": "7cab77583f11448fe55f5c3758bc825f72c3692ebad761d26cefdea8be5dad01",
   "browser": [
     {
       "width": 1360,
-      "four_examples": "passed",
-      "Unicode_cases": 6,
-      "Python_plans_equal": true,
-      "input_not_uploaded": true,
+      "examples": [
+        {
+          "name": "Numbered records",
+          "branch": "numbered",
+          "serial": "dot-or-none"
+        },
+        {
+          "name": "Serial labels",
+          "branch": "numbered",
+          "serial": "lead"
+        },
+        {
+          "name": "Separated records",
+          "branch": "record",
+          "serial": "dot-or-none"
+        },
+        {
+          "name": "Continuous prose",
+          "branch": "prose",
+          "serial": "dot-or-none"
+        }
+      ],
+      "source_cases": [
+        {
+          "name": "Korean text",
+          "plan_equal": true
+        },
+        {
+          "name": "Arabic dot serials",
+          "plan_equal": true
+        },
+        {
+          "name": "Astral lead serials",
+          "plan_equal": true
+        },
+        {
+          "name": "Unicode whitespace and BOM",
+          "plan_equal": true
+        },
+        {
+          "name": "Emoji and combining marks",
+          "plan_equal": true
+        },
+        {
+          "name": "Long dot serial",
+          "plan_equal": true
+        },
+        {
+          "name": "dated/iso",
+          "plan_equal": true
+        },
+        {
+          "name": "dated/arabic",
+          "plan_equal": true
+        },
+        {
+          "name": "dated/word-boundary/U+1C89/before",
+          "plan_equal": true
+        },
+        {
+          "name": "dated/word-boundary/U+1C89/after",
+          "plan_equal": true
+        },
+        {
+          "name": "sessions/JSON-unicode",
+          "plan_equal": true
+        },
+        {
+          "name": "sessions/JSON-escaped-astral",
+          "plan_equal": true
+        },
+        {
+          "name": "sessions/Python-literal",
+          "refusal": "Use JSON"
+        },
+        {
+          "name": "inherited/March-15-2024",
+          "plan_equal": true
+        },
+        {
+          "name": "inherited/session,turn 1,1",
+          "plan_equal": true
+        }
+      ],
+      "python_plans_equal": true,
+      "favicon": {
+        "url_path": "/assets/brand/saintmachines_mark.svg",
+        "status": 200,
+        "mime": "image/svg+xml",
+        "sha256": "42d746b18b93ae3cadfe693397465a6f5405f4903753ee10fe635fc407074bac"
+      },
+      "input_html_not_executed": true,
       "external_runtime_requests": 0,
-      "html_input_not_executed": true,
+      "input_upload_requests": 0,
       "horizontal_overflow": false,
       "page_errors": []
     },
     {
       "width": 390,
-      "four_examples": "passed",
-      "Unicode_cases": 6,
-      "Python_plans_equal": true,
-      "input_not_uploaded": true,
+      "examples": [
+        {
+          "name": "Numbered records",
+          "branch": "numbered",
+          "serial": "dot-or-none"
+        },
+        {
+          "name": "Serial labels",
+          "branch": "numbered",
+          "serial": "lead"
+        },
+        {
+          "name": "Separated records",
+          "branch": "record",
+          "serial": "dot-or-none"
+        },
+        {
+          "name": "Continuous prose",
+          "branch": "prose",
+          "serial": "dot-or-none"
+        }
+      ],
+      "source_cases": [
+        {
+          "name": "Korean text",
+          "plan_equal": true
+        },
+        {
+          "name": "Arabic dot serials",
+          "plan_equal": true
+        },
+        {
+          "name": "Astral lead serials",
+          "plan_equal": true
+        },
+        {
+          "name": "Unicode whitespace and BOM",
+          "plan_equal": true
+        },
+        {
+          "name": "Emoji and combining marks",
+          "plan_equal": true
+        },
+        {
+          "name": "Long dot serial",
+          "plan_equal": true
+        },
+        {
+          "name": "dated/iso",
+          "plan_equal": true
+        },
+        {
+          "name": "dated/arabic",
+          "plan_equal": true
+        },
+        {
+          "name": "dated/word-boundary/U+1C89/before",
+          "plan_equal": true
+        },
+        {
+          "name": "dated/word-boundary/U+1C89/after",
+          "plan_equal": true
+        },
+        {
+          "name": "sessions/JSON-unicode",
+          "plan_equal": true
+        },
+        {
+          "name": "sessions/JSON-escaped-astral",
+          "plan_equal": true
+        },
+        {
+          "name": "sessions/Python-literal",
+          "refusal": "Use JSON"
+        },
+        {
+          "name": "inherited/March-15-2024",
+          "plan_equal": true
+        },
+        {
+          "name": "inherited/session,turn 1,1",
+          "plan_equal": true
+        }
+      ],
+      "python_plans_equal": true,
+      "favicon": {
+        "url_path": "/assets/brand/saintmachines_mark.svg",
+        "status": 200,
+        "mime": "image/svg+xml",
+        "sha256": "42d746b18b93ae3cadfe693397465a6f5405f4903753ee10fe635fc407074bac"
+      },
+      "input_html_not_executed": true,
       "external_runtime_requests": 0,
-      "html_input_not_executed": true,
+      "input_upload_requests": 0,
       "horizontal_overflow": false,
       "page_errors": []
     }
@@ -111,7 +316,7 @@
   "cancellation": [
     {
       "width": 1360,
-      "cancel_ms": 34,
+      "cancel_ms": 209,
       "characters_kept": 40000,
       "can_inspect_after_cancel": true,
       "editing_cancels": true,
@@ -124,7 +329,7 @@
     },
     {
       "width": 390,
-      "cancel_ms": 36,
+      "cancel_ms": 61,
       "characters_kept": 40000,
       "can_inspect_after_cancel": true,
       "editing_cancels": true,
@@ -136,36 +341,34 @@
       "horizontal_overflow": false
     }
   ],
-  "evidence_sha256": {
-    "parity/PLAN_PARITY_VERIFIED.json": "73c297512c0f497ab28b45ff0bc2c3285f42660a41727953341f4f2c8b96cf9d",
-    "browser/BROWSER_VERIFIED.json": "1811374cbd5719ebb23590917f09f63e07a1cf0c64ed822e907745dc316bd5f7",
-    "cancellation/CANCELLATION_VERIFIED.json": "60fc3cea8bd379f51e15b09e22593e0714b1373efd4b8ccb7c53276195327f49",
-    "RUNTIME.json": "2204a657a867913c42c230af46fb40904b0f99624589b31b847b4b562d1564f5"
+  "hf_static_snapshot": {
+    "source_bytes_equal": true,
+    "actual_browser_verified": true,
+    "cancellation_verified": true,
+    "published": false
   },
-  "ui_patch_sha256": "80fdb7ebe8b1f6bc357161c650653989e1c04e3c595de786acab50230fe88394",
+  "evidence_sha256": {
+    "parity01/PLAN_PARITY_VERIFIED.json": "03f033897085a3640a200aa37d95b71e0a003b3f2e83625315751f159b2549c0",
+    "parity01/mismatches.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "browser02/BROWSER_VERIFIED.json": "cc8b864b8928c1a7beac9f438dae884e009597bec0952ff6bff8ff2ae189cf90",
+    "cancel02/CANCELLATION_VERIFIED.json": "ead716e7950d4812286aa8a7284af4a8e02e344076df0eb7e4e287a4f7dc2d24",
+    "hf_browser02/BROWSER_VERIFIED.json": "eee3a4a8732f1e219d4fdd5a2bd4864c5c177b2f58292b37a71a60e9a2b93290",
+    "hf_cancel02/CANCELLATION_VERIFIED.json": "64a9a8e6a58131b6c50c73bf41a0ac6402a84eb98009baffd5b7ce77fc40454b",
+    "HF_SOURCE_CHECKS.json": "65cf736d215bcafbdd60248598a32ac961f92603f44f92582a5f19cba91e6a5c"
+  },
+  "source_rule_coverage": {
+    "month_name_dates": true,
+    "inherited_session_dates": true,
+    "multiline_messages": true,
+    "dated_turn_fraction_uses_Unicode_code_points": true,
+    "date_boundaries_use_the_SDK_Python_word_class": true,
+    "SDK_context_assembly_and_turn_coverage_certified_here": false
+  },
   "new_api_calls": 0,
   "new_model_inference": 0,
   "new_mps_jobs": 0,
   "downloads": 0,
-  "hosted_space_deployment": "not performed",
-  "final_integrated_commit_validation": "Recorded separately with the final release commit and artifacts.",
-  "package_version": "0.1.2",
-  "reference_base_commit": "ee29b6267ca3206c97fb44b93dca3687b4a53462",
-  "selection_limits": [
-    "Native subject-relation slots and value walking apply to dot-serial plans only.",
-    "Lead-serial plans retain the 0.1.0 slot and reading order.",
-    "Serial spelling can change selected context; dot-serial event histories may omit earlier events.",
-    "Original text and stored records remain retained; context selection is not lossless history retrieval.",
-    "This inspector previews structure only and does not run the retrieval models or read an answer."
-  ],
-  "source_metadata_refreshed_utc": "2026-11-07T16:55:25.891286+00:00",
-  "documentation_refresh": {
-    "changed_files": {
-      "docs/try/README.md": {
-        "previous_sha256": "74344b60a70eaab5173f726a94e4410efd09b4413db087daebe0b76d24175a4d",
-        "sha256": "fa527411b4079440ca5ac340d732569edb9631dd6b870d854ca18a5c8374a317"
-      }
-    },
-    "scope": "Preview limit wording uses UTF-16 code units; runtime source and tested SDK are unchanged."
-  }
+  "new_installs": 0,
+  "hosted_deployment": "not performed; publication remains with release owner",
+  "final_commit_validation": "Source hashes above identify this validated snapshot; release commit and server readback are separate gates."
 }

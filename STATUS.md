@@ -2,7 +2,7 @@
 
 What was checked for this release, and the evidence for each line.
 
-The paper directory preserves the author's submitted arXiv package, local revision v219I, and provides a separate November 10 working draft with current SDK measurements. [paper/README.md](paper/README.md)
+The paper directory preserves the author's submitted arXiv package, local revision v219I, and provides the November 11 draft describing SDK 0.1.3 source-collection Auto. [paper/README.md](paper/README.md)
 identifies both. The [project page](https://saintmachines.github.io/MUSTER/)
 and [repository](https://github.com/saintmachines/MUSTER) are its release addresses.
 The Python distribution is `muster-memory`. Install it with `pip install muster-memory` for structure inspection.
@@ -14,21 +14,36 @@ Studio arm64 validation is a separate result; it must not be reported as a hoste
 for the current commit's execution status.
 
 The [browser structure inspector](docs/try/README.md) is included with its source, bundled tokenizer and compatibility
-report: 1,277 inputs matched the tested Python SDK's single-store native plans, statistics and token counts,
+report: 1,372 inputs matched SDK 0.1.3 single-store native plans, statistics and token counts, with three additional explicit-refusal checks,
 including the post-paper serial-format extension; the report pins the tested SDK source hashes. It previews configuration;
 it does not generate answers or replace the paper's retrieval evaluation.
+
+## 0.1.3 collection Auto
+
+The new native `build_collection(stores)` entry point builds independent stores under a source-derived configuration.
+The default statistics use the first up to three sources; `sample=None` uses all sources. Every member is checked,
+and a list of strings passed to ordinary `build` remains one store of records. Source dates, speakers and session-round
+structure determine the applicable record path; configuration takes no benchmark name, question or answer.
+
+The final SDK API replay, with all default arguments, covers all 1,471 non-FC question positions from the SDK paper-settings evaluation. Complete messages match at 1,450 positions; 21 LongMemEval positions change because native rounds now retain previously unpaired source turns. The 200 FC contexts retain frozen selection-trace rendering and numbered-path checks. [Input replay receipt](data/auto_0_1_3/API_INPUT_REPLAY.json).
+
+The current MAB scores combine archived responses for identical inputs with new responses and judgments for the 21 changed LongMemEval inputs. [Per-question score lineage](data/auto_0_1_3/LME_REFRESH.json) and [all fourteen task cells and conditions](docs/data/auto_0_1_3.json) bind the five readers to the final SDK. Original and measured 0.1.2 results remain below.
+
+The [updated manuscript](paper/MUSTER_auto_20261111.pdf) retains the original and historical numeric results. Its current Auto rows update LongMemEval and the resulting AR/Overall aggregates after evaluating the changed inputs. Its source, source ZIP and diffs are listed in the [paper archive](paper/README.md). The [build lock](RELEASE_BUILD.json) records the fixed build tools and exact distribution hashes. The current commit's [CI matrix](https://github.com/saintmachines/MUSTER/actions/workflows/ci.yml) and the [release](https://github.com/saintmachines/MUSTER/releases/tag/v0.1.3) retain their execution records; earlier CI and timing receipts remain specific to their original sources.
+
+Other benchmarks do not gain new reader scores from this release. In particular, the historical LoCoMo and BEAM rows retain their original representations and context budgets. Source-structure checks and browser parity are separate from answer quality.
 
 ## Package 0.1.2 correction
 
 Version 0.1.2 fixes the PyPI description's app connection link and adds rendered-description and destination checks before publication. Its retrieval implementation and browser runtime are unchanged from 0.1.1. At that November 8 correction, the working paper contained the original thirty experimental tables and its source diff only updated two statements about released reproduction materials.
 
-## November 10 current SDK evaluation
+## November 10 SDK 0.1.2 evaluation
 
-The completed [cell data](docs/data/native_mab_0_1_2.json) evaluate the released 0.1.2 wheel with 2048-token encoder and reranker limits. With the paper settings, MAB Overall is 60.5339, 62.1394, 67.0231, 69.6659 and 67.0278 for GPT-4o-mini, GPT-4.1-mini, GPT-5-mini, GLM-5.3-Flash and GPT-6 Luna. These are the current implementation's representative MAB results. There are 14 cells and 1,671 questions per reader; DetectiveQA's three reads make 1,813 raw response slots. The GPT reader group combines 678 fresh answers with 4,335 reused question-reader score units. The GLM/Luna group has 448 fresh and 3,178 reused raw response slots. Reuse requires complete-message/request equality; the two accounting groups retain their different units.
+The completed [cell data](docs/data/native_mab_0_1_2.json) evaluate the released 0.1.2 wheel with 2048-token encoder and reranker limits. With the paper settings, MAB Overall is 60.5339, 62.1394, 67.0231, 69.6659 and 67.0278 for GPT-4o-mini, GPT-4.1-mini, GPT-5-mini, GLM-5.3-Flash and GPT-6 Luna. These are the measured SDK 0.1.2 paper-settings MAB results. There are 14 cells and 1,671 questions per reader; DetectiveQA's three reads make 1,813 raw response slots. The GPT reader group combines 678 fresh answers with 4,335 reused question-reader score units. The GLM/Luna group has 448 fresh and 3,178 reused raw response slots. Reuse requires complete-message/request equality; the two accounting groups retain their different units.
 
-The separately measured per-store automatic 4o-mini result is 58.5282 Overall. It improves SF while AR, TTL and LRU decrease relative to the original paper harness. These rows are not a new aggregate over the other benchmarks, and no new Infini-style judgment is implied. A same-numerical-cache replay through actual 0.1.0 and 0.1.2 gives identical non-FC contexts and reconstructed full reader messages on all 1,471 questions under the fixed paper configuration.
+The separately measured 0.1.2 per-store automatic results are 58.5282, 60.60 and 64.74 Overall for GPT-4o-mini, GPT-4.1-mini and GPT-5-mini. Relative to the original implementation, SF rises and LRU falls for all three; Overall rises for GPT-4o-mini and GPT-5-mini and falls for GPT-4.1-mini. These rows are not a new aggregate over the other benchmarks, and no new Infini-style judgment is implied. SDK evaluations use 2,048-token encoder and reranker inputs; the added numbered-fact rules were developed on the reported FC data. A same-numerical-cache replay through actual 0.1.0 and 0.1.2 gives identical non-FC contexts and reconstructed full reader messages on all 1,471 questions under the fixed paper configuration.
 
-The [35-page working draft](paper/MUSTER_native_20261109.pdf), two source diffs and cell CSVs record these conditions. Table 2 also compares parent-priority selection, 58.5092, with the final policy, 60.5339, on the same SDK axis. Independent source checks preserve the original numeric rows, 25 full table blocks, figures and algorithm. Clean and marked PDFs have identical page-level word sequences, no undefined references or overflowing boxes, and the eleven-file upload ZIP rebuilds to the same clean PDF. The other benchmarks and six-setting overview retain their original implementation scope. Individual cells include losses. Current commit CI must still be read from its own Actions run; arXiv publication is a separate account/server state.
+The [36-page working draft](paper/MUSTER_native_20261109.pdf), two source diffs and cell CSVs record these conditions. Table 2 also compares parent-priority selection, 58.5092, with the final policy, 60.5339, on the same SDK axis. Independent source checks preserve the original numeric rows, all existing table blocks, figures and algorithm. Clean and marked PDFs have identical page-level word sequences, no undefined references or overflowing boxes, and the eleven-file upload ZIP rebuilds to the same clean PDF. The other benchmarks and six-setting overview retain their original implementation scope. Individual cells include losses. Current commit CI must still be read from its own Actions run; arXiv publication is a separate account/server state.
 
 ## SDK 0.1.1 follow-up
 
