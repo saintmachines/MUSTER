@@ -35,10 +35,10 @@ The November 10 draft reports library 0.1.2 with the paper settings as its measu
 - [42 GPT task cells](native_mab_cells.csv) · [28 GLM/Luna task cells](frontier_native_mab_cells.csv) · [14 automatic 4o-mini task cells](auto4omini_mab_cells.csv) · [28 additional automatic task cells](auto_additional_mab_cells.csv)
 - [Representative SDK rows](representative_sdk_mab_rows.csv) · [28 SDK policy-control cells](sdk_policy_comparison_cells.csv) · [Conditions and provenance](../docs/data/native_mab_0_1_2.json)
 
-Clean PDF SHA-256: `b8b02cd7db115d6be578deb552b9be401bfae4b0e1f4f60ecb4e49e4ec0ea338`.
-Source ZIP SHA-256: `784483e4317f167fd02dae32cb6106de683e467c838261652f92c1383066fae4`.
+Clean PDF SHA-256: `779b7516cdedb085092041c5afcf1f5a97dac42401a79c7c94fca636e18d936b`.
+Source ZIP SHA-256: `63c99d7d003c368077f62ff30180b39456e57b8ad6170309c3538d71d9ca7a23`.
 
-The eleven-file source ZIP rebuilds to the clean PDF byte for byte with the recorded TeX Live 2025 image. It contains five ancillary CSVs and their README. This working draft is separate from the archived submitted manuscript below; repository availability does not establish arXiv server publication.
+The source ZIP contains twelve files, including the source and ancillary CSVs. The hashes above describe the current files; an earlier draft's byte-for-byte rebuild record does not establish a rebuild of this version. This working draft is separate from the archived submitted manuscript below; repository availability does not establish arXiv server publication.
 
 ## Submitted manuscript
 

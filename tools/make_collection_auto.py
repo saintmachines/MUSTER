@@ -19,6 +19,7 @@ CANONICAL_PATH = Path('docs/data/native_mab_0_1_2.json')
 PROOF_PATH = Path('data/auto_0_1_3/API_INPUT_IDENTITY.json')
 REPLAY_PATH = Path('data/auto_0_1_3/API_INPUT_REPLAY.json')
 QUALITY_PATH = Path('data/auto_0_1_3/LME_REFRESH.json')
+SDK_SNAPSHOT_PATH = Path('data/auto_0_1_3/SDK_SOURCE.json')
 BEGIN, END = '<!-- BEGIN collection-auto -->', '<!-- END collection-auto -->'
 NATIVE_BEGIN = '<!-- BEGIN native-mab -->'
 READERS = ('4o-mini', '4.1-mini', '5-mini', 'glmh', 'luna')
@@ -107,6 +108,39 @@ def current_sdk_hashes(root):
             for path in sorted(package.rglob('*')) if path.is_file() and '__pycache__' not in path.parts}
 
 
+def evaluated_sdk_hashes(root, proof):
+    """Bind archived results to the SDK that produced them after a code release.
+
+    Current code can satisfy the old proof only when every source byte matches.
+    Otherwise an explicit, versioned snapshot must preserve all of those pins;
+    the recorded responses and judgments are never relabeled as new-SDK scores.
+    """
+    pinned = proof['sdk_source_sha256']
+    current = current_sdk_hashes(root)
+    if current == pinned:
+        return current
+    manifest_path = root / SDK_SNAPSHOT_PATH
+    require(manifest_path.is_file() and not manifest_path.is_symlink(),
+            'Changed SDK requires its evaluated source snapshot')
+    snapshot = load(manifest_path)
+    require(snapshot.get('schema') == 'muster.evaluated_sdk_snapshot.v1'
+            and snapshot.get('sdk_version') == proof['sdk_version'],
+            'Evaluated SDK snapshot schema/version differs')
+    require(snapshot.get('sdk_source_sha256') == pinned,
+            'Evaluated SDK snapshot pins differ from the original proof')
+    relative = Path(snapshot.get('source_root', ''))
+    require(not relative.is_absolute() and relative.parts and '..' not in relative.parts,
+            'Evaluated SDK snapshot must be repository relative')
+    source = root / relative
+    require(source.resolve().is_relative_to(root.resolve()) and not source.is_symlink(),
+            'Evaluated SDK snapshot escapes the repository')
+    require(all(not path.is_symlink() for path in source.rglob('*')),
+            'Evaluated SDK snapshot contains a symlink')
+    actual = current_sdk_hashes(source)
+    require(actual == pinned, 'Evaluated SDK snapshot source bytes differ from the original proof')
+    return actual
+
+
 def validate_proof_v3(proof, root):
     require(proof['schema'] == 'muster.collection_auto.input_replay.v3'
             and proof['status'] == 'passed_input_replay', 'Input replay not passed')
@@ -166,7 +200,8 @@ def validate_proof_v3(proof, root):
     require(set(fc['unchanged_files']) == set(FC_FILES) - {'cut.py'}, 'Wrong FC unchanged-file scope')
     digest(fc['frozen_FC_contexts_sha256'], 'FC frozen contexts')
     pinned = proof['sdk_source_sha256']
-    require(len(pinned) == 37 and pinned == current_sdk_hashes(root), 'Input replay SDK37 does not match current source code')
+    require(len(pinned) == 37 and pinned == evaluated_sdk_hashes(root, proof),
+            'Input replay SDK37 does not match its evaluated source code')
     for filename, value in fc['unchanged_files'].items():
         require(pinned['muster/' + filename] == value, 'FC unchanged file differs: ' + filename)
     require(proof['new_encoder_calls'] is None and proof['new_reranker_calls'] is None,
@@ -238,7 +273,8 @@ def validate_proof(proof, root):
     require(set(fc['unchanged_files']) == set(FC_FILES), 'Incomplete FC unchanged-file proof')
     require(fc['unchanged_function_ast_sha256'] == FC_FUNCTION_PINS, 'FC numbered-function proof differs')
     pinned = proof['sdk_source_sha256']
-    require(len(pinned) == 37 and pinned == current_sdk_hashes(root), 'Input proof SDK37 does not match current source code')
+    require(len(pinned) == 37 and pinned == evaluated_sdk_hashes(root, proof),
+            'Input proof SDK37 does not match its evaluated source code')
     for filename, value in fc['unchanged_files'].items():
         require(pinned['muster/' + filename] == value, 'FC unchanged file differs: ' + filename)
     for field in ('new_encoder_calls', 'new_reranker_calls', 'new_reader_calls', 'new_judge_calls'):
@@ -441,6 +477,8 @@ def validate_data(data, canonical, proof, root):
 
 
 INPUT_SCOPE = (
+    'These are historical SDK 0.1.3 results. Their evaluated SDK source snapshot is retained with the '
+    'original input-replay and score receipts; these numbers do not measure the 1.0.0 default. '
     'Pass one store to `muster.build(source)` and several independent source stores to '
     '`muster.build_collection(source_texts)`. Collection members stay separate; a list of strings passed to '
     'ordinary `build` remains one store of records. The SDK derives the shared retrieval and rendering plan '

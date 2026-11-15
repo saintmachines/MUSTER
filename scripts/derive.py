@@ -11,6 +11,9 @@ No model or key, nothing to tune, and the store never leaves the machine. Two st
                 retrieval mostly by slot (floors meaning 2, keyword 0, parent 8 per 10 selected units)
   record store  at least 90% of the text sits in records of at most 4,096 tokens
                 units = 512 tokens with records kept whole, parents = 8 units
+                larger than its read (more than 10 x 4,096 = 40,960 tokens) and still 90% in records of at most
+                128 tokens: units = 128 tokens, four times as many (40), the same unit tokens; a read restores
+                whole records (1.0)
   prose         everything else
                 units = 1,024 tokens: the 4,096-token chunk searched at a quarter of its size with four times as many
                 units, so the token budget is unchanged; parents = 8 units
@@ -31,6 +34,7 @@ NUM = re.compile(r"^\s*\d+\.\s+\S")    # a line that opens with "<integer>. <bod
 NUMBERED_TAU, RECORD_TAU, MIN_PARENTS = 0.80, 0.90, 10
 P = 4096                     # reference chunk: MemoryAgentBench's protocol size
 RECORD_STEP, MIN_UNIT = 8, 512   # record stores: P / 8, never below 512
+U_RECORD = 10                    # record stores read 10 units per query; U x P = 40,960 (1.0, third test)
 PROSE_STEP = 4                   # prose: searched at P / 4 with four times the units (Algorithm 1, step 8)
 MAX_LINES = 20000
 
@@ -68,24 +72,28 @@ def load(path, column, row):
 
 def statistics(text, enc):
     text = text.replace("\r\n", "\n").replace("\r", "\n")
-    total = fit = 0
+    total = fit = fitq = 0
+    quarter = max(P // RECORD_STEP, MIN_UNIT) // PROSE_STEP   # 128: a quarter of the record unit
     for rec in text.split("\n\n"):
         if rec.strip():
             t = len(enc.encode(rec, disallowed_special=()))
             total += t
             fit += t if t <= P else 0
+            fitq += t if t <= quarter else 0
     lines = [l for l in text.split("\n") if l.strip()][:MAX_LINES]
     serial = sum(1 for l in lines if NUM.match(l)) / float(len(lines)) if lines else 0.0
-    return serial, (fit / float(total) if total else 0.0), total
+    return serial, (fit / float(total) if total else 0.0), total, (fitq / float(total) if total else 0.0)
 
 
-def derive(serial, record, total):
+def derive(serial, record, total, record_quarter=0.0):
     if serial >= NUMBERED_TAU:
         return dict(store="numbered log", unit_tokens=None, units=None, parent_tokens=None, parents=None,
                     order="newest per slot wins", retrieval="mostly by slot",
                     channel_floors=dict(meaning=2, keyword=0, parent=8, per_selected_units=10))
     if record >= RECORD_TAU:
         store, unit = "record store", max(P // RECORD_STEP, MIN_UNIT)
+        if total > U_RECORD * P and record_quarter >= RECORD_TAU:
+            unit //= PROSE_STEP
     else:
         store, unit = "prose", (P // PROSE_STEP if P > MIN_UNIT else P)
     units = total // unit
@@ -103,6 +111,8 @@ def show(path, total, d):
     else:
         if not d["units"]:
             unit = "whole store (under one unit)"
+        elif d["store"] == "record store" and d["unit_tokens"] < MIN_UNIT:
+            unit = "%s tokens, 4x as many; typed records restored whole when they fit" % format(d["unit_tokens"], ",")
         elif d["store"] == "record store":
             unit = "512 tokens, records whole"
         else:
@@ -132,10 +142,10 @@ def main():
     except ImportError:
         sys.exit("needs tiktoken: pip install tiktoken")
     enc = tiktoken.get_encoding("cl100k_base")
-    serial, record, total = statistics(load(a.path, a.column, a.row), enc)
+    serial, record, total, record_quarter = statistics(load(a.path, a.column, a.row), enc)
     if total == 0:
         sys.exit("%s is empty: nothing to configure" % a.path)
-    d = derive(serial, record, total)
+    d = derive(serial, record, total, record_quarter)
     if a.json:
         print(json.dumps(dict(path=a.path, tokens=total, serial_fraction=round(serial, 4), record_share=round(record, 4), **d), indent=1))
     else:

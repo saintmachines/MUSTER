@@ -28,7 +28,9 @@
 pip install "muster-memory[models,mcp]"
 ```
 
-The figures report the paper's original evaluation. [SDK 0.1.3 automatically configures source collections](#collection-auto) on all fourteen MAB tasks; [the 0.1.2 evaluations](#native-mab) retain their original conditions. The [0.1.1 FC follow-up](https://saintmachines.github.io/MUSTER/#sdk-followup) retains its own conditions. Frozen exact-mode paper presets retain their existing behavior.
+**SDK 1.0.0** adds source-derived fine retrieval and budgeted original-record restoration for qualifying large record stores. [What changes in 1.0.0](docs/library/refinement.md) explains the source boundary, activation rule and token budget.
+
+The figures report the paper's original evaluation. [The SDK 0.1.3 source-collection results](#collection-auto) and [0.1.2 evaluations](#native-mab) retain their original measured conditions; they are not 1.0.0 answer-quality results. The [0.1.1 FC follow-up](https://saintmachines.github.io/MUSTER/#sdk-followup) retains its own conditions. Frozen exact-mode paper presets retain their existing behavior.
 
 ## <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme/h2_01_dark.svg"><img src="docs/assets/readme/h2_01_light.svg" alt="" height="18"></picture>Results
 
@@ -269,7 +271,7 @@ MUSTER  beam_conv0.txt  115,630 tokens
 <a id="collection-auto"></a>
 ### SDK 0.1.3 collection Auto on MemoryAgentBench
 
-Pass one store to `muster.build(source)` and several independent source stores to `muster.build_collection(source_texts)`. Collection members stay separate; a list of strings passed to ordinary `build` remains one store of records. The SDK derives the shared retrieval and rendering plan from the first up to three supplied stores and checks every member; strategies are not selected by the user.
+These are historical SDK 0.1.3 results. Their evaluated SDK source snapshot is retained with the original input-replay and score receipts; these numbers do not measure the 1.0.0 default. Pass one store to `muster.build(source)` and several independent source stores to `muster.build_collection(source_texts)`. Collection members stay separate; a list of strings passed to ordinary `build` remains one store of records. The SDK derives the shared retrieval and rendering plan from the first up to three supplied stores and checks every member; strategies are not selected by the user.
 
 | Reader | AR | TTL | LRU | SF | Overall |
 |---|---:|---:|---:|---:|---:|

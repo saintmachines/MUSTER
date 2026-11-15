@@ -32,6 +32,8 @@ class Selection:
     memory_version: Optional[int] = None
     fingerprint: Optional[str] = None
     mode: str = "native"
+    selected: Tuple[int, ...] = ()     # plans that restore records (1.0): the ranked units before the restore
+    restored: Optional[dict] = None    # plans that restore records (1.0): {"budget", "used", "records"}
 
 
 class Scorer:

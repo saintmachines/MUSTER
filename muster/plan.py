@@ -40,6 +40,7 @@ class Plan:
     source: str = "derived"          # derived | preset:<name> | custom
     trace: Tuple[str, ...] = field(default=())
     serial: str = "dot"              # numbered logs: dot ("12. body") | lead (the log's own style, "Step 12: body")
+    restore: str = "off"             # off | records: a read restores whole records within its unit tokens (1.0)
 
     def __post_init__(self):
         if self.branch not in BRANCHES:
@@ -48,12 +49,16 @@ class Plan:
             raise ValueError("mode must be native or exact")
         if self.serial not in ("dot", "lead"):
             raise ValueError("serial must be dot or lead")
+        if self.restore not in ("off", "records"):
+            raise ValueError("restore must be off or records")
 
     def to_dict(self):
         d = asdict(self)
         d["trace"] = list(self.trace)
         if d["serial"] == "dot":         # plans from before the field keep their JSON and plan_id
             del d["serial"]
+        if d["restore"] == "off":        # likewise: every plan the 1.0 refinement leaves alone keeps its plan_id
+            del d["restore"]
         return d
 
     @classmethod

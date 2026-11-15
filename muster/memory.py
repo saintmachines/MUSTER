@@ -64,6 +64,46 @@ def _fingerprint(units):
     return ce_sig(list(units))
 
 
+def restore_records(memory, ids):
+    """Whole records for a selection, within the selection's own unit tokens (1.0; plans with restore="records").
+
+    In selection order, a unit that holds part of a record spread over several units is replaced by all units of
+    every such record it touches when they fit what is left of the selection's unit tokens (o200k, Cut.n_o200k);
+    otherwise the unit alone is kept when it fits. Each unit at most once. A memory built from a plain string, or one
+    whose records each sit in one unit, gets its selection back unchanged.
+    Returns (ids, unit-token budget, unit tokens used, records restored)."""
+    ids = [int(i) for i in ids]
+    if not len(memory.cut.units):
+        return ids, 0, 0, 0
+    memory.unit_records(0)
+    ur = getattr(memory, "_ur", None)
+    if ur is None:
+        budget = sum(memory.cut.n_o200k[i] for i in ids)
+        return ids, budget, budget, 0
+    units_of = {}
+    for i, ks in enumerate(ur):
+        for k in ks:
+            units_of.setdefault(k, []).append(i)
+    n = memory.cut.n_o200k
+    budget = sum(n[i] for i in ids)
+    chosen, out, used, restored = set(), [], 0, 0
+    for i in ids:
+        if i in chosen:
+            continue
+        need = sorted({j for k in ur[i] if len(units_of[k]) > 1 for j in units_of[k]} - chosen)
+        cost = sum(n[j] for j in need)
+        if need and used + cost <= budget:
+            chosen.update(need)
+            out.extend(need)
+            used += cost
+            restored += 1
+        elif used + n[i] <= budget:
+            chosen.add(i)
+            out.append(i)
+            used += n[i]
+    return out, budget, used, restored
+
+
 @dataclass
 class Memory:
     plan: Plan
@@ -167,8 +207,14 @@ class Memory:
         rule = (not exact) or (self.plan.compat or {}).get("floors_lt10") == "rule"
         ids, pool, heads, fq, nr, nrs = select(self.index, self.vecs, qv, query, sc, U=U, policy=self.plan.policy,
                                                exact=exact, floors_rule_below_10=rule, walk=self.plan.serial != "lead")
+        selected, restored = (), None
+        if self.plan.restore == "records":
+            selected = tuple(int(i) for i in ids)
+            ids, budget, used, n = restore_records(self, selected)
+            restored = {"budget": budget, "used": used, "records": n}
         return Selection(query, U, self.plan.policy, tuple(ids), tuple(pool), heads, tuple(fq), nr, nrs,
-                         sc.hits, sc.misses, self.version, self.fingerprint, self.plan.mode)
+                         sc.hits, sc.misses, self.version, self.fingerprint, self.plan.mode,
+                         selected=selected, restored=restored)
 
     def render(self, selection, *, style: Optional[str] = None) -> Context:
         if hasattr(selection, "memory_version"):

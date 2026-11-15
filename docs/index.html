@@ -373,7 +373,7 @@ footer .flinks a:hover{color:var(--text)}
 <div class="wrap">
 <a class="brand" href="#paper"><i></i>MUSTER</a>
 <div class="nav-links"><a href="#results">Results</a><a href="#cost">Cost</a><a href="#how">How it works</a><a href="#start">Quick start</a><a href="#more">More</a><a href="#cite">Cite</a></div>
-<span class="draft" title="Python library source">v0.1.3</span>
+<span class="draft" title="Python library source">v1.0.0</span>
 </div>
 </nav>
 <header class="paper" id="paper">
@@ -391,7 +391,8 @@ footer .flinks a:hover{color:var(--text)}
 <a class="pill" href="#cite"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 16 16"><path d="M5 3H3v10h2M11 3h2v10h-2"></path></svg>BibTeX</a>
 </div>
 <p class="install-hero"><code>pip install muster-memory</code></p>
-<div class="release-links"><a href="try/">Try your store</a><a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">Library docs</a></div>
+<div class="release-links"><a href="try/">Inspect a store · SDK 0.1.3</a><a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/README.md">Library docs</a></div>
+<p class="note">SDK 1.0.0 adds fine retrieval and original-record restoration for qualifying large record stores. <a href="https://github.com/saintmachines/MUSTER/blob/main/docs/library/refinement.md">Read the rule and budget</a>. The figures and answer-quality tables below retain their original implementation or SDK version; they do not measure the new default.</p>
 <p class="byline">Woosang Lim, SAINT Machines and KAIST</p>
 </div>
 <figure class="hero-fig" style="margin:0">
@@ -449,7 +450,7 @@ footer .flinks a:hover{color:var(--text)}
 <div class="wrap">
 <div class="eyebrow">SDK 0.1.3 · collection Auto · MemoryAgentBench</div>
 <h2>Source-derived collection configuration.</h2>
-<p class="lead">Pass one store to <code>muster.build(source)</code> and several independent source stores to <code>muster.build_collection(source_texts)</code>. Collection members stay separate; a list of strings passed to ordinary <code>build</code> remains one store of records. The SDK derives the shared retrieval and rendering plan from the first up to three supplied stores and checks every member; strategies are not selected by the user.</p>
+<p class="lead">These are historical SDK 0.1.3 results. Their evaluated SDK source snapshot is retained with the original input-replay and score receipts; these numbers do not measure the 1.0.0 default. Pass one store to <code>muster.build(source)</code> and several independent source stores to <code>muster.build_collection(source_texts)</code>. Collection members stay separate; a list of strings passed to ordinary <code>build</code> remains one store of records. The SDK derives the shared retrieval and rendering plan from the first up to three supplied stores and checks every member; strategies are not selected by the user.</p>
 <div class="table-wrap"><table class="t" data-collection-auto="0.1.3" style="min-width:640px">
 <caption class="small">Original benchmark metrics, 0–100 scale. Archived results with changed LongMemEval inputs re-evaluated.</caption>
 <thead><tr><th scope="col">Reader</th><th scope="col" data-collection-column="AR">AR</th><th scope="col" data-collection-column="TTL">TTL</th><th scope="col" data-collection-column="LRU">LRU</th><th scope="col" data-collection-column="SF">SF</th><th scope="col" data-collection-column="Overall">Overall</th></tr></thead><tbody>

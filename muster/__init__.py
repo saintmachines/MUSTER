@@ -14,7 +14,7 @@ from .errors import (AssetMissing, EnvironmentRefused, MusterError, PlanError, P
 from .plan import ENCODER, RERANKER, ModelSpec, Plan
 from .records import DEFAULT_TEMPLATE, Record, numbered, serialize
 from . import presets
-from .memory import Memory, build, context, render, search
+from .memory import Memory, build, context, render, restore_records, search
 from .collection import MemoryCollection, build_collection
 from .models import Models
 from .render import Context, compose
@@ -22,7 +22,7 @@ from .store import AddResult, Store
 from .cache import ScoreCache
 from .source_order import SourceOrder, OrderedRecords, normalize_ordered_records, build_declared
 
-__all__ = ["__version__", "build", "build_collection", "MemoryCollection", "search", "render", "context", "compose", "Memory", "Models", "Context", "Store", "AddResult", "ScoreCache", "derive", "derive_collection", "explain", "Plan", "ModelSpec", "ENCODER", "RERANKER",
+__all__ = ["__version__", "build", "build_collection", "MemoryCollection", "search", "restore_records", "render", "context", "compose", "Memory", "Models", "Context", "Store", "AddResult", "ScoreCache", "derive", "derive_collection", "explain", "Plan", "ModelSpec", "ENCODER", "RERANKER",
            "Record", "DEFAULT_TEMPLATE", "numbered", "serialize", "presets", "MusterError", "PlanError", "QueryError", "RecordError",
            "StoreRefused", "EnvironmentRefused", "AssetMissing", "StaleSelection", "PlanViolation", "StoreLocked",
            "SourceOrder", "OrderedRecords", "normalize_ordered_records", "build_declared"]

@@ -1,4 +1,4 @@
-"""Collection Auto rows bind named cells, archived sources, API proof and current SDK bytes."""
+"""Collection Auto rows bind named cells, archived sources and their evaluated SDK bytes."""
 from decimal import Decimal
 from html.parser import HTMLParser
 import hashlib
@@ -32,7 +32,8 @@ def records(tool):
 @pytest.fixture
 def document_root(tmp_path, tool):
     data = tool.load(ROOT / tool.DATA_PATH)
-    paths = [*DOCUMENTS, tool.DATA_PATH, tool.CANONICAL_PATH, Path(data['input_verification']['receipt'])]
+    paths = [*DOCUMENTS, tool.DATA_PATH, tool.CANONICAL_PATH,
+             Path(data['input_verification']['receipt']), tool.SDK_SNAPSHOT_PATH]
     if 'quality_verification' in data:
         paths.append(Path(data['quality_verification']['receipt']))
     for relative in paths:
@@ -40,6 +41,9 @@ def document_root(tmp_path, tool):
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, destination)
     shutil.copytree(ROOT / 'muster', tmp_path / 'muster', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
+    snapshot = tool.load(ROOT / tool.SDK_SNAPSHOT_PATH)
+    shutil.copytree(ROOT / snapshot['source_root'], tmp_path / snapshot['source_root'],
+                    ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
     return tmp_path
 
 
@@ -93,7 +97,7 @@ class CollectionTable(HTMLParser):
             self.active = False
 
 
-def test_public_data_proof_and_current_sdk_are_one_verified_contract(tool, records):
+def test_public_data_proof_and_evaluated_sdk_are_one_verified_contract(tool, records):
     data, canonical, proof = records
     assert data['schema'] == 'muster.collection_auto.mab.v2', 'The final faithful-rounds release needs measured changed-input coverage'
     assert tool.validate_data(data, canonical, proof, ROOT) is data
@@ -212,19 +216,52 @@ def test_reuse_scope_cannot_be_promoted_to_new_or_overridden_measurement(tool, r
 
 
 @pytest.mark.parametrize('mutation', ['code-byte', 'extra-code-file', 'unlisted-proof-file'])
-def test_proof_is_bound_to_the_exact_current_sdk_tree(tool, document_root, mutation):
+def test_proof_is_bound_to_the_exact_evaluated_sdk_tree(tool, document_root, mutation):
     data = tool.load(document_root / tool.DATA_PATH)
     canonical = tool.load(document_root / tool.CANONICAL_PATH)
     proof = tool.load(document_root / data['input_verification']['receipt'])
+    snapshot = tool.load(document_root / tool.SDK_SNAPSHOT_PATH)
+    source = document_root / snapshot['source_root']
     if mutation == 'code-byte':
-        path = document_root / 'muster/memory.py'
+        path = source / 'muster/memory.py'
         path.write_bytes(path.read_bytes() + b'\n# source changed\n')
     elif mutation == 'extra-code-file':
-        (document_root / 'muster/unlisted.py').write_text('value = 1\n')
+        (source / 'muster/unlisted.py').write_text('value = 1\n')
     else:
         del proof['sdk_source_sha256']['muster/collection.py']
-    with pytest.raises(tool.ContractError, match='SDK37'):
+    with pytest.raises(tool.ContractError, match='SDK37|snapshot'):
         tool.validate_data(data, canonical, proof, document_root)
+
+
+def test_new_sdk_does_not_relabel_archived_quality_or_rewrite_proof(tool, document_root):
+    data = tool.load(document_root / tool.DATA_PATH)
+    proof_path = document_root / data['input_verification']['receipt']
+    proof_bytes = proof_path.read_bytes()
+    proof = tool.load(proof_path)
+    assert proof['sdk_version'] == data['sdk_version'] == '0.1.3'
+    assert tool.current_sdk_hashes(document_root) != proof['sdk_source_sha256']
+    assert tool.evaluated_sdk_hashes(document_root, proof) == proof['sdk_source_sha256']
+    assert proof_path.read_bytes() == proof_bytes
+
+
+@pytest.mark.parametrize('mutation', ['missing-manifest', 'wrong-version', 'wrong-pins', 'outside-root'])
+def test_changed_current_sdk_cannot_silently_bypass_the_source_proof(tool, document_root, mutation):
+    data = tool.load(document_root / tool.DATA_PATH)
+    proof = tool.load(document_root / data['input_verification']['receipt'])
+    path = document_root / tool.SDK_SNAPSHOT_PATH
+    snapshot = tool.load(path)
+    if mutation == 'missing-manifest':
+        path.unlink()
+    else:
+        if mutation == 'wrong-version':
+            snapshot['sdk_version'] = '1.0.0'
+        elif mutation == 'wrong-pins':
+            snapshot['sdk_source_sha256']['muster/memory.py'] = '0' * 64
+        else:
+            snapshot['source_root'] = '../outside'
+        path.write_text(json.dumps(snapshot))
+    with pytest.raises(tool.ContractError, match='snapshot'):
+        tool.evaluated_sdk_hashes(document_root, proof)
 
 
 @pytest.mark.parametrize('mutation', ['original-score', 'old-auto-score', 'provenance'])

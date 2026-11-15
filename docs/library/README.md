@@ -6,8 +6,8 @@ evaluation results state their SDK version and input boundary (see [Verification
 
 ## Install
 
-The [0.1.3 changelog](https://github.com/saintmachines/MUSTER/blob/main/CHANGELOG.md) describes source-derived
-configuration for single stores and collections. The [0.1.1 changes](https://github.com/saintmachines/MUSTER/blob/main/docs/library/changes.md)
+The [1.0.0 changelog](https://github.com/saintmachines/MUSTER/blob/main/CHANGELOG.md) describes source-derived
+fine retrieval and original-record restoration for qualifying large record stores. [The refinement rule](https://github.com/saintmachines/MUSTER/blob/main/docs/library/refinement.md) explains its activation and budget. Single-store and collection entry points retain their source boundaries. The [0.1.1 changes](https://github.com/saintmachines/MUSTER/blob/main/docs/library/changes.md)
 retain the earlier input validation, native numbered-log reading and compatibility limits.
 
 Install `muster-memory` from PyPI. The basic install provides structure inspection.
@@ -74,6 +74,8 @@ one store of records. The input boundary supplies the available sources; MUSTER 
 MUSTER distinguishes independent records from dated, speaker-tagged conversation records using source structure.
 It also recognizes a complete serialized sequence alternating session dates and turn lists, keeping its original
 user/answer rounds and sessions. Neither path branches on a benchmark name or on words in a question.
+
+In 1.0.0, a qualifying large record store is searched with finer units and can restore the original records touched by a selection. At the default reference scale, the extra test requires a store over 40,960 tokens and at least 90% fine coverage of its original records; it changes 512-token/U10 retrieval to 128-token/U40 and re-derives parents. Restoration stays within the selected units' token budget. The fully rendered context has its own measured token count. This is not an instruction to fill every context to 5,120 tokens.
 
 The numbered branch also recognizes serials written in the log's own style (`Step 12: ...`, `#12 ...`, `(12) ...`).
 This form is detected when 95% of the lines after the first carry a serial one above the previous line's and
@@ -172,7 +174,7 @@ SDK 0.1.2 paper settings, and the measured 0.1.2 per-store Auto results (58.53, 
 <a id="collection-auto"></a>
 ### SDK 0.1.3 collection Auto on MemoryAgentBench
 
-Pass one store to `muster.build(source)` and several independent source stores to `muster.build_collection(source_texts)`. Collection members stay separate; a list of strings passed to ordinary `build` remains one store of records. The SDK derives the shared retrieval and rendering plan from the first up to three supplied stores and checks every member; strategies are not selected by the user.
+These are historical SDK 0.1.3 results. Their evaluated SDK source snapshot is retained with the original input-replay and score receipts; these numbers do not measure the 1.0.0 default. Pass one store to `muster.build(source)` and several independent source stores to `muster.build_collection(source_texts)`. Collection members stay separate; a list of strings passed to ordinary `build` remains one store of records. The SDK derives the shared retrieval and rendering plan from the first up to three supplied stores and checks every member; strategies are not selected by the user.
 
 | Reader | AR | TTL | LRU | SF | Overall |
 |---|---:|---:|---:|---:|---:|

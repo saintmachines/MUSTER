@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0 — source-derived fine retrieval and record restoration
+
+- Large record stores can take a second, finer cut when the source itself supports it. At the default reference scale, a store over 40,960 tokens whose serialized original records retain at least 90% fine coverage uses 128-token units and U40 instead of 512-token units and U10. Parent groups are derived again at the new unit size.
+- Retrieval can restore the original records touched by the selected fine units, within the selected units' token budget. This budget is distinct from the fully rendered context's token count; U40 is a selection limit, not a promise to fill a 5,120-token context.
+- Declared source order keeps its existing record boundaries. Numbered logs, source rounds, closed refinement paths and frozen paper presets retain their documented behavior.
+- The 0.1.3 answer-quality tables, input-replay receipts and their exact 37-file SDK snapshot are retained as historical results. They are not relabeled as measurements of the 1.0.0 default. New assembly comparisons report evidence or label diagnostics separately from generated-answer accuracy.
+- The source-order API, restoration accounting and CLI explain output include the corrections verified in the 1.0.0 Colab package. No new model call is required to derive a plan.
+
 ## 0.1.3 — source-derived configuration
 
 - `muster.build(source)` builds one memory store. The new native `muster.build_collection(stores)` builds independent stores under a shared source-derived plan and returns a `MemoryCollection`.

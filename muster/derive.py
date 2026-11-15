@@ -18,6 +18,15 @@ a numbered log when >= 95% of its lines after the first carry a
 leading serial one above the previous line's, written in the log's own style ("Step 3: ..."), and its median line is
 at most 20 tokens. The serial is read from that prefix, and the reader sees each line as written. Native collections
 require all nonempty members to have the same serial format; historical exact statistics and presets stay unchanged.
+
+Added in 1.0, the record branch's third test: a record store larger than its own read, T > U x P (the tokens of U
+reference-chunk units, 10 x 4,096 = 40,960), whose record share still holds at a quarter of its unit (>= 90% of its
+tokens in records of at most chunk/4 tokens: the store's own records when it was given records, each as serialized,
+the unit a read restores whole; blank-line records for plain text), takes the quarter step of step 8: units of
+chunk/4 tokens and
+4 x U of them, so a read keeps its unit tokens (10 x 512 = 40 x 128), with parents re-estimated at the new unit. A
+read of such a plan restores whole records within its unit tokens (memory.restore_records). Every other plan keeps
+its 0.1.x form and plan_id.
 """
 import ast
 import operator
@@ -30,10 +39,12 @@ from .errors import PlanError, RecordError
 from .plan import Plan
 from .records import DEFAULT_TEMPLATE, Record, as_record, normalize_newlines, record_list, require_text, serialize
 from .record_serial import body_serial_stats
+from . import bpe
 from .stats import LEAD_LINE_TOKENS, LEAD_TAU, Stats, collection_stats, lead_serial, store_stats
 
 NUMBERED_TAU, RECORD_TAU, MIN_PARENTS = 0.80, 0.90, 10
 RECORD_STEP, MIN_UNIT, PROSE_STEP = 8, 512, 4
+REFINE_TRACE = "refine:"  # 1.0: the trace line of a record plan refined by the third test starts with this
 U_DEFAULT = {"numbered": 10, "record": 10, "prose": 40}
 MAX_REVISIONS = PROSE_STEP  # value_slots in cut.py: a changed subject of a relation holds at most this many lines on average
 
@@ -215,9 +226,48 @@ def _plan(branch, chunk, units_est, st: Stats, P, trace, serial="dot", *, conver
 
 def derive(store, *, reference_chunk: int = 4096, template: str = DEFAULT_TEMPLATE,
            normalize_newlines: bool = True) -> Plan:
-    """The plan of one store, with the documented native serial-format extension."""
+    """The plan of one store, with the documented native serial-format extension and the record branch's third
+    test (1.0)."""
+    return _derive_one(store, reference_chunk=reference_chunk, template=template,
+                       normalize_newlines=normalize_newlines, refine=True)
+
+
+def _record_fit(parts, c):
+    """Record share at reference chunk c over records: [(text, spans)], each span one serialized record (cl100k)."""
+    enc = bpe.cl100k()
+    tot = fit = 0
+    for text, spans in parts:
+        for s, e in spans:
+            t = bpe.count(enc, text[s:e])
+            tot += t
+            fit += t if t <= c else 0
+    return fit / float(tot) if tot else 0.0
+
+
+def _refine(plan, share_at, P, what, kind):
+    """The record branch's third test (1.0). `share_at(c)` is the record share at reference chunk c on the same text
+    (or the same sampled stores) the plan's statistics came from. Any plan that fails a test is returned as it is."""
+    if plan.branch != "record" or plan.mode != "native" or not plan.chunk or plan.chunk < MIN_UNIT:
+        return plan
+    T = int(plan.stats["tokens"])
+    if T <= plan.U * P:
+        return plan
+    unit = plan.chunk // PROSE_STEP
+    share = float(share_at(unit))
+    if share < RECORD_TAU:
+        return plan
+    U = plan.U * PROSE_STEP
+    ms, npar, m = _parents(T // unit, unit)
+    return plan.with_(chunk=unit, mscale=ms, U=U, restore="records", trace=tuple(plan.trace) + (
+        "%s %d %s > U x P = %d x %d and record share %.4f >= %.2f at %d tokens (%s): units of %d tokens (a quarter "
+        "of %d), U %d, %s; a read restores whole records within its unit tokens"
+        % (REFINE_TRACE, T, what, plan.U, P, share, RECORD_TAU, unit, kind, unit, plan.chunk, U,
+           ("parents of %d units (%d tokens), %d of them" % (m, ms, npar)) if ms else "no parent layer"),))
+
+
+def _derive_one(store, *, reference_chunk=4096, template=DEFAULT_TEMPLATE, normalize_newlines=True, refine=True):
     P = _reference_chunk(reference_chunk)
-    text, _, recs = store_text(store, template=template, normalize=normalize_newlines)
+    text, spans, recs = store_text(store, template=template, normalize=normalize_newlines)
     st = store_stats(text, P)
     body_stats = body_serial_stats(recs, normalize=normalize_newlines) if recs is not None else None
     if body_stats is not None:
@@ -245,7 +295,12 @@ def derive(store, *, reference_chunk: int = 4096, template: str = DEFAULT_TEMPLA
     conversation = _conversation_share(text, recs)
     if conversation >= NUMBERED_TAU:
         trace.append("dated speaker record share %.4f >= %.2f" % (conversation, NUMBERED_TAU))
-    return _unserial_plan(st, P, trace, conversation=conversation >= NUMBERED_TAU)
+    plan = _unserial_plan(st, P, trace, conversation=conversation >= NUMBERED_TAU)
+    if not refine:
+        return plan
+    if spans is not None:
+        return _refine(plan, lambda c: _record_fit([(text, spans)], c), P, "tokens", "its records")
+    return _refine(plan, lambda c: store_stats(text, c).record_share, P, "tokens", "blank-line records")
 
 
 def _unserial_plan(st, P, trace, *, conversation=False):
@@ -279,8 +334,8 @@ def _derive_prepared_collection(prepared, *, reference_chunk=4096, sample=3, ste
     P, sample = _reference_chunk(reference_chunk), _sample_size(sample)
     texts = [text for _, text, _ in prepared]
     st = collection_stats(texts, P, sample=sample, mode="native")
-    plans = [derive(source, reference_chunk=P, template=template, normalize_newlines=normalize)
-             for source, _, _ in prepared]
+    plans = [_derive_one(source, reference_chunk=P, template=template, normalize_newlines=normalize, refine=False)
+             for source, _, _ in prepared]  # members supply branches and serials only
     sampled = plans if sample is None else plans[:sample]
     serials = [p.stats["serial"] for p in sampled if p.stats["tokens"]]
     st = replace(st, serial=sum(serials) / len(serials) if serials else 0.0)
@@ -317,8 +372,14 @@ def _derive_prepared_collection(prepared, *, reference_chunk=4096, sample=3, ste
     if not record and step8 and P > MIN_UNIT:
         chunk = P // PROSE_STEP
     trace.append("%s; units of %d tokens" % ("record store" if record else "prose", chunk))
-    return _plan("record" if record else "prose", chunk, max(1, st.tokens // chunk), st, P, trace,
+    plan = _plan("record" if record else "prose", chunk, max(1, st.tokens // chunk), st, P, trace,
                  conversation=all(conversation)).with_(source="derived:collection")
+    first = prepared if sample is None else prepared[:sample]
+    if first and all(recs is not None for _, _, recs in first):
+        parts = [serialize(recs, template=template, normalize=normalize) for _, _, recs in first]
+        return _refine(plan, lambda c: _record_fit(parts, c), P, "tokens per store", "the sampled stores' records")
+    return _refine(plan, lambda c: collection_stats(texts, c, sample=sample, mode="native").record_share, P,
+                   "tokens per store", "blank-line records")
 
 
 def derive_collection(stores: Sequence, *, reference_chunk: int = 4096, sample: Optional[int] = 3,
@@ -364,13 +425,18 @@ def explain(plan: Plan) -> str:
         if plan.serial == "lead":
             rows.append(("serials", "each line's own prefix, shown as written"))
     elif plan.branch in ("record", "prose"):
-        rows += [("units", "%s tokens%s" % (format(plan.chunk, ","), ", records whole" if plan.atom == "blank" else "")),
+        rows += [("units", "%s tokens%s" % (format(plan.chunk, ","),
+                                           ", records whole" if plan.atom == "blank" and plan.restore == "off" else "")),
                  ("parents", ("%s tokens" % format(plan.mscale, ",")) if plan.mscale else "none")]
+        if plan.restore == "records":
+            rows.append(("records", "typed records restored whole when their units fit the read's unit-token budget; raw text unchanged"))
     elif plan.branch == "rounds":
         rows += [("units", "user/answer rounds and unpaired turns"), ("parents", "one per session")]
     rows += [("read", "%d units per query" % plan.U), ("mode", plan.mode), ("source", plan.source)]
     out = ["  %-10s %s" % r for r in rows]
     if plan.trace:
         out.append("  how:")
-        out += ["    - " + t for t in plan.trace]
+        out += ["    - " + (t.replace("a read restores whole records within its unit tokens",
+                                      "typed records may be restored whole when their units fit the read's unit-token budget; raw text is unchanged")
+                            if plan.restore == "records" else t) for t in plan.trace]
     return "\n".join(out)

@@ -25,14 +25,15 @@ from .stats import LEAD_LINE_TOKENS, lead_serial, store_stats
 P = 4096
 
 
-def _decision(serial, record, total, lead=False):
-    """The dict scripts/derive.py prints, from the same three numbers (`lead`: numbered under its own spelling)."""
+def _decision(serial, record, total, lead=False, unit=None):
+    """The dict scripts/derive.py prints, from the same three numbers (`lead`: numbered under its own spelling;
+    `unit`: the record unit of a plan the third test refined, 1.0)."""
     if serial >= NUMBERED_TAU or lead:
         return dict(store="numbered log", unit_tokens=None, units=None, parent_tokens=None, parents=None,
                     order="newest per slot wins", retrieval="mostly by slot",
                     channel_floors=dict(meaning=2, keyword=0, parent=8, per_selected_units=10))
     if record >= RECORD_TAU:
-        store, unit = "record store", max(P // RECORD_STEP, MIN_UNIT)
+        store, unit = "record store", unit or max(P // RECORD_STEP, MIN_UNIT)
     else:
         store, unit = "prose", (P // PROSE_STEP if P > MIN_UNIT else P)
     units = total // unit
@@ -58,6 +59,8 @@ def _show(path, total, d):
     else:
         if not d["units"]:
             unit = "whole store (under one unit)"
+        elif d["store"] == "record store" and d["unit_tokens"] < MIN_UNIT:
+            unit = "%s tokens, 4x as many; typed records restored whole when they fit" % format(d["unit_tokens"], ",")
         elif d["store"] == "record store":
             unit = "512 tokens, records whole"
         else:
@@ -97,7 +100,8 @@ def cmd_derive(a):
                  retrieval="balanced, 3 channels",
                  channel_floors=dict(meaning=4, keyword=3, parent=3, per_selected_units=10))
     else:
-        d = _decision(st.serial if plan.branch == "numbered" else 0.0, st.record_share, st.tokens, lead=lead)
+        d = _decision(st.serial if plan.branch == "numbered" else 0.0, st.record_share, st.tokens, lead=lead,
+                      unit=plan.chunk if plan.restore == "records" else None)
     if lead:
         d = dict(leading_serial_share=round(share, 4), median_line_tokens=med, **d)
     d.update(policy=plan.policy, render=plan.render, U=plan.U,

@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Tuple
 
-from .derive import _derive_prepared_collection, _prepare_collection, derive
+from .derive import _derive_one, _derive_prepared_collection, _prepare_collection
 from .memory import Memory, build
 from .plan import Plan
 from .records import DEFAULT_TEMPLATE
@@ -46,8 +46,8 @@ def build_collection(stores, *, reference_chunk=4096, sample=3, step8=True, mode
         shared_models = Models(encoder_spec=plan.encoder, reranker_spec=plan.reranker)
     memories = []
     for source, _, _ in prepared:
-        own = derive(source, reference_chunk=reference_chunk, template=template,
-                     normalize_newlines=normalize_newlines)
+        own = _derive_one(source, reference_chunk=reference_chunk, template=template,
+                          normalize_newlines=normalize_newlines, refine=False)  # only an empty member keeps its own
         member_plan = own if own.branch == "empty" else plan
         memories.append(build(source, member_plan, models=shared_models, embed=embed,
                               template=template, normalize_newlines=normalize_newlines))

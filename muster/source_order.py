@@ -165,6 +165,7 @@ def build_declared(envelope, *, models=None, embed=True):
 def build_ordered_memory(records, order, *, record_format, plan, models, embed):
     from . import bpe
     from .cut import Cut
+    from .derive import _derive_one
     from .memory import Memory, resolve_plan
     from .records import Record
     normalized = normalize_ordered_records(records, order, record_format=record_format)
@@ -173,14 +174,16 @@ def build_ordered_memory(records, order, *, record_format, plan, models, embed):
     for body in bodies:
         spans.append((pos, pos + len(body)))
         pos += len(body) + 2
-    p = resolve_plan(text, plan)
+    # Declared bodies already define retrieval units. Derive the original U
+    # without enabling token-packing refinement for a different representation.
+    p = _derive_one(text, refine=False) if plan is None else resolve_plan(text, plan)
     if p.mode != "native":
         raise RecordError("declared-order records are a native opt-in mode; exact replay is unchanged")
     trace = ("Caller declares record boundaries and source-array/append order; no date sorting.",
              "One body per unit, one parent per occurrence; all versions kept without a revision contract.",
              "The base plan supplies U=%d; declared record granularity replaces automatic token packing." % p.U)
     p = p.with_(branch="record", atom=None, chunk=None, mscale=0, policy="flrs", render="r4", supersede="off",
-                compat=None, source="declared-order:record-boundaries-v1",
+                compat=None, source="declared-order:record-boundaries-v1", restore="off",
                 trace=trace)
     diagnostics = normalized.diagnostics()
     c = Cut(bodies, bodies, tuple("u:" + r.occurrence_id for r in normalized.records),

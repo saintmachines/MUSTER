@@ -1,0 +1,20 @@
+{
+  "title": "MUSTER: source-adaptive retrieval and context assembly for agent memory",
+  "upload_type": "software",
+  "version": "1.0.0",
+  "description": "MUSTER derives a memory store's retrieval and rendering configuration from source structure. Version 1.0.0 adds source-derived fine retrieval, original-record restoration and first-ring context assembly. It extends the MacRAG fine-retrieval and context-expansion lineage to source-structured agent memory. Published answer-quality results retain their original implementation and SDK version. New assembly studies report evidence-recall and context diagnostics separately from generated-answer accuracy.",
+  "creators": [
+    {
+      "name": "Lim, Woosang",
+      "affiliation": "SAINT Machines and KAIST"
+    }
+  ],
+  "license": "Apache-2.0",
+  "keywords": ["agent memory", "retrieval", "context assembly", "MacRAG", "reproducibility"],
+  "related_identifiers": [
+    {"identifier": "https://github.com/saintmachines/MUSTER", "relation": "isSupplementTo", "scheme": "url"},
+    {"identifier": "https://saintmachines.github.io/MUSTER/", "relation": "isDocumentedBy", "scheme": "url"},
+    {"identifier": "https://huggingface.co/datasets/saintmachines/MUSTER-eval", "relation": "isSupplementedBy", "scheme": "url"},
+    {"identifier": "https://arxiv.org/abs/2505.06569", "relation": "references", "scheme": "url"}
+  ]
+}
