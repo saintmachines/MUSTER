@@ -223,7 +223,7 @@ class LiveProgress:
             if complete:
                 count = self.total
             samples = self.samples[cap]
-            reset = count is not None and samples and count < samples[-1][1]
+            reset = count is not None and bool(samples) and count < samples[-1][1]
             if reset:
                 samples.clear()
             if count is not None:
